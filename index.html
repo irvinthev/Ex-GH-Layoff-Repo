@@ -3,31 +3,77 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TalentBotHQ Directory</title>
+  <title>Ex-Grubhub Talent Network</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow">Ex-Grubhub Talent Network</p>
+      <h1>Help Great People Land Faster</h1>
+      <p class="hero-subtext">
+        Browse impacted alumni by function, team, and location. Built to help hiring teams,
+        recruiters, and former coworkers connect talent to opportunity.
+      </p>
 
-  <header>
-    <h1>Ex-Grubhub Talent Directory</h1>
-    <p>Browse alumni talent by role, function, and location.</p>
+      <div class="hero-actions">
+        <a class="primary-btn" href="YOUR_GOOGLE_FORM_LINK" target="_blank" rel="noopener noreferrer">
+          Join the Directory
+        </a>
+        <a class="secondary-btn" href="#directory-section">
+          Browse Talent
+        </a>
+      </div>
+    </div>
   </header>
 
   <main>
-    <section class="controls">
-      <input
-        type="text"
-        id="search"
-        placeholder="Search roles, teams, functions, locations..."
-      />
+    <section class="stats-section">
+      <div class="stat-card highlight">
+        <div class="stat-number" id="totalCount">63</div>
+        <div class="stat-label">People Currently Searching</div>
+      </div>
 
-      <select id="functionFilter">
-        <option value="">All Functions</option>
-      </select>
+      <div class="stat-card">
+        <div class="stat-number" id="functionCount">0</div>
+        <div class="stat-label">Functions Represented</div>
+      </div>
 
-      <select id="locationFilter">
-        <option value="">All Locations</option>
-      </select>
+      <div class="stat-card">
+        <div class="stat-number" id="locationCount">0</div>
+        <div class="stat-label">Locations Represented</div>
+      </div>
+    </section>
+
+    <section class="dashboard-section">
+      <div class="section-header">
+        <h2>Talent by Function</h2>
+        <p>Quick snapshot of who’s in the network right now.</p>
+      </div>
+      <div id="functionDashboard" class="function-dashboard"></div>
+    </section>
+
+    <section class="controls-section" id="directory-section">
+      <div class="section-header">
+        <h2>Browse the Directory</h2>
+        <p>Search by role, function, team, or location.</p>
+      </div>
+
+      <div class="controls">
+        <input
+          type="text"
+          id="search"
+          placeholder="Search roles, teams, functions, locations..."
+        />
+
+        <select id="functionFilter">
+          <option value="">All Functions</option>
+        </select>
+
+        <select id="locationFilter">
+          <option value="">All Locations</option>
+        </select>
+      </div>
     </section>
 
     <section id="directory"></section>
