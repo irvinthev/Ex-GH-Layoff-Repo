@@ -1,39 +1,88 @@
 body {
-font-family: Arial, sans-serif;
-margin: 40px;
-background: #f7f7f7;
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+margin: 0;
+background: #f5f7fb;
+color: #222;
 }
 
-h1 {
+/* Header */
+
+header {
 text-align: center;
+padding: 40px 20px 20px;
 }
 
-#search {
-display: block;
-margin: 20px auto;
-padding: 10px;
-width: 60%;
-font-size: 16px;
+header h1 {
+margin: 0;
+font-size: 32px;
 }
+
+header p {
+color: #666;
+margin-top: 8px;
+}
+
+/* Filters */
+
+.controls {
+display: flex;
+gap: 12px;
+justify-content: center;
+padding: 20px;
+flex-wrap: wrap;
+}
+
+.controls input,
+.controls select {
+padding: 10px 12px;
+font-size: 14px;
+border: 1px solid #ddd;
+border-radius: 6px;
+min-width: 200px;
+}
+
+/* Directory grid */
 
 #directory {
+max-width: 1200px;
+margin: auto;
+padding: 20px;
 display: grid;
 grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
 gap: 20px;
 }
 
+/* Talent cards */
+
 .card {
 background: white;
-padding: 20px;
-border-radius: 8px;
-box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+border-radius: 10px;
+padding: 18px;
+box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.card:hover {
+transform: translateY(-4px);
+box-shadow: 0 8px 18px rgba(0,0,0,0.12);
 }
 
 .card h3 {
-margin-top: 0;
+margin: 0 0 10px 0;
+font-size: 18px;
+}
+
+.card p {
+margin: 4px 0;
+font-size: 14px;
 }
 
 .card a {
-color: #0077b5;
+color: #0a66c2;
 text-decoration: none;
+font-weight: 500;
+}
+
+.card a:hover {
+text-decoration: underline;
 }
