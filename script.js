@@ -74,8 +74,9 @@ async function loadDirectory() {
     }
 
     list.forEach(person => {
-      const name = person["Name"] || person["First Name"] || "Unnamed Person";
-      const formerRole = person["Former Job Title"] || "";
+const name =
+  (person["First Name"] ? person["First Name"] + " " : "") +
+  (person["Last Name"] || person["Name"] || "");      const formerRole = person["Former Job Title"] || "";
       const team = person["Team"] || "";
       const jobFunction = person["Function"] || "";
       const location = person["Remote/Location"] || "";
