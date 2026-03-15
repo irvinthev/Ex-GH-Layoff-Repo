@@ -1,42 +1,762 @@
 [
   {
+    "First Name": "Stephanie",
+    "Name": "Roberts",
+    "Former Job Title": "Care Lead, Care Tax Team/Merchant Accounting",
+    "Team": "Care",
+    "Function": "Customer Support",
+    "Remote/Location": "Chicago/Remote",
+    "LinkedIn URL": "Stephanie Roberts - Darien Park District | LinkedIn",
+    "Description": "Stephanie Roberts is a Chicago-based professional with a background in customer care and merchant accounting. She previously served as a Care Lead for the Care Tax Team, specializing in merchant accounting within a care-focused function."
+  },
+  {
     "First Name": "Kevin",
-    "Name": "Kevin Cheng",
+    "Name": "Cheng",
     "Former Job Title": "Product Designer II",
     "Team": "Product",
     "Function": "Design",
     "Remote/Location": "New York City",
-    "LinkedIn URL": "https://linkedin.com/in/example",
-    "Description": "Ex-Grubhub product designer focused on mobile UX and growth experimentation."
+    "LinkedIn URL": "https://www.linkedin.com/in/kchengtoo/",
+    "Description": "Kevin Cheng is a Product Designer II based in New York City with professional experience in product design and development, most recently serving on the Product team at Grubhub."
   },
   {
-    "First Name": "Stephanie",
-    "Name": "Stephanie Roberts",
-    "Former Job Title": "Care Lead, Care Tax Team/Merchant Accounting",
-    "Team": "Care",
-    "Function": "Customer Support",
-    "Remote/Location": "Chicago / Remote",
-    "LinkedIn URL": "https://linkedin.com/in/example",
-    "Description": "Customer operations leader with experience supporting merchant accounting and tax teams."
-  },
-  {
-    "First Name": "Devon",
-    "Name": "Devon Branin",
-    "Former Job Title": "Senior Operations Engineer",
-    "Team": "Operations",
+    "First Name": "Mindy",
+    "Name": "Yan",
+    "Former Job Title": "Software engineer (Android)",
+    "Team": "Growth / Engineering",
     "Function": "Engineering",
-    "Remote/Location": "Seattle / Remote",
-    "LinkedIn URL": "https://linkedin.com/in/example",
-    "Description": "Reliability engineer focused on infrastructure stability and distributed systems."
+    "Remote/Location": "NY City / Remote",
+    "LinkedIn URL": "https://www.linkedin.com/in/mingyang-yan/",
+    "Description": "Mindy Yan is a software engineer specializing in Android development with a background in growth and engineering. Currently based in New York City, she has experience working in remote and hybrid environments."
   },
   {
     "First Name": "Michael",
-    "Name": "Michael Pascutoi",
-    "Former Job Title": "Senior Associate, Analytics & Insights",
+    "Name": "Pascutoi",
+    "Former Job Title": "Senior Associate, Anayltics & Insights",
     "Team": "Merchant Network",
     "Function": "Analytics",
-    "Remote/Location": "Chicago / Remote",
-    "LinkedIn URL": "https://linkedin.com/in/example",
-    "Description": "Analytics professional specializing in operational insights and business performance reporting."
+    "Remote/Location": "Chicago/Remote",
+    "LinkedIn URL": "https://www.linkedin.com/in/michael-pascutoi/",
+    "Description": "Michael Pascutoi is an experienced professional with a background in analytics, operations, and real estate. He recently served as a Senior Associate of Analytics and Insights at Grubhub and has held various roles as a licensed real estate agent and property manager. He holds an MSBA/MBA from the University of Notre Dame and a Bachelor of Arts in Economics and Political Science from the University of Rochester."
+  },
+  {
+    "First Name": "Devon",
+    "Name": "Branin",
+    "Former Job Title": "Senior Operations Engineer (Reliability)",
+    "Team": "Operations",
+    "Function": "Engineering",
+    "Remote/Location": "Seattle / Remote",
+    "LinkedIn URL": "https://www.linkedin.com/in/devon-branin-4455a847/",
+    "Description": "Devon Branin is an experienced engineering professional with a background in site reliability and operations. He most recently served as a Senior Operations Engineer (Reliability) within the operations team at Grubhub."
+  },
+  {
+    "First Name": "Edgar",
+    "Name": "Madrigal",
+    "Former Job Title": "Associate Graphic Designer",
+    "Team": "Brand/Creative",
+    "Function": "Design",
+    "Remote/Location": "Chicago",
+    "LinkedIn URL": "https://www.linkedin.com/in/edgar-madrigal",
+    "Description": "Edgar Madrigal is a Chicago-based graphic designer with experience in brand and creative functions. He most recently served as an Associate Graphic Designer."
+  },
+  {
+    "First Name": "Nakul",
+    "Name": "Nagaraj",
+    "Former Job Title": "Policy Manager",
+    "Team": "Public Policy",
+    "Function": "Operations",
+    "Remote/Location": "New York/Open to anything",
+    "LinkedIn URL": "https://www.linkedin.com/in/nakulnagaraj/",
+    "Description": "Nakul Nagaraj is a public policy professional who served as a Policy Manager and holds a Master in Public Policy from the Harvard Kennedy School. His experience includes working with informal labor groups in India and a ride-sharing platform in Singapore, focusing on the intersection of technology and workforce development."
+  },
+  {
+    "First Name": "Ali",
+    "Name": "Alenizi",
+    "Former Job Title": "Strategy and Operations Manager",
+    "Team": "Logistics",
+    "Function": "Operations",
+    "Remote/Location": "Remote / Los Angeles",
+    "LinkedIn URL": "https://www.linkedin.com/in/alialenizi/",
+    "Description": "Ali Alenizi is a Strategy and Operations Manager with over 12 years of experience in logistics, supply management, and systems analysis. He holds a Master’s in Management Information Systems and has a diverse background ranging from founding a tech startup to consulting for major organizations like Careem and Caterpillar."
+  },
+  {
+    "First Name": "Lam",
+    "Name": "Truong",
+    "Former Job Title": "Senior Operations Engineer",
+    "Team": "Operations /Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "Remote/ Boston",
+    "LinkedIn URL": "https://www.linkedin.com/in/lamquoctruong/",
+    "Description": "Lam Truong is a Senior Operations Engineer with experience in both operations and engineering functions, specializing in the engineering sector. Based in Boston and working remotely, he has established a professional background focused on maintaining and optimizing operational systems."
+  },
+  {
+    "First Name": "Brittany",
+    "Name": "Piotrkowski",
+    "Former Job Title": "Product Designer II",
+    "Team": "Product",
+    "Function": "Design",
+    "Remote/Location": "Boston/Remote",
+    "LinkedIn URL": "http://linkedin.com/in/brittanypio",
+    "Description": "Brittany Piotrkowski is a Product Designer II at Grubhub with a background in product design and engineering teams. She is based in Boston and holds a degree from a university, with previous experience in the financial services industry."
+  },
+  {
+    "First Name": "Hoa Tommy",
+    "Name": "Tran",
+    "Former Job Title": "Software Engineer",
+    "Team": "Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "Boston",
+    "LinkedIn URL": "https://www.linkedin.com/in/tommy-le-dev",
+    "Description": "Hoa Tommy Tran is a Software Engineer based in Boston with a background in the engineering team. He focuses on development and technical implementation to support business growth and customer acquisition."
+  },
+  {
+    "First Name": "Sean",
+    "Name": "Zhang",
+    "Former Job Title": "Software Engineer I",
+    "Team": "Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "Chicago",
+    "LinkedIn URL": "www.linkedin.com/in/shaocheng-zhang-a03604220",
+    "Description": "Shaocheng Zhang is a Software Engineer I with a background in engineering, specifically within the Chicago area. He has professional experience in software development and maintains an active presence on LinkedIn."
+  },
+  {
+    "First Name": "Ruthea",
+    "Name": "Waller",
+    "Former Job Title": "Manager QA",
+    "Team": "",
+    "Function": "Engineering",
+    "Remote/Location": "Remote",
+    "LinkedIn URL": "Ruthea Waller - Grubhub | LinkedIn",
+    "Description": "Ruthea Waller is a QA Manager with professional experience at Grubhub, currently based in a remote location."
+  },
+  {
+    "First Name": "Ceren",
+    "Name": "Ercen",
+    "Former Job Title": "SRE II",
+    "Team": "Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "New York",
+    "LinkedIn URL": "https://www.linkedin.com/in/cerenercen/",
+    "Description": "Ceren Ercen is a technical professional with experience in Site Reliability Engineering (SRE), systems administration, and DevOps. She has worked at companies such as Grubhub and Linuxcare and holds a degree in history."
+  },
+  {
+    "First Name": "Natalie",
+    "Name": "Reyes",
+    "Former Job Title": "Team Lead - Customer Service",
+    "Team": "Care",
+    "Function": "Customer Support",
+    "Remote/Location": "Remote",
+    "LinkedIn URL": "Natalie Reyes - Grubhub | LinkedIn",
+    "Description": "Natalie Reyes is an experienced professional in the customer service sector, previously serving as a Team Lead for the Care team at Grubhub. Her background is primarily focused on customer support and team leadership within a remote work environment."
+  },
+  {
+    "First Name": "Ionut",
+    "Name": "Maxim",
+    "Former Job Title": "Senior Software Engineer (BE)",
+    "Team": "Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "Remote / Romania",
+    "LinkedIn URL": "Ionut Maxim - Iaşi, România | Profil profesional | LinkedIn",
+    "Description": "Ionut Maxim is a senior software engineer and UX architect with over 20 years of experience in the online industry. Based in Romania, he currently serves as a digital product architect at max | Human Experience Design and as a product design mentor at ADPList. His expertise spans product strategy, UX/UI design, and full-stack development, having worked with over 100 brands across diverse sectors like SaaS, FinTech, and e-commerce."
+  },
+  {
+    "First Name": "Norman",
+    "Name": "Hogeveen",
+    "Former Job Title": "IT Procurement Analyst",
+    "Team": "Corp IT",
+    "Function": "Operations",
+    "Remote/Location": "Chicago",
+    "LinkedIn URL": "www.linkedin.com/in/norman-hogeveen-52511b4",
+    "Description": "Norman Hogeveen is a Chicago-based professional who served as an IT Procurement Analyst within the Corporate IT team at Grubhub. His professional background focuses on IT procurement and operational support."
+  },
+  {
+    "First Name": "Pradipto",
+    "Name": "Dasgupta",
+    "Former Job Title": "Product Manager II",
+    "Team": "Merchant Integrations",
+    "Function": "Product",
+    "Remote/Location": "Boston",
+    "LinkedIn URL": "https://www.linkedin.com/in/pradipto-dasgupta/",
+    "Description": "Pradipto Dasgupta is a Product Manager II based in Boston with a background in Merchant Integrations. His experience includes managing product development and integration strategies within the merchant network sector."
+  },
+  {
+    "First Name": "Florentin",
+    "Name": "Hetriuc",
+    "Former Job Title": "Software Engineer II (FE)",
+    "Team": "Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "Remote / Romania",
+    "LinkedIn URL": "https://www.linkedin.com/in/florentin-hetriuc-75714056?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
+    "Description": "Florentin Hetriuc is a Romania-based Software Engineer II specializing in frontend development, with professional experience at companies including Grubhub and TiVo. He holds a degree from Gheorghe Asachi Technical University of Iasi and focuses on building and maintaining web applications."
+  },
+  {
+    "First Name": "Gilbert",
+    "Name": "Andrei",
+    "Former Job Title": "Senior Software Engineer (iOS)",
+    "Team": "Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "Remote / Romania",
+    "LinkedIn URL": "https://www.linkedin.com/in/gilbertandrei/",
+    "Description": "Gilbert Andrei is a Senior Software Engineer specializing in iOS development with experience in the engineering function. Based in Romania, he has worked remotely in the technology sector."
+  },
+  {
+    "First Name": "Crystal",
+    "Name": "Franklin",
+    "Former Job Title": "Enterprise Data Onboarding, Team Lead",
+    "Team": "Data",
+    "Function": "Operations",
+    "Remote/Location": "Remote",
+    "LinkedIn URL": "www.linkedin.com/in/crystal-franklin-6b3238127",
+    "Description": "Crystal Franklin is an operations leader with experience in enterprise data onboarding and compliance. She previously served as a Team Lead for Enterprise Data Onboarding at Grubhub and holds an MBA."
+  },
+  {
+    "First Name": "Trung",
+    "Name": "L",
+    "Former Job Title": "Software Engineer II (FE)",
+    "Team": "Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "San Francisco / Remote",
+    "LinkedIn URL": "www.linkedin.com/in/trung-l-1476b6147",
+    "Description": "Trung L is a Software Engineer II specialized in front-end development within the engineering team. Based in San Francisco with remote flexibility, they have an established background in building and maintaining web-based user interfaces."
+  },
+  {
+    "First Name": "Austin",
+    "Name": "Trivett",
+    "Former Job Title": "Software Engineer II (BE)",
+    "Team": "Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "Remote / Boston",
+    "LinkedIn URL": "https://www.linkedin.com/in/austintrivett/",
+    "Description": "Austin Trivett is an experienced software engineer specializing in backend development and engineering. He previously served as a Software Engineer II (BE) at Grubhub within their Engineering team."
+  },
+  {
+    "First Name": "Bogdan",
+    "Name": "Oprin",
+    "Former Job Title": "Senior Software Engineer (BE)",
+    "Team": "Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "Remote / Romania",
+    "LinkedIn URL": "https://www.linkedin.com/in/bogdan-oprin/",
+    "Description": "Bogdan Oprin is an experienced Senior Software Engineer specializing in backend development. Based in Romania, he has a strong background in engineering and has previously held senior technical roles focusing on building and maintaining complex software systems."
+  },
+  {
+    "First Name": "Carrin",
+    "Name": "Strain",
+    "Former Job Title": "Operations Manager - Business Insights",
+    "Team": "Care",
+    "Function": "Customer Support",
+    "Remote/Location": "Anywhere",
+    "LinkedIn URL": "https://www.linkedin.com/in/carrin-strain/",
+    "Description": "Carrin Strain is an operations professional who previously served as an Operations Manager for Business Insights within the Care team at Grubhub. They have a background focused on customer support and data-driven operational strategy."
+  },
+  {
+    "First Name": "Lucian",
+    "Name": "Hij",
+    "Former Job Title": "Senior Software Engineer (FE)",
+    "Team": "Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "Remote",
+    "LinkedIn URL": "https://www.linkedin.com/in/lucian-hij-web",
+    "Description": "Lucian Hij is an experienced Senior Software Engineer specializing in front-end development and web technologies. He has a professional background in engineering teams, most recently serving in a senior-level front-end role."
+  },
+  {
+    "First Name": "Charlie",
+    "Name": "Tinkham",
+    "Former Job Title": "Operations Engineer II",
+    "Team": "Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "Remote / Boston",
+    "LinkedIn URL": "https://www.linkedin.com/in/charlie-tinkham-manunited4ever?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
+    "Description": "Charlie Tinkham is an experienced engineering and operations professional who most recently served as an Operations Engineer II at Grubhub. Based in Boston, his background includes technical operations, logistics, and process optimization within an engineering framework."
+  },
+  {
+    "First Name": "Jane",
+    "Name": "K",
+    "Former Job Title": "Onboarding Associate Operations",
+    "Team": "Restaurant Sales",
+    "Function": "Sales",
+    "Remote/Location": "New York/ Hybrid/ Remote",
+    "LinkedIn URL": "https://www.linkedin.com/in/jane-k-77b86b98/",
+    "Description": "Jane K is an operations professional with experience as an Onboarding Associate in Restaurant Sales. She has a background in managing hybrid and remote workflows, specifically within the New York market."
+  },
+  {
+    "First Name": "Anthony",
+    "Name": "Potrykus",
+    "Former Job Title": "Data Analyst III",
+    "Team": "Finance/Analytics",
+    "Function": "Analytics",
+    "Remote/Location": "Austin/Hybrid Remote",
+    "LinkedIn URL": "",
+    "Description": "I do not have enough information to answer this query. The LinkedIn URL for Anthony Potrykus is missing from the provided spreadsheet data. Please provide the URL or more details about his professional history to generate a summary."
+  },
+  {
+    "First Name": "David",
+    "Name": "Porosnicu",
+    "Former Job Title": "Senior Software Engineer",
+    "Team": "Engineering - Diner",
+    "Function": "Engineering",
+    "Remote/Location": "Remote",
+    "LinkedIn URL": "https://www.linkedin.com/in/david-porosnicu-881827144/",
+    "Description": "David Porosnicu is an experienced Senior Software Engineer who currently works on the Engineering - Diner team. He is a remote professional with a strong technical background in software engineering and development."
+  },
+  {
+    "First Name": "Alicia",
+    "Name": "Roberts",
+    "Former Job Title": "Program Manager",
+    "Team": "Corporate accounts",
+    "Function": "Operations",
+    "Remote/Location": "",
+    "LinkedIn URL": "",
+    "Description": "I do not have enough information to answer the query because there is no LinkedIn URL provided for Alicia Roberts in the spreadsheet context. Please provide a LinkedIn URL to summarize her professional background."
+  },
+  {
+    "First Name": "Bogdan",
+    "Name": "Mic",
+    "Former Job Title": "Senior Software Engineer",
+    "Team": "Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "Remote / Romania",
+    "LinkedIn URL": "https://www.linkedin.com/in/bogdanmic/",
+    "Description": "Bogdan Mic is an experienced Senior Software Engineer who previously worked within an engineering team. He is based in Romania and has experience working in remote environments."
+  },
+  {
+    "First Name": "Mark",
+    "Name": "Spooner",
+    "Former Job Title": "Senior Software Engineer (FE)",
+    "Team": "Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "Remote",
+    "LinkedIn URL": "https://www.linkedin.com/in/mark-spooner-603b9b55/",
+    "Description": "Mark Spooner is a Senior Software Engineer with a focus on front-end development and engineering. He has experience working in remote environments and is currently associated with an engineering team."
+  },
+  {
+    "First Name": "Jason",
+    "Name": "Park",
+    "Former Job Title": "Software Engineer II (FE)",
+    "Team": "Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "New York/ Hybrid",
+    "LinkedIn URL": "https://www.linkedin.com/in/jason-park-50657714b/",
+    "Description": "Jason Park is a Software Engineer II specializing in front-end development. He was previously part of the engineering team at Grubhub and is currently based in New York."
+  },
+  {
+    "First Name": "Terrance",
+    "Name": "Woods",
+    "Former Job Title": "Software Engineer II (FE)",
+    "Team": "Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "Remote",
+    "LinkedIn URL": "https://www.linkedin.com/in/terrance-woods-20389684/",
+    "Description": "Terrance Woods is a software engineer with experience as a Software Engineer II (FE) in the engineering department at Grubhub. His professional background is primarily focused on frontend web development while working in a remote capacity."
+  },
+  {
+    "First Name": "Jaime",
+    "Name": "Ruiz-Salinas",
+    "Former Job Title": "Account Executive",
+    "Team": "Sales",
+    "Function": "Sales",
+    "Remote/Location": "Phoenix",
+    "LinkedIn URL": "https://www.linkedin.com/in/jaimeruiz-salinas",
+    "Description": "Jaime Ruiz-Salinas is a sales professional with experience as an Account Executive and has also served as a Banking Supervision Trainee at the European Central Bank. His background includes roles in both enterprise sales and financial regulation."
+  },
+  {
+    "First Name": "Cole",
+    "Name": "Linnekin",
+    "Former Job Title": "Account Manager",
+    "Team": "Enterprise Success",
+    "Function": "Sales",
+    "Remote/Location": "Chicago/Remote",
+    "LinkedIn URL": "www.linkedin.com/in/cole-linnekin-65a1a3149",
+    "Description": "Cole Linnekin is a sales and account management professional with experience in enterprise success and client relations. He most recently served as an Account Manager at Grubhub, where he focused on driving growth and managing partnerships for enterprise-level accounts."
+  },
+  {
+    "First Name": "Anjana",
+    "Name": "Thirumalai",
+    "Former Job Title": "Senior Product Designer",
+    "Team": "Product Design",
+    "Function": "Design",
+    "Remote/Location": "Chicago/ Remote",
+    "LinkedIn URL": "https://www.linkedin.com/in/anjana-k-thirumalai-a3960511/",
+    "Description": "Anjana Thirumalai is a Senior Product Designer with a background in Product Design, previously working in the Product Design team at Grubhub. Based in Chicago, she has experience working in hybrid or remote environments."
+  },
+  {
+    "First Name": "Rehana",
+    "Name": "Khan",
+    "Former Job Title": "Product Designer II",
+    "Team": "Illustration / Product Design",
+    "Function": "Design",
+    "Remote/Location": "Bay Area / Remote",
+    "LinkedIn URL": "https://www.linkedin.com/in/rehanakn?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
+    "Description": "Rehana Khan is an experienced product designer and illustrator who most recently served as a Product Designer II at Grubhub. Based in the San Francisco Bay Area, she specialized in illustration and product design, contributing to user experience and visual identity for digital platforms."
+  },
+  {
+    "First Name": "Trent",
+    "Name": "Thompson",
+    "Former Job Title": "Staff Product Designer",
+    "Team": "Product Design",
+    "Function": "Design",
+    "Remote/Location": "Austin / Remote",
+    "LinkedIn URL": "https://www.linkedin.com/in/trentkthompson/",
+    "Description": "Trent Thompson is an experienced design leader who recently served as a Staff Product Designer at Grubhub, focusing on the diner experience across mobile and web platforms. With over a decade of experience in product design and creative direction, his background includes roles at companies like Mutual Mobile and various agencies, specializing in user experience, interface design, and design systems."
+  },
+  {
+    "First Name": "Casey",
+    "Name": "Mcclatchey",
+    "Former Job Title": "Team Lead, Competitive Intelligence",
+    "Team": "Care",
+    "Function": "Customer Support",
+    "Remote/Location": "Los Angeles / Remote",
+    "LinkedIn URL": "https://www.linkedin.com/in/casey-mcclatchey-b8722b214/",
+    "Description": "Casey Mcclatchey is a customer support professional based in Los Angeles with experience as a Team Lead for Competitive Intelligence within a Care team. They have a background in managing operations and insights to support merchant and customer experience."
+  },
+  {
+    "First Name": "Gauri",
+    "Name": "Sarode",
+    "Former Job Title": "Machine Learning Engineer",
+    "Team": "Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "San Francisco Bay Area",
+    "LinkedIn URL": "https://www.linkedin.com/in/gaurisarode/",
+    "Description": "Gauri Sarode is a Machine Learning Engineer based in the San Francisco Bay Area with a professional background in engineering. She previously served as a Machine Learning Engineer within an engineering team."
+  },
+  {
+    "First Name": "Gregory",
+    "Name": "Dumas",
+    "Former Job Title": "Sr Manager, Training & Communications",
+    "Team": "Care",
+    "Function": "Customer Support",
+    "Remote/Location": "Chicago / Hybrid",
+    "LinkedIn URL": "https://www.linkedin.com/in/gregory-dumas-14524147",
+    "Description": "Gregory Dumas is an experienced professional in the customer care sector, most recently serving as a Senior Manager of Training and Communications. Based in Chicago, his background focuses on organizational enablement and operational strategy within customer experience teams."
+  },
+  {
+    "First Name": "Mohan",
+    "Name": "Chiriki",
+    "Former Job Title": "Sr Data Scientist (Operations Research)",
+    "Team": "Fulfillment Engineering",
+    "Function": "Analytics",
+    "Remote/Location": "Boston / Open to relocation",
+    "LinkedIn URL": "",
+    "Description": "Mohan Chiriki is a Senior Data Scientist specializing in operations research, previously working with the Fulfillment Engineering team in Boston."
+  },
+  {
+    "First Name": "Brianna",
+    "Name": "Hale",
+    "Former Job Title": "Logistics Manager (OPs)",
+    "Team": "Logistics",
+    "Function": "Operations",
+    "Remote/Location": "Remote / Chicago",
+    "LinkedIn URL": "https://www.linkedin.com/in/brianna-hale",
+    "Description": "Brianna Hale is an operations professional who previously served as a Logistics Manager (OPs) within a logistics functional team. She has experience working in both remote and Chicago-based roles."
+  },
+  {
+    "First Name": "Colette",
+    "Name": "Tibbs",
+    "Former Job Title": "Senior Enablement Associate, Fulfillment",
+    "Team": "Merchant Network",
+    "Function": "Operations",
+    "Remote/Location": "Remote / Chicago",
+    "LinkedIn URL": "www.linkedin.com/in/colette-tibbs-mba-3ba302aa",
+    "Description": "Colette Tibbs is a professional with an MBA who most recently served as a Senior Enablement Associate for Fulfillment within the Merchant Network team at Grubhub. Based in Chicago, her background includes specialized experience in operations and merchant network enablement."
+  },
+  {
+    "First Name": "Lauren",
+    "Name": "Hansen",
+    "Former Job Title": "Manager, Operations",
+    "Team": "Care",
+    "Function": "Customer Support",
+    "Remote/Location": "Denver/Remote",
+    "LinkedIn URL": "http://linkedin.com/in/llhansen",
+    "Description": "Lauren Hansen is an operations professional with experience as a Manager of Operations at Grubhub, where she was part of the Care team. Based in Denver and open to remote work, she has a background in team leadership and customer support functions."
+  },
+  {
+    "First Name": "Alok",
+    "Name": "Lal",
+    "Former Job Title": "Director of Engineering",
+    "Team": "Engineering - Corporate",
+    "Function": "Engineering",
+    "Remote/Location": "New York",
+    "LinkedIn URL": "http://linkedin.com/in/alok-lal-b7550315",
+    "Description": "Alok Lal is an experienced engineering leader who most recently served as the Director of Engineering for the Corporate team at Grubhub. Based in New York, his professional background is centered in engineering management and software development within the technology sector."
+  },
+  {
+    "First Name": "Jessica",
+    "Name": "Fabrizi",
+    "Former Job Title": "Account Executive II",
+    "Team": "Sales",
+    "Function": "Sales",
+    "Remote/Location": "Remote/North Carolina",
+    "LinkedIn URL": "http://linkedin.com/in/jessica-marie-fabrizi",
+    "Description": "Jessica Fabrizi is a sales professional who previously served as an Account Executive II within the Sales team at Grubhub. Based in North Carolina, she has experience working in remote environments and managing client accounts."
+  },
+  {
+    "First Name": "Ankita",
+    "Name": "Ankita",
+    "Former Job Title": "Software Engineer II - Android",
+    "Team": "Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "Remote",
+    "LinkedIn URL": "www.linkedin.com/in/ankita-48349316",
+    "Description": "Ankita is a Software Engineer II with a focus on Android development. She previously worked at Grubhub and has experience in engineering and remote work environments."
+  },
+  {
+    "First Name": "Prem",
+    "Name": "Patel",
+    "Former Job Title": "Software Engineer II (BE)",
+    "Team": "Checkout Platform/Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "Chicago",
+    "LinkedIn URL": "www.linkedin.com/in/patel-prem",
+    "Description": "Prem Patel is a Software Engineer II with a focus on back-end development. Based in Chicago, he previously worked on the Checkout Platform and Engineering team."
+  },
+  {
+    "First Name": "Samantha",
+    "Name": "Roman",
+    "Former Job Title": "Command Center Coordinator",
+    "Team": "Care / Workforce Management",
+    "Function": "Customer Support",
+    "Remote/Location": "Remote/Chicago",
+    "LinkedIn URL": "https://www.linkedin.com/in/samantharoman3892",
+    "Description": "Samantha Roman is a customer support and operations professional with experience as a Command Center Coordinator in workforce management. Her background includes leading knowledge management initiatives at Social Impact and contributing to multimillion-dollar international development proposals focused on democracy, human rights, and governance."
+  },
+  {
+    "First Name": "Gema",
+    "Name": "Del Real",
+    "Former Job Title": "Senior Care Specialist",
+    "Team": "Process Insights",
+    "Function": "Customer Support",
+    "Remote/Location": "Chicago/Remote",
+    "LinkedIn URL": "https://www.linkedin.com/in/gdelreals",
+    "Description": "Gema Del Real is an experienced customer support professional who recently served as a Senior Care Specialist within the Process Insights team at Grubhub. Based in Chicago, her background includes a focus on care operations, process improvement, and customer service."
+  },
+  {
+    "First Name": "Jason",
+    "Name": "Elue",
+    "Former Job Title": "Service Desk Analyst II",
+    "Team": "Service Desk",
+    "Function": "Operations",
+    "Remote/Location": "Chicago",
+    "LinkedIn URL": "https://www.linkedin.com/in/jason-elue-56830956/",
+    "Description": "Jason Elue is an IT professional based in Chicago with experience as a Service Desk Analyst II. His background includes providing technical support and managing service desk operations within a corporate environment."
+  },
+  {
+    "First Name": "Vlad",
+    "Name": "Lintes",
+    "Former Job Title": "Software Engineer ll FE",
+    "Team": "Bottom of Funnel, Web Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "Remote",
+    "LinkedIn URL": "https://www.linkedin.com/in/vladlintes/",
+    "Description": "Vlad Lintes is a frontend software engineer with experience in web engineering and frontend development. He has held roles as a Software Engineer II (Frontend) within web engineering teams and as a Frontend Developer at rinf.tech."
+  },
+  {
+    "First Name": "Matt",
+    "Name": "Curnyn",
+    "Former Job Title": "Operations Engineer I",
+    "Team": "Operations Engineering/ Launch SMB Integrations",
+    "Function": "Engineering",
+    "Remote/Location": "Boston/Remote",
+    "LinkedIn URL": "https://www.linkedin.com/in/matt-curnyn/",
+    "Description": "Matt Curnyn is an experienced operations engineer with a background in engineering and small-to-medium business (SMB) integration launches. He previously served as an Operations Engineer I at Grubhub within the Operations Engineering and Launch SMB Integrations team, based in the Boston area."
+  },
+  {
+    "First Name": "Karen",
+    "Name": "He He",
+    "Former Job Title": "Product Designer II",
+    "Team": "Discovery",
+    "Function": "Design",
+    "Remote/Location": "New York",
+    "LinkedIn URL": "https://www.linkedin.com/in/karen-he-046a16122/",
+    "Description": "Karen He He is a Product Designer II who previously worked on the Discovery team at Grubhub and is currently based in New York."
+  },
+  {
+    "First Name": "Brendan",
+    "Name": "Dite",
+    "Former Job Title": "Staff Software Engineer",
+    "Team": "Consumer Messaging - BE",
+    "Function": "Engineering",
+    "Remote/Location": "Chicago",
+    "LinkedIn URL": "https://www.linkedin.com/in/brendandite/",
+    "Description": "Brendan Dite is a Staff Software Engineer at Grubhub with a focus on back-end engineering for consumer messaging. Based in Chicago, he has extensive experience in software development and engineering leadership."
+  },
+  {
+    "First Name": "Deepa",
+    "Name": "Kasi Nathan",
+    "Former Job Title": "Software Engineering II",
+    "Team": "Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "Chicago",
+    "LinkedIn URL": "https://www.linkedin.com/in/deepakasinathan/",
+    "Description": "Deepa Kasi Nathan is a software engineering professional with a background in engineering, specifically holding a Software Engineering II role. Based in Chicago, she has experience working within engineering teams and is associated with the LinkedIn profile provided in the spreadsheet."
+  },
+  {
+    "First Name": "Alexandra (Alex)",
+    "Name": "Beckman",
+    "Former Job Title": "Sr. Associate, Enterprise Growth",
+    "Team": "Enterprise Marketing",
+    "Function": "Marketing",
+    "Remote/Location": "Chicago",
+    "LinkedIn URL": "https://www.linkedin.com/in/alexandrabeckman/",
+    "Description": "Alexandra Beckman is an experienced marketing professional currently based in Chicago. She most recently served as a Senior Associate of Enterprise Growth at Grubhub, where she focused on enterprise marketing initiatives."
+  },
+  {
+    "First Name": "Cansu",
+    "Name": "Kacmaz",
+    "Former Job Title": "Quality Coordinator",
+    "Team": "Care/QA",
+    "Function": "Customer Support",
+    "Remote/Location": "Austin, TX",
+    "LinkedIn URL": "https://www.linkedin.com/in/cansukacmaz/",
+    "Description": "Cansu Kacmaz is a Quality Coordinator with experience in customer care and quality assurance. She most recently worked at Grubhub within the Care/QA team and is currently based in Austin, Texas."
+  },
+  {
+    "First Name": "Nikole",
+    "Name": "Kniffin",
+    "Former Job Title": "Audit Coordinator",
+    "Team": "Process Insights",
+    "Function": "Operations",
+    "Remote/Location": "Austin/Remote",
+    "LinkedIn URL": "www.linkedin.com/in/nikole-kniffin",
+    "Description": "Nikole Kniffin is an experienced operations professional who previously served as an Audit Coordinator within the Process Insights team. Based in Austin, Texas, she has a background in oversight and quality assurance within corporate operations."
+  },
+  {
+    "First Name": "Jacqueline",
+    "Name": "Wujec",
+    "Former Job Title": "Instructional Designer",
+    "Team": "Care",
+    "Function": "Customer Support",
+    "Remote/Location": "Chicago/Remote",
+    "LinkedIn URL": "https://www.linkedin.com/in/jacqueline-wujec/",
+    "Description": "Jacqueline Wujec is an experienced instructional designer and educator with a background in developing training programs and learning materials, most recently serving as an Instructional Designer for the Care team at Grubhub. She has extensive experience in curriculum development, adult learning principles, and educational leadership across both corporate and academic settings."
+  },
+  {
+    "First Name": "Christopher",
+    "Name": "Johnson",
+    "Former Job Title": "Systems and Applications Admin",
+    "Team": "Core Services - Jira and Zendesk Admin",
+    "Function": "Operations",
+    "Remote/Location": "Chicago, IL",
+    "LinkedIn URL": "https://www.linkedin.com/in/cjohnsn17",
+    "Description": "Christopher Johnson is a Systems and Applications Administrator based in Chicago with expertise in managing Jira and Zendesk within Core Services teams."
+  },
+  {
+    "First Name": "Kate",
+    "Name": "Richmond",
+    "Former Job Title": "Sr. Director, Care Optimization",
+    "Team": "Customer Experience/Care",
+    "Function": "Customer Support",
+    "Remote/Location": "Remote (Iowa)",
+    "LinkedIn URL": "www.linkedin.com/in/Kate-Richmond",
+    "Description": "Kate Richmond is a senior leader in customer experience and support, most recently serving as the Sr. Director of Care Optimization. Her professional background is centered on care operations and customer experience management."
+  },
+  {
+    "First Name": "Kim",
+    "Name": "Hirschey",
+    "Former Job Title": "Sr. Enterprise Partner Manager",
+    "Team": "Enterprise Partnerships, Mid-Market",
+    "Function": "Sales",
+    "Remote/Location": "Chicago, IL",
+    "LinkedIn URL": "https://www.linkedin.com/in/kimberlyhirschey/",
+    "Description": "Kimberly Hirschey is an experienced sales professional based in Chicago, specializing in enterprise partnerships and mid-market account management. She most recently served as a Senior Enterprise Partner Manager, focusing on strategic relationship development and business growth within the partnership ecosystem."
+  },
+  {
+    "First Name": "Steven",
+    "Name": "Uy",
+    "Former Job Title": "Senior Software Engineer (iOS)",
+    "Team": "Engineering",
+    "Function": "Engineering",
+    "Remote/Location": "Remote / Austin",
+    "LinkedIn URL": "https://www.linkedin.com/in/stevencuy/",
+    "Description": "Steven Uy is an experienced Senior Software Engineer specializing in iOS development. He has a professional background in engineering, with a focus on building and maintaining mobile applications in a remote capacity."
+  },
+  {
+    "First Name": "Robert",
+    "Name": "Garcia",
+    "Former Job Title": "Command Center Coordinator",
+    "Team": "Workforce Management",
+    "Function": "Customer Support",
+    "Remote/Location": "Tucson, AZ",
+    "LinkedIn URL": "https://www.linkedin.com/in/bobby-robert-garcia-576747100/",
+    "Description": "Robert Garcia is a professional with experience in workforce management, specifically serving as a Command Center Coordinator. His background includes overseeing operational logistics and coordination within a team or function dedicated to workforce optimization."
+  },
+  {
+    "First Name": "James",
+    "Name": "Corey",
+    "Former Job Title": "Software Engineer",
+    "Team": "Frontend Focused",
+    "Function": "Engineering",
+    "Remote/Location": "Rhode Island",
+    "LinkedIn URL": "https://www.linkedin.com/in/james-corey/",
+    "Description": "James Corey is the Vice President for University Advancement and Alumni Engagement at The University of Tulsa, with a background in fundraising leadership at American University and the University of Michigan. He holds a bachelor's degree from Kenyon College and a Master of Public Administration from the University of Michigan."
+  },
+  {
+    "First Name": "Roger",
+    "Name": "Hannagan",
+    "Former Job Title": "Software Engineer 2",
+    "Team": "Cart/Checkout - Android",
+    "Function": "Engineering",
+    "Remote/Location": "Broomfield, Colorado",
+    "LinkedIn URL": "https://www.linkedin.com/in/rogerhannagan/",
+    "Description": "Roger Hannagan is a Software Engineer 2 with a professional background in Android development, specifically focusing on Cart and Checkout functions. He is based in Broomfield, Colorado."
+  },
+  {
+    "First Name": "Josh",
+    "Name": "Dean",
+    "Former Job Title": "Staff Frontend Engineer",
+    "Team": "Merchant Web",
+    "Function": "Engineering",
+    "Remote/Location": "Chicago",
+    "LinkedIn URL": "https://www.linkedin.com/in/imjoshdean/",
+    "Description": "Josh Dean is a Staff Frontend Engineer with a focus on web development and technical solutions. His background includes expertise in modern technologies like VueJS, JavaScript, and Python, alongside experience in SQL reporting, VBA automation, and instructional design. He currently works on the Merchant Web team, where he leverages data-focused insights and technical problem-solving to streamline complex systems."
+  },
+  {
+    "First Name": "Dan",
+    "Name": "DeFord",
+    "Former Job Title": "Account Advisor",
+    "Team": "Restaurant Success",
+    "Function": "Sales",
+    "Remote/Location": "Oakland, CA",
+    "LinkedIn URL": "https://www.linkedin.com/in/dan-deford-1b73b7215/",
+    "Description": "Dan DeFord is an Account Advisor on the Restaurant Success team, based in Oakland, California. His professional background includes experience in account management and sales within the food technology industry."
+  },
+  {
+    "First Name": "Breana",
+    "Name": "Pierik",
+    "Former Job Title": "Manager, Content Operations",
+    "Team": "Operations",
+    "Function": "Operations",
+    "Remote/Location": "Chicago",
+    "LinkedIn URL": "linkedin.com/in/breanapierik",
+    "Description": "Dr. Pierik is a veterinary intern with a Doctor of Veterinary Medicine from Ross University School of Veterinary Medicine and an undergraduate degree from the University of Guelph. Her professional background is focused on equine care, with specific interests in surgery, reproductive medicine, sports medicine, theriogenology, and emergency medicine. Her experience emphasizes helping horses recover and return to performance as athletes or companions."
+  },
+  {
+    "First Name": "Sean",
+    "Name": "Kim",
+    "Former Job Title": "Technical Project Manager",
+    "Team": "Product",
+    "Function": "Product",
+    "Remote/Location": "Remote",
+    "LinkedIn URL": "https://www.linkedin.com/in/kim-sean/",
+    "Description": "Sean Kim is a Technical Project Manager with experience in product development and management within the technology sector. He has a history of leading cross-functional teams and managing project lifecycles to deliver software solutions."
+  },
+  {
+    "First Name": "Elena",
+    "Name": "Moilan",
+    "Former Job Title": "Operations Manager",
+    "Team": "Enterprise Data Onboarding and Compliance",
+    "Function": "Operations",
+    "Remote/Location": "San Francisco",
+    "LinkedIn URL": "https://www.linkedin.com/in/elena-moilan",
+    "Description": "Elena Moilan is an operations professional who served as an Operations Manager for Enterprise Data Onboarding and Compliance at Grubhub. Her background includes nearly a decade of experience at Yelp in various leadership and project management roles focused on local operations and data integrity."
+  },
+  {
+    "First Name": "Ryan",
+    "Name": "Eshleman",
+    "Former Job Title": "Sr. Specialist, Content Integrity",
+    "Team": "Content Integrity/QA/Merchant Network",
+    "Function": "Operations",
+    "Remote/Location": "Remote (originally Chicago)",
+    "LinkedIn URL": "https://www.linkedin.com/in/ryan-eshleman/",
+    "Description": "Ryan Eshleman is an operations professional with experience as a Senior Specialist in Content Integrity, Quality Assurance, and Merchant Network functions. His background includes managing content integrity and process optimization within the food delivery industry."
   }
 ]
