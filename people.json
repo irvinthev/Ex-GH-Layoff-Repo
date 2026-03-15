@@ -14,7 +14,7 @@
     "Name": "Cheng",
     "Former Job Title": "Product Designer II",
     "Team": "Product",
-    "Function": "Design",
+    "Function": "Product",
     "Remote/Location": "New York City",
     "LinkedIn URL": "https://www.linkedin.com/in/kchengtoo/",
     "Description": "Kevin Cheng is a Product Designer II based in New York City with professional experience in product design and development, most recently serving on the Product team at Grubhub."
@@ -55,7 +55,7 @@
     "Former Job Title": "Associate Graphic Designer",
     "Team": "Brand/Creative",
     "Function": "Design",
-    "Remote/Location": "Chicago",
+    "Remote/Location": "Chicago/Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/edgar-madrigal",
     "Description": "Edgar Madrigal is a Chicago-based graphic designer with experience in brand and creative functions. He most recently served as an Associate Graphic Designer."
   },
@@ -84,7 +84,7 @@
     "Name": "Truong",
     "Former Job Title": "Senior Operations Engineer",
     "Team": "Operations /Engineering",
-    "Function": "Engineering",
+    "Function": "Operations",
     "Remote/Location": "Remote/ Boston",
     "LinkedIn URL": "https://www.linkedin.com/in/lamquoctruong/",
     "Description": "Lam Truong is a Senior Operations Engineer with experience in both operations and engineering functions, specializing in the engineering sector. Based in Boston and working remotely, he has established a professional background focused on maintaining and optimizing operational systems."
@@ -94,7 +94,7 @@
     "Name": "Piotrkowski",
     "Former Job Title": "Product Designer II",
     "Team": "Product",
-    "Function": "Design",
+    "Function": "Product Design",
     "Remote/Location": "Boston/Remote",
     "LinkedIn URL": "http://linkedin.com/in/brittanypio",
     "Description": "Brittany Piotrkowski is a Product Designer II at Grubhub with a background in product design and engineering teams. She is based in Boston and holds a degree from a university, with previous experience in the financial services industry."
@@ -124,7 +124,7 @@
     "Name": "Waller",
     "Former Job Title": "Manager QA",
     "Team": "",
-    "Function": "Engineering",
+    "Function": "Operations",
     "Remote/Location": "Remote",
     "LinkedIn URL": "Ruthea Waller - Grubhub | LinkedIn",
     "Description": "Ruthea Waller is a QA Manager with professional experience at Grubhub, currently based in a remote location."
@@ -164,7 +164,7 @@
     "Name": "Hogeveen",
     "Former Job Title": "IT Procurement Analyst",
     "Team": "Corp IT",
-    "Function": "Operations",
+    "Function": "IT",
     "Remote/Location": "Chicago",
     "LinkedIn URL": "www.linkedin.com/in/norman-hogeveen-52511b4",
     "Description": "Norman Hogeveen is a Chicago-based professional who served as an IT Procurement Analyst within the Corporate IT team at Grubhub. His professional background focuses on IT procurement and operational support."
@@ -204,7 +204,7 @@
     "Name": "Franklin",
     "Former Job Title": "Enterprise Data Onboarding, Team Lead",
     "Team": "Data",
-    "Function": "Operations",
+    "Function": "Data",
     "Remote/Location": "Remote",
     "LinkedIn URL": "www.linkedin.com/in/crystal-franklin-6b3238127",
     "Description": "Crystal Franklin is an operations leader with experience in enterprise data onboarding and compliance. She previously served as a Team Lead for Enterprise Data Onboarding at Grubhub and holds an MBA."
@@ -244,7 +244,7 @@
     "Name": "Strain",
     "Former Job Title": "Operations Manager - Business Insights",
     "Team": "Care",
-    "Function": "Customer Support",
+    "Function": "Operations",
     "Remote/Location": "Anywhere",
     "LinkedIn URL": "https://www.linkedin.com/in/carrin-strain/",
     "Description": "Carrin Strain is an operations professional who previously served as an Operations Manager for Business Insights within the Care team at Grubhub. They have a background focused on customer support and data-driven operational strategy."
@@ -274,7 +274,7 @@
     "Name": "K",
     "Former Job Title": "Onboarding Associate Operations",
     "Team": "Restaurant Sales",
-    "Function": "Sales",
+    "Function": "Account Management",
     "Remote/Location": "New York/ Hybrid/ Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/jane-k-77b86b98/",
     "Description": "Jane K is an operations professional with experience as an Onboarding Associate in Restaurant Sales. She has a background in managing hybrid and remote workflows, specifically within the New York market."
@@ -284,7 +284,7 @@
     "Name": "Potrykus",
     "Former Job Title": "Data Analyst III",
     "Team": "Finance/Analytics",
-    "Function": "Analytics",
+    "Function": "Data",
     "Remote/Location": "Austin/Hybrid Remote",
     "LinkedIn URL": "",
     "Description": "I do not have enough information to answer this query. The LinkedIn URL for Anthony Potrykus is missing from the provided spreadsheet data. Please provide the URL or more details about his professional history to generate a summary."
@@ -304,7 +304,7 @@
     "Name": "Roberts",
     "Former Job Title": "Program Manager",
     "Team": "Corporate accounts",
-    "Function": "Operations",
+    "Function": "Account Management",
     "Remote/Location": "",
     "LinkedIn URL": "",
     "Description": "I do not have enough information to answer the query because there is no LinkedIn URL provided for Alicia Roberts in the spreadsheet context. Please provide a LinkedIn URL to summarize her professional background."
@@ -350,21 +350,11 @@
     "Description": "Terrance Woods is a software engineer with experience as a Software Engineer II (FE) in the engineering department at Grubhub. His professional background is primarily focused on frontend web development while working in a remote capacity."
   },
   {
-    "First Name": "Jaime",
-    "Name": "Ruiz-Salinas",
-    "Former Job Title": "Account Executive",
-    "Team": "Sales",
-    "Function": "Sales",
-    "Remote/Location": "Phoenix",
-    "LinkedIn URL": "https://www.linkedin.com/in/jaimeruiz-salinas",
-    "Description": "Jaime Ruiz-Salinas is a sales professional with experience as an Account Executive and has also served as a Banking Supervision Trainee at the European Central Bank. His background includes roles in both enterprise sales and financial regulation."
-  },
-  {
     "First Name": "Cole",
     "Name": "Linnekin",
     "Former Job Title": "Account Manager",
     "Team": "Enterprise Success",
-    "Function": "Sales",
+    "Function": "Account Management",
     "Remote/Location": "Chicago/Remote",
     "LinkedIn URL": "www.linkedin.com/in/cole-linnekin-65a1a3149",
     "Description": "Cole Linnekin is a sales and account management professional with experience in enterprise success and client relations. He most recently served as an Account Manager at Grubhub, where he focused on driving growth and managing partnerships for enterprise-level accounts."
@@ -374,7 +364,7 @@
     "Name": "Thirumalai",
     "Former Job Title": "Senior Product Designer",
     "Team": "Product Design",
-    "Function": "Design",
+    "Function": "Product",
     "Remote/Location": "Chicago/ Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/anjana-k-thirumalai-a3960511/",
     "Description": "Anjana Thirumalai is a Senior Product Designer with a background in Product Design, previously working in the Product Design team at Grubhub. Based in Chicago, she has experience working in hybrid or remote environments."
@@ -384,7 +374,7 @@
     "Name": "Khan",
     "Former Job Title": "Product Designer II",
     "Team": "Illustration / Product Design",
-    "Function": "Design",
+    "Function": "Product",
     "Remote/Location": "Bay Area / Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/rehanakn?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
     "Description": "Rehana Khan is an experienced product designer and illustrator who most recently served as a Product Designer II at Grubhub. Based in the San Francisco Bay Area, she specialized in illustration and product design, contributing to user experience and visual identity for digital platforms."
@@ -394,7 +384,7 @@
     "Name": "Thompson",
     "Former Job Title": "Staff Product Designer",
     "Team": "Product Design",
-    "Function": "Design",
+    "Function": "Product",
     "Remote/Location": "Austin / Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/trentkthompson/",
     "Description": "Trent Thompson is an experienced design leader who recently served as a Staff Product Designer at Grubhub, focusing on the diner experience across mobile and web platforms. With over a decade of experience in product design and creative direction, his background includes roles at companies like Mutual Mobile and various agencies, specializing in user experience, interface design, and design systems."
@@ -434,7 +424,7 @@
     "Name": "Chiriki",
     "Former Job Title": "Sr Data Scientist (Operations Research)",
     "Team": "Fulfillment Engineering",
-    "Function": "Analytics",
+    "Function": "Data",
     "Remote/Location": "Boston / Open to relocation",
     "LinkedIn URL": "",
     "Description": "Mohan Chiriki is a Senior Data Scientist specializing in operations research, previously working with the Fulfillment Engineering team in Boston."
@@ -445,7 +435,7 @@
     "Former Job Title": "Logistics Manager (OPs)",
     "Team": "Logistics",
     "Function": "Operations",
-    "Remote/Location": "Remote / Chicago",
+    "Remote/Location": "Chicago/ Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/brianna-hale",
     "Description": "Brianna Hale is an operations professional who previously served as a Logistics Manager (OPs) within a logistics functional team. She has experience working in both remote and Chicago-based roles."
   },
@@ -455,7 +445,7 @@
     "Former Job Title": "Senior Enablement Associate, Fulfillment",
     "Team": "Merchant Network",
     "Function": "Operations",
-    "Remote/Location": "Remote / Chicago",
+    "Remote/Location": "Chicago/ Remote",
     "LinkedIn URL": "www.linkedin.com/in/colette-tibbs-mba-3ba302aa",
     "Description": "Colette Tibbs is a professional with an MBA who most recently served as a Senior Enablement Associate for Fulfillment within the Merchant Network team at Grubhub. Based in Chicago, her background includes specialized experience in operations and merchant network enablement."
   },
@@ -505,7 +495,7 @@
     "Former Job Title": "Software Engineer II (BE)",
     "Team": "Checkout Platform/Engineering",
     "Function": "Engineering",
-    "Remote/Location": "Chicago",
+    "Remote/Location": "Chicago/ Remote",
     "LinkedIn URL": "www.linkedin.com/in/patel-prem",
     "Description": "Prem Patel is a Software Engineer II with a focus on back-end development. Based in Chicago, he previously worked on the Checkout Platform and Engineering team."
   },
@@ -515,7 +505,7 @@
     "Former Job Title": "Command Center Coordinator",
     "Team": "Care / Workforce Management",
     "Function": "Customer Support",
-    "Remote/Location": "Remote/Chicago",
+    "Remote/Location": "Chicago/ Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/samantharoman3892",
     "Description": "Samantha Roman is a customer support and operations professional with experience as a Command Center Coordinator in workforce management. Her background includes leading knowledge management initiatives at Social Impact and contributing to multimillion-dollar international development proposals focused on democracy, human rights, and governance."
   },
@@ -535,7 +525,7 @@
     "Former Job Title": "Service Desk Analyst II",
     "Team": "Service Desk",
     "Function": "Operations",
-    "Remote/Location": "Chicago",
+    "Remote/Location": "Chicago/ Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/jason-elue-56830956/",
     "Description": "Jason Elue is an IT professional based in Chicago with experience as a Service Desk Analyst II. His background includes providing technical support and managing service desk operations within a corporate environment."
   },
@@ -564,7 +554,7 @@
     "Name": "He He",
     "Former Job Title": "Product Designer II",
     "Team": "Discovery",
-    "Function": "Design",
+    "Function": "Product",
     "Remote/Location": "New York",
     "LinkedIn URL": "https://www.linkedin.com/in/karen-he-046a16122/",
     "Description": "Karen He He is a Product Designer II who previously worked on the Discovery team at Grubhub and is currently based in New York."
@@ -575,7 +565,7 @@
     "Former Job Title": "Staff Software Engineer",
     "Team": "Consumer Messaging - BE",
     "Function": "Engineering",
-    "Remote/Location": "Chicago",
+    "Remote/Location": "Chicago/ Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/brendandite/",
     "Description": "Brendan Dite is a Staff Software Engineer at Grubhub with a focus on back-end engineering for consumer messaging. Based in Chicago, he has extensive experience in software development and engineering leadership."
   },
@@ -585,7 +575,7 @@
     "Former Job Title": "Software Engineering II",
     "Team": "Engineering",
     "Function": "Engineering",
-    "Remote/Location": "Chicago",
+    "Remote/Location": "Chicago/ Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/deepakasinathan/",
     "Description": "Deepa Kasi Nathan is a software engineering professional with a background in engineering, specifically holding a Software Engineering II role. Based in Chicago, she has experience working within engineering teams and is associated with the LinkedIn profile provided in the spreadsheet."
   },
@@ -595,7 +585,7 @@
     "Former Job Title": "Sr. Associate, Enterprise Growth",
     "Team": "Enterprise Marketing",
     "Function": "Marketing",
-    "Remote/Location": "Chicago",
+    "Remote/Location": "Chicago/ Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/alexandrabeckman/",
     "Description": "Alexandra Beckman is an experienced marketing professional currently based in Chicago. She most recently served as a Senior Associate of Enterprise Growth at Grubhub, where she focused on enterprise marketing initiatives."
   },
@@ -634,8 +624,8 @@
     "Name": "Johnson",
     "Former Job Title": "Systems and Applications Admin",
     "Team": "Core Services - Jira and Zendesk Admin",
-    "Function": "Operations",
-    "Remote/Location": "Chicago, IL",
+    "Function": "IT",
+    "Remote/Location": "Chicago/ Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/cjohnsn17",
     "Description": "Christopher Johnson is a Systems and Applications Administrator based in Chicago with expertise in managing Jira and Zendesk within Core Services teams."
   },
@@ -655,7 +645,7 @@
     "Former Job Title": "Sr. Enterprise Partner Manager",
     "Team": "Enterprise Partnerships, Mid-Market",
     "Function": "Sales",
-    "Remote/Location": "Chicago, IL",
+    "Remote/Location": "Chicago/ Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/kimberlyhirschey/",
     "Description": "Kimberly Hirschey is an experienced sales professional based in Chicago, specializing in enterprise partnerships and mid-market account management. She most recently served as a Senior Enterprise Partner Manager, focusing on strategic relationship development and business growth within the partnership ecosystem."
   },
@@ -705,7 +695,7 @@
     "Former Job Title": "Staff Frontend Engineer",
     "Team": "Merchant Web",
     "Function": "Engineering",
-    "Remote/Location": "Chicago",
+    "Remote/Location": "Chicago/ Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/imjoshdean/",
     "Description": "Josh Dean is a Staff Frontend Engineer with a focus on web development and technical solutions. His background includes expertise in modern technologies like VueJS, JavaScript, and Python, alongside experience in SQL reporting, VBA automation, and instructional design. He currently works on the Merchant Web team, where he leverages data-focused insights and technical problem-solving to streamline complex systems."
   },
@@ -725,7 +715,7 @@
     "Former Job Title": "Manager, Content Operations",
     "Team": "Operations",
     "Function": "Operations",
-    "Remote/Location": "Chicago",
+    "Remote/Location": "Chicago/ Remote",
     "LinkedIn URL": "linkedin.com/in/breanapierik",
     "Description": "Dr. Pierik is a veterinary intern with a Doctor of Veterinary Medicine from Ross University School of Veterinary Medicine and an undergraduate degree from the University of Guelph. Her professional background is focused on equine care, with specific interests in surgery, reproductive medicine, sports medicine, theriogenology, and emergency medicine. Her experience emphasizes helping horses recover and return to performance as athletes or companions."
   },
@@ -755,7 +745,7 @@
     "Former Job Title": "Sr. Specialist, Content Integrity",
     "Team": "Content Integrity/QA/Merchant Network",
     "Function": "Operations",
-    "Remote/Location": "Remote (originally Chicago)",
+    "Remote/Location": "Chicago/ Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/ryan-eshleman/",
     "Description": "Ryan Eshleman is an operations professional with experience as a Senior Specialist in Content Integrity, Quality Assurance, and Merchant Network functions. His background includes managing content integrity and process optimization within the food delivery industry."
   }
