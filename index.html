@@ -6,34 +6,27 @@
   <title>Ex-Grubhub Talent Network</title>
   <meta
     name="description"
-    content="Hire top Ex-Grubhub talent. Browse impacted alumni across engineering, operations, product, design, analytics, and customer teams."
+    content="Browse the Ex-Grubhub Talent Network. Search impacted alumni by function, team, and location, and help great people land faster."
   />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <nav class="site-nav">
-    <div class="nav-inner">
-      <a class="nav-brand" href="index.html">Ex-Grubhub Talent Network</a>
-      <div class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="directory.html">Directory</a>
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSehawGkkedBDJJCGhzKEy33epkB2GeRQ7sB8x8fQ-Uz_kxgAQ/viewform" target="_blank" rel="noopener noreferrer">Join</a>
-      </div>
-    </div>
-  </nav>
-
   <header class="hero">
     <div class="hero-inner">
       <p class="eyebrow">Ex-Grubhub Talent Network</p>
 
-      <h1>Hire Top Ex-Grubhub Talent</h1>
+      <h1>Great people are looking for what’s next.</h1>
 
       <p class="hero-subtext">
-        A searchable network of former Grubhub professionals currently open to new opportunities across engineering, operations, product, design, analytics, and customer teams.
+        This directory helps recruiters, hiring managers, and former coworkers discover
+        impacted Grubhub alumni by function, team, and location.
       </p>
 
       <div class="hero-actions">
-        <a class="primary-btn" href="directory.html">
+        <a
+          class="primary-btn"
+          href="#directory-section"
+        >
           Browse Talent
         </a>
 
@@ -48,7 +41,7 @@
       </div>
 
       <p class="hero-note">
-        <strong><span id="heroCount">0</span></strong> alumni currently searching • Updated automatically from the community tracker
+        Takes about 30 seconds to join. Public profiles are intended to help people get found faster.
       </p>
     </div>
   </header>
@@ -56,7 +49,7 @@
   <main>
     <section class="stats-section" aria-label="Directory summary">
       <div class="stat-card stat-card-primary">
-        <div class="stat-number" id="totalCount">0</div>
+        <div class="stat-number" id="totalCount">63</div>
         <div class="stat-label">People Currently Searching</div>
       </div>
 
@@ -74,62 +67,45 @@
     <section class="dashboard-section" aria-labelledby="function-dashboard-heading">
       <div class="section-header">
         <h2 id="function-dashboard-heading">Talent by Function</h2>
-        <p>A quick snapshot of the types of talent currently represented in the network.</p>
+        <p>
+          A quick snapshot of the kinds of talent currently represented in the network.
+        </p>
       </div>
 
       <div id="functionDashboard" class="function-dashboard"></div>
     </section>
 
-    <section class="dashboard-section" aria-labelledby="hiring-signals-heading">
+    <section class="controls-section" id="directory-section" aria-labelledby="directory-heading">
       <div class="section-header">
-        <h2 id="hiring-signals-heading">Hiring Signals</h2>
-        <p>Where alumni have recently landed, shown in aggregate.</p>
-      </div>
-
-      <div class="badge-row">
-        <span class="company-badge">Amazon</span>
-        <span class="company-badge">FanDuel</span>
-        <span class="company-badge">Monday.com</span>
-        <span class="company-badge">Uber</span>
-        <span class="company-badge">Hinge</span>
-      </div>
-    </section>
-
-    <section class="dashboard-section" aria-labelledby="about-heading">
-      <div class="section-header">
-        <h2 id="about-heading">Why This Exists</h2>
-      </div>
-
-      <div class="content-card">
+        <h2 id="directory-heading">Browse the Directory</h2>
         <p>
-          This directory was created to help impacted Grubhub alumni get discovered faster by recruiters, hiring managers, and former coworkers.
-        </p>
-        <p>
-          Profiles are submitted voluntarily and link directly to LinkedIn so outreach stays simple. Placement outcomes can be shared publicly in aggregate, while individual placement details remain private.
+          Search by role, function, team, or location.
         </p>
       </div>
+
+      <div class="controls" role="search">
+        <label class="sr-only" for="search">Search the directory</label>
+        <input
+          type="text"
+          id="search"
+          placeholder="Search roles, teams, functions, locations..."
+          autocomplete="off"
+        />
+
+        <label class="sr-only" for="functionFilter">Filter by function</label>
+        <select id="functionFilter">
+          <option value="">All Functions</option>
+        </select>
+
+        <label class="sr-only" for="locationFilter">Filter by location</label>
+        <select id="locationFilter">
+          <option value="">All Locations</option>
+        </select>
+      </div>
     </section>
 
-    <section class="dashboard-section" aria-labelledby="cta-heading">
-      <div class="section-header">
-        <h2 id="cta-heading">Explore the Network</h2>
-        <p>Browse the full directory or add your profile to the tracker.</p>
-      </div>
-
-      <div class="hero-actions left-actions">
-        <a class="primary-btn" href="directory.html">Browse Full Directory</a>
-        <a
-          class="secondary-btn"
-          href="https://docs.google.com/forms/d/e/1FAIpQLSehawGkkedBDJJCGhzKEy33epkB2GeRQ7sB8x8fQ-Uz_kxgAQ/viewform"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Add Your Profile
-        </a>
-      </div>
-    </section>
+    <section id="directory" aria-live="polite"></section>
   </main>
-
-  <script src="script.js"></script>
 </body>
+<script src="script.js"></script>
 </html>
