@@ -294,9 +294,11 @@ body {
 }
 
 .card a {
-  color: #0a66c2;
-  text-decoration: none;
+  display: inline-block;
+  margin-top: 6px;
   font-weight: 600;
+  color: #2563eb;
+  text-decoration: none;
 }
 
 .card a:hover {
