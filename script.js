@@ -1,107 +1,132 @@
 async function loadDirectory() {
+  const response = await fetch("./people.json");
+  const people = await response.json();
 
-const response = await fetch("./people.json");
-const people = await response.json();
+  const container = document.getElementById("directory");
+  const searchBox = document.getElementById("search");
+  const functionFilter = document.getElementById("functionFilter");
+  const locationFilter = document.getElementById("locationFilter");
 
-const container = document.getElementById("directory");
-const searchBox = document.getElementById("search");
-const functionFilter = document.getElementById("functionFilter");
-const locationFilter = document.getElementById("locationFilter");
+  const totalCount = document.getElementById("totalCount");
+  const functionCount = document.getElementById("functionCount");
+  const locationCount = document.getElementById("locationCount");
+  const functionDashboard = document.getElementById("functionDashboard");
 
-function uniqueValues(field) {
-return [...new Set(people.map(p => p[field]).filter(Boolean))].sort();
-}
+  function uniqueValues(field) {
+    return [...new Set(people.map(p => p[field]).filter(Boolean))].sort();
+  }
 
-function populateFilters() {
+  function countByField(field) {
+    const counts = {};
+    people.forEach(person => {
+      const value = person[field];
+      if (value) {
+        counts[value] = (counts[value] || 0) + 1;
+      }
+    });
+    return counts;
+  }
 
-uniqueValues("Function").forEach(f => {
-const option = document.createElement("option");
-option.value = f;
-option.textContent = f;
-functionFilter.appendChild(option);
-});
+  function populateFilters() {
+    uniqueValues("Function").forEach(f => {
+      const option = document.createElement("option");
+      option.value = f;
+      option.textContent = f;
+      functionFilter.appendChild(option);
+    });
 
-uniqueValues("Remote/Location").forEach(l => {
-const option = document.createElement("option");
-option.value = l;
-option.textContent = l;
-locationFilter.appendChild(option);
-});
+    uniqueValues("Remote/Location").forEach(l => {
+      const option = document.createElement("option");
+      option.value = l;
+      option.textContent = l;
+      locationFilter.appendChild(option);
+    });
+  }
 
-}
+  function renderDashboard() {
+    const functionCounts = countByField("Function");
+    const sortedFunctions = Object.entries(functionCounts)
+      .sort((a, b) => b[1] - a[1]);
 
-function render(list) {
+    functionDashboard.innerHTML = "";
 
-container.innerHTML = "";
+    sortedFunctions.forEach(([name, count]) => {
+      const card = document.createElement("div");
+      card.className = "function-card";
+      card.innerHTML = `
+        <div class="function-name">${name}</div>
+        <div class="function-value">${count}</div>
+      `;
+      functionDashboard.appendChild(card);
+    });
 
-if (!list.length) {
-container.innerHTML = "<p>No matching results found.</p>";
-return;
-}
+    totalCount.textContent = people.length;
+    functionCount.textContent = uniqueValues("Function").length;
+    locationCount.textContent = uniqueValues("Remote/Location").length;
+  }
 
-list.forEach(person => {
+  function render(list) {
+    container.innerHTML = "";
 
-const name = person["Name"] || person["First Name"] || "Unnamed Person";
-const formerRole = person["Former Job Title"] || "";
-const team = person["Team"] || "";
-const jobFunction = person["Function"] || "";
-const location = person["Remote/Location"] || "";
-const linkedin = person["LinkedIn URL"] || "";
-const description = person["Description"] || "";
+    if (!list.length) {
+      container.innerHTML = "<p>No matching results found.</p>";
+      return;
+    }
 
-const card = document.createElement("div");
-card.className = "card";
+    list.forEach(person => {
+      const name = person["Name"] || person["First Name"] || "Unnamed Person";
+      const formerRole = person["Former Job Title"] || "";
+      const team = person["Team"] || "";
+      const jobFunction = person["Function"] || "";
+      const location = person["Remote/Location"] || "";
+      const linkedin = person["LinkedIn URL"] || "";
+      const description = person["Description"] || "";
 
-card.innerHTML = `
-<h3>${name}</h3>
-<p><strong>Former Role:</strong> ${formerRole}</p>
-<p><strong>Team:</strong> ${team}</p>
-<p><strong>Function:</strong> ${jobFunction}</p>
-<p><strong>Location:</strong> ${location}</p>
-${description ? `<p>${description}</p>` : ""}
-${linkedin ? `<p><a href="${linkedin}" target="_blank">LinkedIn</a></p>` : ""}
-`;
+      const card = document.createElement("div");
+      card.className = "card";
 
-container.appendChild(card);
+      card.innerHTML = `
+        <h3>${name}</h3>
+        <div class="card-meta">${jobFunction || "Unknown Function"} • ${location || "Unknown Location"}</div>
+        <p><strong>Former Role:</strong> ${formerRole}</p>
+        <p><strong>Team:</strong> ${team}</p>
+        ${description ? `<p>${description}</p>` : ""}
+        ${linkedin ? `<p><a href="${linkedin}" target="_blank" rel="noopener noreferrer">LinkedIn</a></p>` : ""}
+      `;
 
-});
+      container.appendChild(card);
+    });
+  }
 
-}
+  function applyFilters() {
+    const query = searchBox.value.toLowerCase();
+    const selectedFunction = functionFilter.value;
+    const selectedLocation = locationFilter.value;
 
-function applyFilters() {
+    const filtered = people.filter(person => {
+      const matchesSearch = Object.values(person).some(val =>
+        String(val).toLowerCase().includes(query)
+      );
 
-const query = searchBox.value.toLowerCase();
-const selectedFunction = functionFilter.value;
-const selectedLocation = locationFilter.value;
+      const matchesFunction =
+        !selectedFunction || person["Function"] === selectedFunction;
 
-const filtered = people.filter(person => {
+      const matchesLocation =
+        !selectedLocation || person["Remote/Location"] === selectedLocation;
 
-const matchesSearch =
-Object.values(person).some(val =>
-String(val).toLowerCase().includes(query)
-);
+      return matchesSearch && matchesFunction && matchesLocation;
+    });
 
-const matchesFunction =
-!selectedFunction || person["Function"] === selectedFunction;
+    render(filtered);
+  }
 
-const matchesLocation =
-!selectedLocation || person["Remote/Location"] === selectedLocation;
+  populateFilters();
+  renderDashboard();
+  render(people);
 
-return matchesSearch && matchesFunction && matchesLocation;
-
-});
-
-render(filtered);
-
-}
-
-populateFilters();
-render(people);
-
-searchBox.addEventListener("input", applyFilters);
-functionFilter.addEventListener("change", applyFilters);
-locationFilter.addEventListener("change", applyFilters);
-
+  searchBox.addEventListener("input", applyFilters);
+  functionFilter.addEventListener("change", applyFilters);
+  locationFilter.addEventListener("change", applyFilters);
 }
 
 loadDirectory();
