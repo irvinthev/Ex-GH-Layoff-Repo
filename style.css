@@ -324,6 +324,23 @@ body {
     border-color 0.18s ease;
 }
 
+/*.location-badge */
+.location-badge {
+  display: inline-block;
+  margin: 8px 0 0;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #374151;
+  background: #eef2f7;
+  border: 1px solid #dbe3ee;
+  border-radius: 999px;
+}
+
+
+
+
+
 .card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
