@@ -1,0 +1,46 @@
+name: Update Directory Data
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Download CSV from Google Sheets
+        run: |
+          curl -L "https://docs.google.com/spreadsheets/d/e/2PACX-1vTneLfd7McnMAUWannvW6a3h-tgjHxzgC7xKFTY3s1SjaRHa2Rw-JFQQYXPcOjBQ0UtACBo1S_mm9E-/pub?output=csv" -o people.csv
+
+      - name: Convert CSV to JSON
+        run: |
+          python - <<'EOF'
+          import csv
+          import json
+
+          rows = []
+          with open("people.csv", newline="", encoding="utf-8-sig") as f:
+              reader = csv.DictReader(f)
+              for row in reader:
+                  cleaned = {k.strip(): v.strip() for k, v in row.items() if k}
+                  rows.append(cleaned)
+
+          with open("people.json", "w", encoding="utf-8") as f:
+              json.dump(rows, f, indent=2, ensure_ascii=False)
+          EOF
+
+      - name: Commit updated JSON
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add people.json
+          git diff --cached --quiet || git commit -m "Update people.json from Google Sheet"
+          git push
