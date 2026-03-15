@@ -181,6 +181,14 @@ body {
   padding: 18px;
   border: 1px solid #edf0f4;
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  .function-card {
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.function-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 18px rgba(0,0,0,0.08);
 }
 
 .function-name {
