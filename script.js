@@ -45,8 +45,7 @@ async function loadDirectory() {
 
   function renderDashboard() {
     const functionCounts = countByField("Function");
-    const sortedFunctions = Object.entries(functionCounts)
-      .sort((a, b) => b[1] - a[1]);
+    const sortedFunctions = Object.entries(functionCounts).sort((a, b) => b[1] - a[1]);
 
     functionDashboard.innerHTML = "";
 
@@ -74,9 +73,11 @@ async function loadDirectory() {
     }
 
     list.forEach(person => {
-const name =
-  (person["First Name"] ? person["First Name"] + " " : "") +
-  (person["Last Name"] || person["Name"] || "");      const formerRole = person["Former Job Title"] || "";
+      const name =
+        (person["First Name"] ? person["First Name"] + " " : "") +
+        (person["Last Name"] || person["Name"] || "");
+
+      const formerRole = person["Former Job Title"] || "";
       const team = person["Team"] || "";
       const jobFunction = person["Function"] || "";
       const location = person["Remote/Location"] || "";
