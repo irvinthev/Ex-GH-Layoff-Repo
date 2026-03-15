@@ -5,11 +5,9 @@ async function loadDirectory() {
   const container = document.getElementById("directory");
   const searchBox = document.getElementById("search");
   const functionFilter = document.getElementById("functionFilter");
-  const locationFilter = document.getElementById("locationFilter");
 
   const totalCount = document.getElementById("totalCount");
   const functionCount = document.getElementById("functionCount");
-  const locationCount = document.getElementById("locationCount");
   const functionDashboard = document.getElementById("functionDashboard");
 
   function uniqueValues(field) {
@@ -38,20 +36,12 @@ async function loadDirectory() {
 
   function populateFilters() {
     functionFilter.innerHTML = '<option value="">All Functions</option>';
-    locationFilter.innerHTML = '<option value="">All Locations</option>';
 
     uniqueValues("Function").forEach((f) => {
       const option = document.createElement("option");
       option.value = f;
       option.textContent = f;
       functionFilter.appendChild(option);
-    });
-
-    uniqueValues("Remote/Location").forEach((l) => {
-      const option = document.createElement("option");
-      option.value = l;
-      option.textContent = l;
-      locationFilter.appendChild(option);
     });
   }
 
@@ -83,7 +73,6 @@ async function loadDirectory() {
 
     totalCount.textContent = people.length;
     functionCount.textContent = uniqueValues("Function").length;
-    locationCount.textContent = uniqueValues("Remote/Location").length;
   }
 
   function render(list) {
@@ -109,6 +98,7 @@ async function loadDirectory() {
       const linkedin = person["LinkedIn URL"] || "";
       const description = person["Description"] || "";
 
+      const cleanLocation = location.replace(/\s*\/\s*/g, " / ").trim();
       const functionClass = `badge-${slugify(jobFunction)}`;
 
       const card = document.createElement("div");
@@ -117,9 +107,13 @@ async function loadDirectory() {
       card.innerHTML = `
         ${jobFunction ? `<div class="badge ${functionClass}">${jobFunction}</div>` : ""}
         <h3>${name || "Unnamed Person"}</h3>
-        <div class="card-meta">${location || "Location not listed"}</div>
         <p><strong>Former Role:</strong> ${formerRole}</p>
         ${team ? `<p><strong>Team:</strong> ${team}</p>` : ""}
+        ${
+          cleanLocation
+            ? `<p class="location-badge">📍 ${cleanLocation}</p>`
+            : ""
+        }
         ${description ? `<p>${description}</p>` : ""}
         ${
           linkedin
@@ -135,7 +129,6 @@ async function loadDirectory() {
   function applyFilters() {
     const query = searchBox.value.toLowerCase().trim();
     const selectedFunction = functionFilter.value;
-    const selectedLocation = locationFilter.value;
 
     const filtered = people.filter((person) => {
       const matchesSearch = Object.values(person).some((val) =>
@@ -145,10 +138,7 @@ async function loadDirectory() {
       const matchesFunction =
         !selectedFunction || person["Function"] === selectedFunction;
 
-      const matchesLocation =
-        !selectedLocation || person["Remote/Location"] === selectedLocation;
-
-      return matchesSearch && matchesFunction && matchesLocation;
+      return matchesSearch && matchesFunction;
     });
 
     render(filtered);
@@ -160,7 +150,6 @@ async function loadDirectory() {
 
   searchBox.addEventListener("input", applyFilters);
   functionFilter.addEventListener("change", applyFilters);
-  locationFilter.addEventListener("change", applyFilters);
 }
 
 loadDirectory();
