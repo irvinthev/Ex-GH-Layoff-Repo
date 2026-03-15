@@ -1,13 +1,38 @@
-<h1>Ex-Grubhub Talent Directory</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TalentBotHQ Directory</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
 
-<input type="text" id="search" placeholder="Search roles, teams, locations...">
+  <header>
+    <h1>Ex-Grubhub Talent Directory</h1>
+    <p>Browse alumni talent by role, function, and location.</p>
+  </header>
 
-<select id="functionFilter">
-<option value="">All Functions</option>
-</select>
+  <main>
+    <section class="controls">
+      <input
+        type="text"
+        id="search"
+        placeholder="Search roles, teams, functions, locations..."
+      />
 
-<select id="locationFilter">
-<option value="">All Locations</option>
-</select>
+      <select id="functionFilter">
+        <option value="">All Functions</option>
+      </select>
 
-<div id="directory"></div>
+      <select id="locationFilter">
+        <option value="">All Locations</option>
+      </select>
+    </section>
+
+    <section id="directory"></section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
