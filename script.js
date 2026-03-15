@@ -28,6 +28,9 @@ async function loadDirectory() {
   }
 
   function populateFilters() {
+    functionFilter.innerHTML = '<option value="">All Functions</option>';
+    locationFilter.innerHTML = '<option value="">All Locations</option>';
+
     uniqueValues("Function").forEach(f => {
       const option = document.createElement("option");
       option.value = f;
@@ -44,38 +47,30 @@ async function loadDirectory() {
   }
 
   function renderDashboard() {
-  const functionCounts = countByField("Function");
+    const functionCounts = countByField("Function");
+    const sortedFunctions = Object.entries(functionCounts).sort((a, b) => b[1] - a[1]);
 
-  const sortedFunctions = Object.entries(functionCounts)
-    .sort((a, b) => b[1] - a[1]);
+    functionDashboard.innerHTML = "";
 
-  functionDashboard.innerHTML = "";
+    sortedFunctions.forEach(([name, count]) => {
+      const card = document.createElement("div");
+      card.className = "function-card";
+      card.innerHTML = `
+        <div class="function-name">${name}</div>
+        <div class="function-value">${count}</div>
+      `;
 
-  sortedFunctions.forEach(([name, count]) => {
-    const card = document.createElement("div");
-    card.className = "function-card";
+      card.addEventListener("click", () => {
+        functionFilter.value = name;
+        applyFilters();
+        document.getElementById("directory-section").scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      });
 
-    card.innerHTML = `
-      <div class="function-name">${name}</div>
-      <div class="function-value">${count}</div>
-    `;
-
-    // Make card clickable
-    card.style.cursor = "pointer";
-
-    card.addEventListener("click", () => {
-      functionFilter.value = name;
-      applyFilters();
-      window.scrollTo({ top: 450, behavior: "smooth" });
+      functionDashboard.appendChild(card);
     });
-
-    functionDashboard.appendChild(card);
-  });
-
-  totalCount.textContent = people.length;
-  functionCount.textContent = uniqueValues("Function").length;
-  locationCount.textContent = uniqueValues("Remote/Location").length;
-}
 
     totalCount.textContent = people.length;
     functionCount.textContent = uniqueValues("Function").length;
@@ -106,7 +101,7 @@ async function loadDirectory() {
       card.className = "card";
 
       card.innerHTML = `
-        <h3>${name}</h3>
+        <h3>${name.trim() || "Unnamed Person"}</h3>
         <div class="card-meta">${jobFunction || "Unknown Function"} • ${location || "Unknown Location"}</div>
         <p><strong>Former Role:</strong> ${formerRole}</p>
         <p><strong>Team:</strong> ${team}</p>
@@ -119,7 +114,7 @@ async function loadDirectory() {
   }
 
   function applyFilters() {
-    const query = searchBox.value.toLowerCase();
+    const query = searchBox.value.toLowerCase().trim();
     const selectedFunction = functionFilter.value;
     const selectedLocation = locationFilter.value;
 
