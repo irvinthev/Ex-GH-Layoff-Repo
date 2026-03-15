@@ -1,0 +1,42 @@
+[
+  {
+    "First Name": "Kevin",
+    "Name": "Kevin Cheng",
+    "Former Job Title": "Product Designer II",
+    "Team": "Product",
+    "Function": "Design",
+    "Remote/Location": "New York City",
+    "LinkedIn URL": "https://linkedin.com/in/example",
+    "Description": "Ex-Grubhub product designer focused on mobile UX and growth experimentation."
+  },
+  {
+    "First Name": "Stephanie",
+    "Name": "Stephanie Roberts",
+    "Former Job Title": "Care Lead, Care Tax Team/Merchant Accounting",
+    "Team": "Care",
+    "Function": "Customer Support",
+    "Remote/Location": "Chicago / Remote",
+    "LinkedIn URL": "https://linkedin.com/in/example",
+    "Description": "Customer operations leader with experience supporting merchant accounting and tax teams."
+  },
+  {
+    "First Name": "Devon",
+    "Name": "Devon Branin",
+    "Former Job Title": "Senior Operations Engineer",
+    "Team": "Operations",
+    "Function": "Engineering",
+    "Remote/Location": "Seattle / Remote",
+    "LinkedIn URL": "https://linkedin.com/in/example",
+    "Description": "Reliability engineer focused on infrastructure stability and distributed systems."
+  },
+  {
+    "First Name": "Michael",
+    "Name": "Michael Pascutoi",
+    "Former Job Title": "Senior Associate, Analytics & Insights",
+    "Team": "Merchant Network",
+    "Function": "Analytics",
+    "Remote/Location": "Chicago / Remote",
+    "LinkedIn URL": "https://linkedin.com/in/example",
+    "Description": "Analytics professional specializing in operational insights and business performance reporting."
+  }
+]
