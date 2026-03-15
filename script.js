@@ -44,20 +44,38 @@ async function loadDirectory() {
   }
 
   function renderDashboard() {
-    const functionCounts = countByField("Function");
-    const sortedFunctions = Object.entries(functionCounts).sort((a, b) => b[1] - a[1]);
+  const functionCounts = countByField("Function");
 
-    functionDashboard.innerHTML = "";
+  const sortedFunctions = Object.entries(functionCounts)
+    .sort((a, b) => b[1] - a[1]);
 
-    sortedFunctions.forEach(([name, count]) => {
-      const card = document.createElement("div");
-      card.className = "function-card";
-      card.innerHTML = `
-        <div class="function-name">${name}</div>
-        <div class="function-value">${count}</div>
-      `;
-      functionDashboard.appendChild(card);
+  functionDashboard.innerHTML = "";
+
+  sortedFunctions.forEach(([name, count]) => {
+    const card = document.createElement("div");
+    card.className = "function-card";
+
+    card.innerHTML = `
+      <div class="function-name">${name}</div>
+      <div class="function-value">${count}</div>
+    `;
+
+    // Make card clickable
+    card.style.cursor = "pointer";
+
+    card.addEventListener("click", () => {
+      functionFilter.value = name;
+      applyFilters();
+      window.scrollTo({ top: 450, behavior: "smooth" });
     });
+
+    functionDashboard.appendChild(card);
+  });
+
+  totalCount.textContent = people.length;
+  functionCount.textContent = uniqueValues("Function").length;
+  locationCount.textContent = uniqueValues("Remote/Location").length;
+}
 
     totalCount.textContent = people.length;
     functionCount.textContent = uniqueValues("Function").length;
