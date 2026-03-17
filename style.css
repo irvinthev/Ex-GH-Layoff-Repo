@@ -422,6 +422,27 @@ body {
   color: #ec4899;
 }
 
+/* Product Design */
+
+.badge-product-design {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+
+/* IT */
+
+.badge-it {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+/* Go To Market */
+
+.badge-go-to-market {
+  background: #ecfdf5;
+  color: #047857;
+}
+
 /* =====================
    LINKEDIN BUTTON
 ===================== */
