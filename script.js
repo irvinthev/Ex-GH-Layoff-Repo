@@ -63,18 +63,21 @@ async function loadDirectory() {
   }
 
   function populateFilters(base = people) {
-    const selectedFunction = functionFilter.value;
-    const selectedLocation = locationFilter.value;
+    const selectedFunction = String(functionFilter.value || "").trim();
+    const selectedLocation = String(locationFilter.value || "").trim();
 
     functionFilter.innerHTML = `<option value="">All Functions</option>`;
 
     getUniqueFunctions().forEach((f) => {
+      const cleanFunction = String(f || "").trim();
       const opt = document.createElement("option");
-      opt.value = f;
-      opt.textContent = f;
-      if (f === selectedFunction) opt.selected = true;
+      opt.value = cleanFunction;
+      opt.textContent = cleanFunction;
       functionFilter.appendChild(opt);
     });
+
+    // Force selected function back after rebuilding options
+    functionFilter.value = selectedFunction;
 
     const counts = {};
 
@@ -92,11 +95,13 @@ async function loadDirectory() {
         const opt = document.createElement("option");
         opt.value = loc;
         opt.textContent = `${loc} (${count})`;
-        if (loc === selectedLocation) opt.selected = true;
         locationFilter.appendChild(opt);
       });
 
-    if (selectedLocation && !counts[selectedLocation]) {
+    // Restore location only if still valid
+    if (selectedLocation && counts[selectedLocation]) {
+      locationFilter.value = selectedLocation;
+    } else {
       locationFilter.value = "";
     }
   }
@@ -184,21 +189,25 @@ async function loadDirectory() {
 
   function applyFilters() {
     const q = searchBox.value.toLowerCase().trim();
-    const f = functionFilter.value;
-    const selectedLocationBeforeRefresh = locationFilter.value;
+    const selectedFunction = String(functionFilter.value || "").trim();
+    const selectedLocation = String(locationFilter.value || "").trim();
 
     const fnFiltered = people.filter((p) => {
       const personFunction = String(p["Function"] || "").trim();
-      return !f || personFunction === f;
+      return !selectedFunction || personFunction === selectedFunction;
     });
 
     populateFilters(fnFiltered);
 
-    if (selectedLocationBeforeRefresh) {
-      locationFilter.value = selectedLocationBeforeRefresh;
+    // Force function value again after populate, for iOS Safari
+    functionFilter.value = selectedFunction;
+
+    // Restore location only if still valid
+    if (selectedLocation) {
+      locationFilter.value = selectedLocation;
     }
 
-    const activeLoc = locationFilter.value;
+    const activeLoc = String(locationFilter.value || "").trim();
 
     const filtered = fnFiltered.filter((p) => {
       const matchesSearch = Object.values(p).some((v) =>
