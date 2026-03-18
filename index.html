@@ -3,29 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Ex-Grubhub Talent Network</title>
+
   <meta
     name="description"
-    content="Browse the Ex-GH Talent Network. Search impacted alumni by function, team, or keywords, and help great people land faster."
+    content="Browse the Ex-GH Talent Network. Search impacted alumni by function, location, and role to help great people land faster."
   />
+
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
+
+  <!-- HERO -->
   <header class="hero">
     <div class="hero-inner">
       <p class="eyebrow">Ex-GH Talent Network</p>
 
-      <h1> Hire Top Ex-GH Talent.</h1>
+      <h1>Hire Top Ex-GH Talent</h1>
 
       <p class="hero-subtext">
-        A curated directory of former Grubhub employees across engineering, product, operations, and go-to-market teams who are currently open to new opportunities
+        A curated directory of former Grubhub employees across engineering, product, operations, and go-to-market teams who are actively exploring new opportunities.
       </p>
 
       <div class="hero-actions">
-        <a
-          class="primary-btn"
-          href="#directory-section"
-        >
+        <a class="primary-btn" href="#directory-section">
           Browse Talent
         </a>
 
@@ -40,15 +43,17 @@
       </div>
 
       <p class="hero-note">
-        Submit form for review to be added to tracker. List of users are updated as soon as possible based on employment. All users currently tracked have opted in. Public profiles are intended to help people get found faster.
+        Profiles are opt-in and updated regularly. This directory is designed to help great people get discovered faster.
       </p>
     </div>
   </header>
 
   <main>
+
+    <!-- STATS -->
     <section class="stats-section" aria-label="Directory summary">
       <div class="stat-card stat-card-primary">
-        <div class="stat-number" id="totalCount">63</div>
+        <div class="stat-number" id="totalCount">0</div>
         <div class="stat-label">People Currently Searching</div>
       </div>
 
@@ -56,33 +61,53 @@
         <div class="stat-number" id="functionCount">0</div>
         <div class="stat-label">Functions Represented</div>
       </div>
+
+      <div class="stat-card">
+        <div class="stat-number" id="locationCount">0</div>
+        <div class="stat-label">Locations Represented</div>
+      </div>
     </section>
 
+    <!-- FUNCTION DASHBOARD -->
     <section class="dashboard-section" aria-labelledby="function-dashboard-heading">
       <div class="section-header">
         <h2 id="function-dashboard-heading">Talent by Function</h2>
         <p>
-          A quick snapshot of the kinds of talent currently represented in the network.
+          A quick snapshot of the types of talent currently represented.
         </p>
       </div>
 
       <div id="functionDashboard" class="function-dashboard"></div>
     </section>
 
+    <!-- LOCATION DASHBOARD -->
+    <section class="dashboard-section" aria-labelledby="location-dashboard-heading">
+      <div class="section-header">
+        <h2 id="location-dashboard-heading">Talent by Location</h2>
+        <p>
+          Click a location to quickly filter candidates by geography.
+        </p>
+      </div>
+
+      <div id="locationDashboard" class="function-dashboard"></div>
+    </section>
+
+    <!-- FILTERS -->
     <section class="controls-section" id="directory-section" aria-labelledby="directory-heading">
       <div class="section-header">
         <h2 id="directory-heading">Browse the Directory</h2>
         <p>
-          Search by role, function, team, or location.
+          Search and filter by role, function, or location.
         </p>
       </div>
 
       <div class="controls" role="search">
+
         <label class="sr-only" for="search">Search the directory</label>
         <input
           type="text"
           id="search"
-          placeholder="Search: engineer, product manager, Chicago, data, design...."
+          placeholder="Search: engineer, product manager, Chicago, data..."
           autocomplete="off"
         />
 
@@ -90,11 +115,24 @@
         <select id="functionFilter">
           <option value="">All Functions</option>
         </select>
+
+        <label class="sr-only" for="locationFilter">Filter by location</label>
+        <select id="locationFilter">
+          <option value="">All Locations</option>
+        </select>
+
+        <button id="clearFilters" class="clear-btn">
+          Clear Filters
+        </button>
+
       </div>
     </section>
 
+    <!-- DIRECTORY -->
     <section id="directory" aria-live="polite"></section>
+
   </main>
+
+  <script src="script.js"></script>
 </body>
-<script src="script.js"></script>
 </html>
