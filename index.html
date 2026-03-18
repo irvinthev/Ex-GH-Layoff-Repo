@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
   <title>Ex-Grubhub Talent Network</title>
 
   <meta
     name="description"
-    content="Browse the Ex-GH Talent Network. Search impacted alumni by function, location, and role to help great people land faster."
+    content="Browse the Ex-GH Talent Network. Search impacted alumni by function, location, and role."
   />
 
   <link rel="stylesheet" href="style.css" />
@@ -16,123 +16,89 @@
 
 <body>
 
-  <!-- HERO -->
-  <header class="hero">
-    <div class="hero-inner">
-      <p class="eyebrow">Ex-GH Talent Network</p>
+<header class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">Ex-GH Talent Network</p>
+    <h1>Hire Top Ex-GH Talent</h1>
 
-      <h1>Hire Top Ex-GH Talent</h1>
+    <p class="hero-subtext">
+      A curated directory of former Grubhub employees actively exploring new opportunities.
+    </p>
 
-      <p class="hero-subtext">
-        A curated directory of former Grubhub employees across engineering, product, operations, and go-to-market teams who are actively exploring new opportunities.
-      </p>
-
-      <div class="hero-actions">
-        <a class="primary-btn" href="#directory-section">
-          Browse Talent
-        </a>
-
-        <a
-          class="secondary-btn"
-          href="https://docs.google.com/forms/d/e/1FAIpQLSehawGkkedBDJJCGhzKEy33epkB2GeRQ7sB8x8fQ-Uz_kxgAQ/viewform"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Join the Directory
-        </a>
-      </div>
-
-      <p class="hero-note">
-        Profiles are opt-in and updated regularly. This directory is designed to help great people get discovered faster.
-      </p>
+    <div class="hero-actions">
+      <a class="primary-btn" href="#directory-section">Browse Talent</a>
+      <a
+        class="secondary-btn"
+        href="https://docs.google.com/forms/d/e/1FAIpQLSehawGkkedBDJJCGhzKEy33epkB2GeRQ7sB8x8fQ-Uz_kxgAQ/viewform"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Join the Directory
+      </a>
     </div>
-  </header>
+  </div>
+</header>
 
-  <main>
+<main>
 
-    <!-- STATS -->
-    <section class="stats-section" aria-label="Directory summary">
-      <div class="stat-card stat-card-primary">
-        <div class="stat-number" id="totalCount">0</div>
-        <div class="stat-label">People Currently Searching</div>
-      </div>
+  <!-- STATS -->
+  <section class="stats-section">
+    <div class="stat-card stat-card-primary">
+      <div id="totalCount" class="stat-number">0</div>
+      <div class="stat-label">People Searching</div>
+    </div>
 
-      <div class="stat-card">
-        <div class="stat-number" id="functionCount">0</div>
-        <div class="stat-label">Functions Represented</div>
-      </div>
+    <div class="stat-card">
+      <div id="functionCount" class="stat-number">0</div>
+      <div class="stat-label">Functions</div>
+    </div>
+  </section>
 
-      <div class="stat-card">
-        <div class="stat-number" id="locationCount">0</div>
-        <div class="stat-label">Locations Represented</div>
-      </div>
-    </section>
+  <!-- FUNCTION DASHBOARD -->
+  <section class="dashboard-section">
+    <div class="section-header">
+      <h2>Talent by Function</h2>
+    </div>
+    <div id="functionDashboard" class="function-dashboard"></div>
+  </section>
 
-    <!-- FUNCTION DASHBOARD -->
-    <section class="dashboard-section" aria-labelledby="function-dashboard-heading">
-      <div class="section-header">
-        <h2 id="function-dashboard-heading">Talent by Function</h2>
-        <p>
-          A quick snapshot of the types of talent currently represented.
-        </p>
-      </div>
+  <!-- REGION DASHBOARD -->
+  <section class="dashboard-section">
+    <div class="section-header">
+      <h2>Talent by Region</h2>
+    </div>
+    <div id="locationDashboard" class="function-dashboard"></div>
+  </section>
 
-      <div id="functionDashboard" class="function-dashboard"></div>
-    </section>
+  <!-- FILTERS -->
+  <section class="controls-section" id="directory-section">
+    <div class="section-header">
+      <h2>Browse the Directory</h2>
+    </div>
 
-    <!-- LOCATION DASHBOARD -->
-    <section class="dashboard-section" aria-labelledby="location-dashboard-heading">
-      <div class="section-header">
-        <h2 id="location-dashboard-heading">Talent by Location</h2>
-        <p>
-          Click a location to quickly filter candidates by geography.
-        </p>
-      </div>
+    <div class="controls">
 
-      <div id="locationDashboard" class="function-dashboard"></div>
-    </section>
+      <input id="search" type="text" placeholder="Search..." />
 
-    <!-- FILTERS -->
-    <section class="controls-section" id="directory-section" aria-labelledby="directory-heading">
-      <div class="section-header">
-        <h2 id="directory-heading">Browse the Directory</h2>
-        <p>
-          Search and filter by role, function, or location.
-        </p>
-      </div>
+      <select id="functionFilter">
+        <option value="">All Functions</option>
+      </select>
 
-      <div class="controls" role="search">
+      <select id="locationFilter">
+        <option value="">All Locations</option>
+      </select>
 
-        <label class="sr-only" for="search">Search the directory</label>
-        <input
-          type="text"
-          id="search"
-          placeholder="Search: engineer, product manager, Chicago, data..."
-          autocomplete="off"
-        />
+      <button id="clearFilters" class="clear-btn">
+        Clear Filters
+      </button>
 
-        <label class="sr-only" for="functionFilter">Filter by function</label>
-        <select id="functionFilter">
-          <option value="">All Functions</option>
-        </select>
+    </div>
+  </section>
 
-        <label class="sr-only" for="locationFilter">Filter by location</label>
-        <select id="locationFilter">
-          <option value="">All Locations</option>
-        </select>
+  <section id="directory"></section>
 
-        <button id="clearFilters" class="clear-btn">
-          Clear Filters
-        </button>
+</main>
 
-      </div>
-    </section>
-
-    <!-- DIRECTORY -->
-    <section id="directory" aria-live="polite"></section>
-
-  </main>
-
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
