@@ -16,6 +16,7 @@ async function loadDirectory() {
 
   function slugify(v) {
     return String(v || "")
+      .trim()
       .toLowerCase()
       .replace(/&/g, "and")
       .replace(/[\/,]/g, " ")
@@ -26,13 +27,14 @@ async function loadDirectory() {
   function normalizeLocation(v) {
     v = String(v || "").toLowerCase();
 
-    if (v.includes("new york")) return "New York";
+    if (v.includes("new york") || v.includes("nyc") || v.includes("ny city")) return "New York";
     if (v.includes("chicago")) return "Chicago";
     if (v.includes("boston")) return "Boston";
     if (v.includes("san francisco") || v.includes("bay area")) return "SF Bay Area";
     if (v.includes("los angeles")) return "Los Angeles";
     if (v.includes("seattle")) return "Seattle";
-    if (v.includes("remote")) return "Remote";
+    if (v.includes("remote") || v.includes("anywhere")) return "Remote";
+    if (!v.trim()) return "Unknown";
 
     return "Other";
   }
@@ -40,80 +42,114 @@ async function loadDirectory() {
   function getRegion(v) {
     v = String(v || "").toLowerCase();
 
-    if (!v) return "Unknown";
+    if (!v.trim()) return "Unknown";
 
-    if (v.includes("new york") || v.includes("boston")) return "East Coast";
+    if (v.includes("new york") || v.includes("nyc") || v.includes("ny city") || v.includes("boston")) return "East Coast";
     if (v.includes("chicago")) return "Midwest";
-    if (v.includes("san francisco") || v.includes("los angeles") || v.includes("seattle")) return "West Coast";
-    if (v.includes("remote")) return "Remote";
+    if (
+      v.includes("san francisco") ||
+      v.includes("bay area") ||
+      v.includes("los angeles") ||
+      v.includes("seattle") ||
+      v.includes("oakland")
+    ) return "West Coast";
+    if (v.includes("remote") || v.includes("anywhere")) return "Remote";
 
     return "Other";
   }
 
+  function getUniqueFunctions() {
+    return [...new Set(people.map((p) => String(p["Function"] || "").trim()).filter(Boolean))].sort();
+  }
+
   function populateFilters(base = people) {
+    const selectedFunction = functionFilter.value;
+    const selectedLocation = locationFilter.value;
+
     functionFilter.innerHTML = `<option value="">All Functions</option>`;
 
-    [...new Set(people.map(p => p["Function"]).filter(Boolean))]
-      .sort()
-      .forEach(f => {
-        const opt = document.createElement("option");
-        opt.value = f;
-        opt.textContent = f;
-        functionFilter.appendChild(opt);
-      });
+    getUniqueFunctions().forEach((f) => {
+      const opt = document.createElement("option");
+      opt.value = f;
+      opt.textContent = f;
+      if (f === selectedFunction) opt.selected = true;
+      functionFilter.appendChild(opt);
+    });
 
     const counts = {};
 
-    base.forEach(p => {
+    base.forEach((p) => {
       const loc = normalizeLocation(p["Remote/Location"]);
+      if (!loc) return;
       counts[loc] = (counts[loc] || 0) + 1;
     });
 
     locationFilter.innerHTML = `<option value="">All Locations</option>`;
 
     Object.entries(counts)
-      .sort((a, b) => b[1] - a[1])
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
       .forEach(([loc, count]) => {
         const opt = document.createElement("option");
         opt.value = loc;
         opt.textContent = `${loc} (${count})`;
+        if (loc === selectedLocation) opt.selected = true;
         locationFilter.appendChild(opt);
       });
+
+    if (selectedLocation && !counts[selectedLocation]) {
+      locationFilter.value = "";
+    }
   }
 
   function renderDashboard() {
     const fnCounts = {};
     const regionCounts = {};
 
-    people.forEach(p => {
-      const fn = p["Function"];
+    people.forEach((p) => {
+      const fn = String(p["Function"] || "").trim();
       const region = getRegion(p["Remote/Location"]);
 
-      fnCounts[fn] = (fnCounts[fn] || 0) + 1;
+      if (fn) {
+        fnCounts[fn] = (fnCounts[fn] || 0) + 1;
+      }
       regionCounts[region] = (regionCounts[region] || 0) + 1;
     });
 
     functionDashboard.innerHTML = "";
     locationDashboard.innerHTML = "";
 
-    Object.entries(fnCounts).forEach(([k, v]) => {
-      const el = document.createElement("div");
-      el.className = "function-card";
-      el.innerHTML = `<div>${k}</div><div>${v}</div>`;
-      el.onclick = () => {
-        functionFilter.value = k;
-        locationFilter.value = "";
-        applyFilters();
-      };
-      functionDashboard.appendChild(el);
-    });
+    Object.entries(fnCounts)
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .forEach(([k, v]) => {
+        const el = document.createElement("div");
+        el.className = "function-card";
+        el.innerHTML = `
+          <div class="function-name">${k}</div>
+          <div class="function-value">${v}</div>
+        `;
+        el.onclick = () => {
+          functionFilter.value = String(k).trim();
+          locationFilter.value = "";
+          applyFilters();
+          document.getElementById("directory-section").scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+        };
+        functionDashboard.appendChild(el);
+      });
 
-    Object.entries(regionCounts).forEach(([k, v]) => {
-      const el = document.createElement("div");
-      el.className = "function-card";
-      el.innerHTML = `<div>${k}</div><div>${v}</div>`;
-      locationDashboard.appendChild(el);
-    });
+    Object.entries(regionCounts)
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .forEach(([k, v]) => {
+        const el = document.createElement("div");
+        el.className = "function-card";
+        el.innerHTML = `
+          <div class="function-name">${k}</div>
+          <div class="function-value">${v}</div>
+        `;
+        locationDashboard.appendChild(el);
+      });
 
     totalCount.textContent = people.length;
     functionCount.textContent = Object.keys(fnCounts).length;
@@ -127,9 +163,9 @@ async function loadDirectory() {
       return;
     }
 
-    list.forEach(p => {
+    list.forEach((p) => {
       const name = `${p["First Name"] || ""} ${p["Name"] || ""}`.trim();
-      const fn = p["Function"] || "";
+      const fn = String(p["Function"] || "").trim();
       const loc = p["Remote/Location"] || "";
 
       const card = document.createElement("div");
@@ -147,25 +183,30 @@ async function loadDirectory() {
   }
 
   function applyFilters() {
-    const q = searchBox.value.toLowerCase();
+    const q = searchBox.value.toLowerCase().trim();
     const f = functionFilter.value;
-    const l = locationFilter.value;
+    const selectedLocationBeforeRefresh = locationFilter.value;
 
-    const fnFiltered = people.filter(p =>
-      !f || p["Function"] === f
-    );
+    const fnFiltered = people.filter((p) => {
+      const personFunction = String(p["Function"] || "").trim();
+      return !f || personFunction === f;
+    });
 
     populateFilters(fnFiltered);
 
+    if (selectedLocationBeforeRefresh) {
+      locationFilter.value = selectedLocationBeforeRefresh;
+    }
+
     const activeLoc = locationFilter.value;
 
-    const filtered = fnFiltered.filter(p => {
-      const matchesSearch = Object.values(p)
-        .some(v => String(v).toLowerCase().includes(q));
+    const filtered = fnFiltered.filter((p) => {
+      const matchesSearch = Object.values(p).some((v) =>
+        String(v).toLowerCase().includes(q)
+      );
 
       const matchesLoc =
-        !activeLoc ||
-        normalizeLocation(p["Remote/Location"]) === activeLoc;
+        !activeLoc || normalizeLocation(p["Remote/Location"]) === activeLoc;
 
       return matchesSearch && matchesLoc;
     });
