@@ -2,103 +2,67 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-  <title>Ex-Grubhub Talent Network</title>
-
-  <meta
-    name="description"
-    content="Browse the Ex-GH Talent Network. Search impacted alumni by function, location, and role."
-  />
-
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ex-GH Talent Directory</title>
+  <link rel="stylesheet" href="./styles.css" />
 </head>
-
 <body>
+  <header class="hero">
+    <div class="hero-inner">
+      <h1>Hire Top Ex-Grubhub Talent</h1>
+      <p class="hero-subtitle">
+        Browse open-to-work alumni profiles, filter by function, and connect directly on LinkedIn.
+      </p>
 
-<header class="hero">
-  <div class="hero-inner">
-    <p class="eyebrow">Ex-GH Talent Network</p>
-    <h1>Hire Top Ex-GH Talent</h1>
-
-    <p class="hero-subtext">
-      A curated directory of former Grubhub employees actively exploring new opportunities.
-    </p>
-
-    <div class="hero-actions">
-      <a class="primary-btn" href="#directory-section">Browse Talent</a>
-      <a
-        class="secondary-btn"
-        href="https://docs.google.com/forms/d/e/1FAIpQLSehawGkkedBDJJCGhzKEy33epkB2GeRQ7sB8x8fQ-Uz_kxgAQ/viewform"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Join the Directory
-      </a>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-number" id="totalCount">0</div>
+          <div class="stat-label">Open to Work</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="functionCount">0</div>
+          <div class="stat-label">Functions</div>
+        </div>
+      </div>
     </div>
-  </div>
-</header>
+  </header>
 
-<main>
+  <main class="page">
+    <section class="controls">
+      <div class="search-wrap">
+        <label for="search" class="sr-only">Search people</label>
+        <input
+          type="text"
+          id="search"
+          placeholder="Search by name, role, function, or keyword..."
+        />
+      </div>
 
-  <!-- STATS -->
-  <section class="stats-section">
-    <div class="stat-card stat-card-primary">
-      <div id="totalCount" class="stat-number">0</div>
-      <div class="stat-label">People Searching</div>
-    </div>
+      <div class="filter-wrap">
+        <label for="functionFilter" class="sr-only">Filter by function</label>
+        <select id="functionFilter">
+          <option value="">All Functions</option>
+        </select>
+      </div>
 
-    <div class="stat-card">
-      <div id="functionCount" class="stat-number">0</div>
-      <div class="stat-label">Functions</div>
-    </div>
-  </section>
+      <button id="clearFilters" class="clear-btn" type="button">Clear</button>
+    </section>
 
-  <!-- FUNCTION DASHBOARD -->
-  <section class="dashboard-section">
-    <div class="section-header">
-      <h2>Talent by Function</h2>
-    </div>
-    <div id="functionDashboard" class="function-dashboard"></div>
-  </section>
+    <section class="dashboard-section">
+      <h2>Function Breakdown</h2>
+      <div id="functionDashboard" class="dashboard-list"></div>
+    </section>
 
-  <!-- REGION DASHBOARD -->
-  <section class="dashboard-section">
-    <div class="section-header">
-      <h2>Talent by Region</h2>
-    </div>
-    <div id="locationDashboard" class="function-dashboard"></div>
-  </section>
+    <section class="directory-section">
+      <div class="section-header">
+        <h2>Talent Directory</h2>
+        <p id="resultsCount" class="results-count">0 results</p>
+      </div>
 
-  <!-- FILTERS -->
-  <section class="controls-section" id="directory-section">
-    <div class="section-header">
-      <h2>Browse the Directory</h2>
-    </div>
+      <div id="directory" class="directory-grid"></div>
+    </section>
+  </main>
 
-    <div class="controls">
-
-      <input id="search" type="text" placeholder="Search..." />
-
-      <select id="functionFilter">
-        <option value="">All Functions</option>
-      </select>
-
-      <select id="locationFilter">
-        <option value="">All Locations</option>
-      </select>
-
-      <button id="clearFilters" class="clear-btn">
-        Clear Filters
-      </button>
-
-    </div>
-  </section>
-
-  <section id="directory"></section>
-
-</main>
-
-<script src="script.js"></script>
+  <script src="./script.js"></script>
 </body>
 </html>
