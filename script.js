@@ -5,182 +5,155 @@ async function loadDirectory() {
   const container = document.getElementById("directory");
   const searchBox = document.getElementById("search");
   const functionFilter = document.getElementById("functionFilter");
-  const locationFilter = document.getElementById("locationFilter");
   const clearBtn = document.getElementById("clearFilters");
 
   const totalCount = document.getElementById("totalCount");
   const functionCount = document.getElementById("functionCount");
+  const resultsCount = document.getElementById("resultsCount");
 
   const functionDashboard = document.getElementById("functionDashboard");
-  const locationDashboard = document.getElementById("locationDashboard");
 
-  function slugify(v) {
-    return String(v || "")
+  function slugify(value) {
+    return String(value || "")
       .trim()
       .toLowerCase()
       .replace(/&/g, "and")
-      .replace(/[\/,]/g, " ")
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-]/g, "");
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-");
   }
 
-  function normalizeLocation(v) {
-    v = String(v || "").toLowerCase();
-
-    if (v.includes("new york") || v.includes("nyc") || v.includes("ny city")) return "New York";
-    if (v.includes("chicago")) return "Chicago";
-    if (v.includes("boston")) return "Boston";
-    if (v.includes("san francisco") || v.includes("bay area")) return "SF Bay Area";
-    if (v.includes("los angeles")) return "Los Angeles";
-    if (v.includes("seattle")) return "Seattle";
-    if (v.includes("remote") || v.includes("anywhere")) return "Remote";
-    if (!v.trim()) return "Unknown";
-
-    return "Other";
+  function uniqueValues(field) {
+    return [...new Set(people.map((p) => p[field]).filter(Boolean))].sort();
   }
 
-  function getRegion(v) {
-    v = String(v || "").toLowerCase();
-
-    if (!v.trim()) return "Unknown";
-
-    if (v.includes("new york") || v.includes("nyc") || v.includes("ny city") || v.includes("boston")) return "East Coast";
-    if (v.includes("chicago")) return "Midwest";
-    if (
-      v.includes("san francisco") ||
-      v.includes("bay area") ||
-      v.includes("los angeles") ||
-      v.includes("seattle") ||
-      v.includes("oakland")
-    ) return "West Coast";
-    if (v.includes("remote") || v.includes("anywhere")) return "Remote";
-
-    return "Other";
-  }
-
-  function getUniqueFunctions() {
-    return [...new Set(people.map((p) => String(p["Function"] || "").trim()).filter(Boolean))].sort();
-  }
-
-  function populateFilters(base = people) {
-    const selectedFunction = String(functionFilter.value || "").trim();
-    const selectedLocation = String(locationFilter.value || "").trim();
-
-    functionFilter.innerHTML = `<option value="">All Functions</option>`;
-
-    getUniqueFunctions().forEach((f) => {
-      const cleanFunction = String(f || "").trim();
-      const opt = document.createElement("option");
-      opt.value = cleanFunction;
-      opt.textContent = cleanFunction;
-      functionFilter.appendChild(opt);
-    });
-
-    // Force selected function back after rebuilding options
-    functionFilter.value = selectedFunction;
-
+  function countByField(list, field) {
     const counts = {};
-
-    base.forEach((p) => {
-      const loc = normalizeLocation(p["Remote/Location"]);
-      if (!loc) return;
-      counts[loc] = (counts[loc] || 0) + 1;
+    list.forEach((item) => {
+      const value = item[field];
+      if (value) {
+        counts[value] = (counts[value] || 0) + 1;
+      }
     });
-
-    locationFilter.innerHTML = `<option value="">All Locations</option>`;
-
-    Object.entries(counts)
-      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-      .forEach(([loc, count]) => {
-        const opt = document.createElement("option");
-        opt.value = loc;
-        opt.textContent = `${loc} (${count})`;
-        locationFilter.appendChild(opt);
-      });
-
-    // Restore location only if still valid
-    if (selectedLocation && counts[selectedLocation]) {
-      locationFilter.value = selectedLocation;
-    } else {
-      locationFilter.value = "";
-    }
+    return counts;
   }
 
-  function renderDashboard() {
-    const fnCounts = {};
-    const regionCounts = {};
+  function normalizeText(value) {
+    return String(value || "").trim();
+  }
 
-    people.forEach((p) => {
-      const fn = String(p["Function"] || "").trim();
-      const region = getRegion(p["Remote/Location"]);
+  function shortDescription(text) {
+    const clean = normalizeText(text);
+    if (!clean) return "";
+    return clean.length > 140 ? `${clean.slice(0, 140).trim()}...` : clean;
+  }
 
-      if (fn) {
-        fnCounts[fn] = (fnCounts[fn] || 0) + 1;
-      }
-      regionCounts[region] = (regionCounts[region] || 0) + 1;
+  function formatRole(person) {
+    const role = normalizeText(person.formerRole || person.role);
+    const company = normalizeText(person.company || "Grubhub");
+
+    if (!role) return `Most recently served at ${company}.`;
+
+    const roleLower = role.charAt(0).toLowerCase() + role.slice(1);
+    return `Most recently served as a ${roleLower} at ${company}.`;
+  }
+
+  function renderLinkedIn(person) {
+    const link = normalizeText(person.linkedin);
+    const isValid = link && /^https?:\/\//i.test(link);
+
+    if (isValid) {
+      return `
+        <a href="${link}" target="_blank" rel="noopener noreferrer" class="linkedin">
+          View LinkedIn →
+        </a>
+      `;
+    }
+
+    return `
+      <span class="linkedin pending">
+        LinkedIn: Coming soon
+      </span>
+    `;
+  }
+
+  function populateFunctionFilter() {
+    const functions = uniqueValues("function");
+    functions.forEach((fn) => {
+      const option = document.createElement("option");
+      option.value = fn;
+      option.textContent = fn;
+      functionFilter.appendChild(option);
     });
+  }
+
+  function renderDashboard(list) {
+    const counts = countByField(list, "function");
+    const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    const max = entries.length ? entries[0][1] : 1;
 
     functionDashboard.innerHTML = "";
-    locationDashboard.innerHTML = "";
 
-    Object.entries(fnCounts)
-      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-      .forEach(([k, v]) => {
-        const el = document.createElement("div");
-        el.className = "function-card";
-        el.innerHTML = `
-          <div class="function-name">${k}</div>
-          <div class="function-value">${v}</div>
-        `;
-        el.onclick = () => {
-          functionFilter.value = String(k).trim();
-          locationFilter.value = "";
-          applyFilters();
-          document.getElementById("directory-section").scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-          });
-        };
-        functionDashboard.appendChild(el);
-      });
+    entries.forEach(([label, value]) => {
+      const row = document.createElement("div");
+      row.className = "dashboard-row";
 
-    Object.entries(regionCounts)
-      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-      .forEach(([k, v]) => {
-        const el = document.createElement("div");
-        el.className = "function-card";
-        el.innerHTML = `
-          <div class="function-name">${k}</div>
-          <div class="function-value">${v}</div>
-        `;
-        locationDashboard.appendChild(el);
-      });
+      const percentage = (value / max) * 100;
 
-    totalCount.textContent = people.length;
-    functionCount.textContent = Object.keys(fnCounts).length;
+      row.innerHTML = `
+        <div class="dashboard-label">${label}</div>
+        <div class="dashboard-bar-wrap">
+          <div class="dashboard-bar" style="width: ${percentage}%"></div>
+        </div>
+        <div class="dashboard-value">${value}</div>
+      `;
+
+      functionDashboard.appendChild(row);
+    });
   }
 
-  function render(list) {
+  function renderPeople(list) {
     container.innerHTML = "";
 
     if (!list.length) {
-      container.innerHTML = "<p>No results</p>";
+      container.innerHTML = `
+        <div class="empty-state">
+          No matches found. Try a different search or clear filters.
+        </div>
+      `;
+      resultsCount.textContent = "0 results";
       return;
     }
 
-    list.forEach((p) => {
-      const name = `${p["First Name"] || ""} ${p["Name"] || ""}`.trim();
-      const fn = String(p["Function"] || "").trim();
-      const loc = p["Remote/Location"] || "";
+    resultsCount.textContent = `${list.length} result${list.length === 1 ? "" : "s"}`;
 
-      const card = document.createElement("div");
+    list.forEach((person) => {
+      const card = document.createElement("article");
       card.className = "card";
+      card.setAttribute("data-name", slugify(person.name));
 
       card.innerHTML = `
-        ${fn ? `<div class="badge badge-${slugify(fn)}">${fn}</div>` : ""}
-        <h3>${name}</h3>
-        <p>${p["Former Job Title"] || ""}</p>
-        <p class="location-badge">📍 ${loc}</p>
+        <div class="tag">Open to Work</div>
+
+        <h3>${normalizeText(person.name)}</h3>
+        <p class="role">${normalizeText(person.formerRole || person.role || "")}</p>
+
+        <div class="meta">
+          ${normalizeText(person.location) ? `📍 ${normalizeText(person.location)}` : ""}
+        </div>
+
+        <p class="summary">
+          ${formatRole(person)}
+        </p>
+
+        ${
+          normalizeText(person.description)
+            ? `<p class="description">${shortDescription(person.description)}</p>`
+            : ""
+        }
+
+        <div class="footer">
+          ${renderLinkedIn(person)}
+        </div>
       `;
 
       container.appendChild(card);
@@ -188,61 +161,60 @@ async function loadDirectory() {
   }
 
   function applyFilters() {
-    const q = searchBox.value.toLowerCase().trim();
-    const selectedFunction = String(functionFilter.value || "").trim();
-    const selectedLocation = String(locationFilter.value || "").trim();
+    const searchTerm = searchBox.value.trim().toLowerCase();
+    const selectedFunction = functionFilter.value;
 
-    const fnFiltered = people.filter((p) => {
-      const personFunction = String(p["Function"] || "").trim();
-      return !selectedFunction || personFunction === selectedFunction;
+    const filtered = people.filter((person) => {
+      const matchesFunction =
+        !selectedFunction || normalizeText(person.function) === selectedFunction;
+
+      const haystack = [
+        person.name,
+        person.formerRole,
+        person.role,
+        person.function,
+        person.location,
+        person.description,
+        person.company
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      const matchesSearch = !searchTerm || haystack.includes(searchTerm);
+
+      return matchesFunction && matchesSearch;
     });
 
-    populateFilters(fnFiltered);
-
-    // Force function value again after populate, for iOS Safari
-    functionFilter.value = selectedFunction;
-
-    // Restore location only if still valid
-    if (selectedLocation) {
-      locationFilter.value = selectedLocation;
-    }
-
-    const activeLoc = String(locationFilter.value || "").trim();
-
-    const filtered = fnFiltered.filter((p) => {
-      const matchesSearch = Object.values(p).some((v) =>
-        String(v).toLowerCase().includes(q)
-      );
-
-      const matchesLoc =
-        !activeLoc || normalizeLocation(p["Remote/Location"]) === activeLoc;
-
-      return matchesSearch && matchesLoc;
-    });
-
-    render(filtered);
+    renderPeople(filtered);
   }
 
-  clearBtn.onclick = () => {
+  searchBox.addEventListener("input", applyFilters);
+  functionFilter.addEventListener("change", applyFilters);
+
+  clearBtn.addEventListener("click", () => {
     searchBox.value = "";
     functionFilter.value = "";
-    locationFilter.value = "";
-    populateFilters();
-    render(people);
-  };
-
-  searchBox.oninput = applyFilters;
-
-  functionFilter.onchange = () => {
-    locationFilter.value = "";
     applyFilters();
-  };
+  });
 
-  locationFilter.onchange = applyFilters;
+  totalCount.textContent = people.length;
+  functionCount.textContent = uniqueValues("function").length;
 
-  populateFilters();
-  renderDashboard();
-  render(people);
+  populateFunctionFilter();
+  renderDashboard(people);
+  renderPeople(people);
 }
 
-loadDirectory();
+loadDirectory().catch((error) => {
+  console.error("Failed to load directory:", error);
+
+  const container = document.getElementById("directory");
+  if (container) {
+    container.innerHTML = `
+      <div class="empty-state">
+        Something broke while loading the directory. Check your people.json file and file paths.
+      </div>
+    `;
+  }
+});
