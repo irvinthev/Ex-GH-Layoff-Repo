@@ -86,6 +86,16 @@ async function loadDirectory() {
     return clean.length > 140 ? `${clean.slice(0, 140).trim()}...` : clean;
   }
 
+  function slugify(value) {
+    return String(value || "")
+      .trim()
+      .toLowerCase()
+      .replace(/&/g, "and")
+      .replace(/[\/,]/g, " ")
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "");
+  }
+
   function normalizeLocation(value) {
     const v = String(value || "").toLowerCase().trim();
 
@@ -185,7 +195,6 @@ async function loadDirectory() {
     }
 
     const lower = raw.toLowerCase();
-
     const looksLikeLabelOnly =
       lower.includes("linkedin") && !lower.includes("linkedin.com");
 
@@ -350,12 +359,13 @@ async function loadDirectory() {
       const role = getRole(person);
       const rawLocation = getRawLocation(person);
       const description = getDescription(person);
+      const fn = getFunction(person);
 
       const card = document.createElement("article");
       card.className = "card";
 
       card.innerHTML = `
-        <div class="tag">Open to Work</div>
+        ${fn ? `<div class="badge badge-${slugify(fn)}">${fn}</div>` : ""}
 
         <h3>${name}</h3>
         <p class="role">${role}</p>
