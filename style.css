@@ -114,13 +114,6 @@ body {
   flex-wrap: wrap;
 }
 
-.hero-note {
-  margin-top: 14px;
-  color: var(--text-muted);
-  font-size: 14px;
-  line-height: 1.5;
-}
-
 /* =====================
    BUTTONS
 ===================== */
@@ -229,12 +222,6 @@ body {
   margin: 0;
   font-size: 28px;
   color: var(--text);
-}
-
-.section-header p {
-  margin: 8px 0 0;
-  color: var(--text-muted);
-  line-height: 1.5;
 }
 
 .results-count {
@@ -428,6 +415,8 @@ body {
 
 .footer {
   margin-top: 14px;
+  display: flex;
+  align-items: center;
 }
 
 /* =====================
@@ -447,119 +436,10 @@ body {
 }
 
 /* =====================
-   LEGACY BADGES
-===================== */
-
-.badge {
-  display: inline-block;
-  padding: 4px 10px;
-  margin-bottom: 10px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  background: #f1f5f9;
-  color: #334155;
-}
-
-.badge-product-design {
-  background: #f3e8ff;
-  color: #7c3aed;
-}
-
-.badge-it {
-  background: #e0f2fe;
-  color: #0369a1;
-}
-
-.badge-go-to-market {
-  background: #ecfdf5;
-  color: #047857;
-}
-
-.badge-engineering {
-  background: #e0edff;
-  color: #2563eb;
-}
-
-.badge-operations {
-  background: #fff4e5;
-  color: #f59e0b;
-}
-
-.badge-design {
-  background: #f3e8ff;
-  color: #8b5cf6;
-}
-
-.badge-customer-support {
-  background: #e6fffa;
-  color: #14b8a6;
-}
-
-.badge-sales {
-  background: #ecfdf5;
-  color: #22c55e;
-}
-
-.badge-product {
-  background: #eef2ff;
-  color: #6366f1;
-}
-
-.badge-data-and-analytics {
-  background: #ecfeff;
-  color: #06b6d4;
-}
-
-.badge-marketing {
-  background: #fdf2f8;
-  color: #ec4899;
-}
-
-/* =====================
-   LEGACY LOCATION BADGE
-===================== */
-
-.location-badge {
-  display: inline-block;
-  margin: 8px 0 0;
-  padding: 6px 10px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #374151;
-  background: #eef2f7;
-  border: 1px solid #dbe3ee;
-  border-radius: 999px;
-}
-
-/* =====================
-   LINKEDIN
+   LINKEDIN CTA
 ===================== */
 
 .linkedin {
-  display: inline-block;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--primary);
-  text-decoration: none;
-  transition: color 0.15s ease, transform 0.15s ease;
-}
-
-.linkedin:hover {
-  color: var(--primary-hover);
-  text-decoration: underline;
-  transform: translateY(-1px);
-}
-
-.linkedin.pending {
-  color: var(--text-muted);
-  text-decoration: none;
-  cursor: default;
-  transform: none;
-}
-
-/* legacy class support */
-.linkedin-btn {
   display: inline-block;
   margin-top: 12px;
   padding: 10px 14px;
@@ -569,20 +449,27 @@ body {
   background: #f1f5f9;
   color: var(--primary);
   text-decoration: none;
-  transition: background 0.15s ease, transform 0.15s ease;
+  transition: background 0.15s ease, transform 0.15s ease, color 0.15s ease;
 }
 
-.linkedin-btn:hover {
+.linkedin:hover {
   background: #e2e8f0;
+  color: var(--primary-hover);
   transform: translateY(-1px);
+}
+
+.linkedin.pending {
+  background: #f9fafb;
+  color: var(--text-muted);
+  cursor: default;
+  transform: none;
 }
 
 /* =====================
    EMPTY STATE
 ===================== */
 
-.empty-state,
-#directory > p {
+.empty-state {
   grid-column: 1 / -1;
   background: white;
   border: 1px solid var(--border);
