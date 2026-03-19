@@ -90,7 +90,7 @@ async function loadDirectory() {
     const v = String(value || "").toLowerCase().trim();
 
     if (!v) return "Unknown";
-    if (v.includes("new york") || v.includes("nyc") || v.includes("ny city")) return "New York";
+    if (v.includes("new york") || v.includes("nyc") || v.includes("ny city") || v.includes("new york city")) return "New York";
     if (v.includes("chicago")) return "Chicago";
     if (v.includes("boston")) return "Boston";
     if (v.includes("san francisco") || v.includes("bay area")) return "SF Bay Area";
@@ -118,6 +118,7 @@ async function loadDirectory() {
       v.includes("new york") ||
       v.includes("nyc") ||
       v.includes("ny city") ||
+      v.includes("new york city") ||
       v.includes("boston") ||
       v.includes("rhode island") ||
       v.includes("north carolina")
@@ -406,7 +407,6 @@ async function loadDirectory() {
 
     const filtered = functionFiltered.filter((person) => {
       const personLocation = normalizeLocation(getRawLocation(person));
-
       const matchesLocation = !activeLocation || personLocation === activeLocation;
 
       const haystack = [
