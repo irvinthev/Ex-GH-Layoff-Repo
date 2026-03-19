@@ -3,28 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
   <title>Ex-Grubhub Talent Network</title>
-
   <meta
     name="description"
-    content="Browse the Ex-GH Talent Network. Search impacted alumni by function and role."
+    content="Browse the Ex-GH Talent Network. Search impacted alumni by function, location, and role."
   />
-
   <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-
   <header class="hero">
     <div class="hero-inner">
       <p class="eyebrow">Ex-GH Talent Network</p>
       <h1>Hire Top Ex-GH Talent</h1>
-
       <p class="hero-subtext">
         A curated directory of former Grubhub employees actively exploring new opportunities.
       </p>
-
       <div class="hero-actions">
         <a class="primary-btn" href="#directory-section">Browse Talent</a>
         <a
@@ -40,8 +33,6 @@
   </header>
 
   <main class="page">
-
-    <!-- STATS -->
     <section class="stats-section">
       <div class="stat-card stat-card-primary">
         <div id="totalCount" class="stat-number">0</div>
@@ -54,7 +45,6 @@
       </div>
     </section>
 
-    <!-- FUNCTION DASHBOARD -->
     <section class="dashboard-section">
       <div class="section-header">
         <h2>Talent by Function</h2>
@@ -62,7 +52,13 @@
       <div id="functionDashboard" class="function-dashboard"></div>
     </section>
 
-    <!-- FILTERS -->
+    <section class="dashboard-section">
+      <div class="section-header">
+        <h2>Talent by Region</h2>
+      </div>
+      <div id="locationDashboard" class="function-dashboard"></div>
+    </section>
+
     <section class="controls-section" id="directory-section">
       <div class="section-header">
         <h2>Browse the Directory</h2>
@@ -80,15 +76,17 @@
           <option value="">All Functions</option>
         </select>
 
+        <select id="locationFilter">
+          <option value="">All Locations</option>
+        </select>
+
         <button id="clearFilters" class="clear-btn" type="button">
           Clear Filters
         </button>
       </div>
     </section>
 
-    <!-- DIRECTORY -->
     <section id="directory" class="directory-grid"></section>
-
   </main>
 
   <script src="script.js"></script>
