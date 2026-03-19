@@ -34,12 +34,16 @@ async function loadDirectory() {
     return `${first} ${last}`.trim();
   }
 
-  function getFunction(person) {
-    return getValue(person, ["function", "Function"]);
-  }
-
   function getRole(person) {
     return getValue(person, ["formerRole", "Former Role", "Former Job Title", "role"]);
+  }
+
+  function getTeam(person) {
+    return getValue(person, ["Former Team", "Team", "formerTeam"]);
+  }
+
+  function getFunction(person) {
+    return getValue(person, ["function", "Function"]);
   }
 
   function getCompany(person) {
@@ -48,6 +52,16 @@ async function loadDirectory() {
 
   function getRawLocation(person) {
     return getValue(person, ["location", "Location", "Remote/Location"]);
+  }
+
+  function getLinkedIn(person) {
+    return getValue(person, [
+      "linkedin",
+      "LinkedIn",
+      "Linkedin",
+      "Linked In",
+      "LinkedIn URL"
+    ]);
   }
 
   function getDescription(person) {
@@ -60,10 +74,6 @@ async function loadDirectory() {
     }
 
     return desc;
-  }
-
-  function getLinkedIn(person) {
-    return getValue(person, ["linkedin", "LinkedIn", "Linkedin", "Linked In"]);
   }
 
   function normalizeText(value) {
@@ -89,6 +99,10 @@ async function loadDirectory() {
     if (v.includes("oakland")) return "Oakland";
     if (v.includes("denver") || v.includes("broomfield") || v.includes("colorado")) return "Colorado";
     if (v.includes("austin")) return "Austin";
+    if (v.includes("tucson")) return "Tucson";
+    if (v.includes("rhode island")) return "Rhode Island";
+    if (v.includes("north carolina")) return "North Carolina";
+    if (v.includes("romania")) return "Romania";
     if (v.includes("remote") || v.includes("anywhere")) return "Remote";
 
     return value || "Other";
@@ -99,16 +113,46 @@ async function loadDirectory() {
 
     if (!v) return "Unknown";
     if (v.includes("remote") || v.includes("anywhere")) return "Remote";
-    if (v.includes("new york") || v.includes("nyc") || v.includes("ny city") || v.includes("boston") || v.includes("rhode island")) return "East Coast";
-    if (v.includes("chicago") || v.includes("ohio")) return "Midwest";
+
+    if (
+      v.includes("new york") ||
+      v.includes("nyc") ||
+      v.includes("ny city") ||
+      v.includes("boston") ||
+      v.includes("rhode island") ||
+      v.includes("north carolina")
+    ) {
+      return "East Coast";
+    }
+
+    if (v.includes("chicago") || v.includes("ohio")) {
+      return "Midwest";
+    }
+
     if (
       v.includes("san francisco") ||
       v.includes("bay area") ||
       v.includes("los angeles") ||
       v.includes("seattle") ||
       v.includes("oakland")
-    ) return "West Coast";
-    if (v.includes("denver") || v.includes("broomfield") || v.includes("colorado") || v.includes("austin") || v.includes("texas")) return "Central / Mountain";
+    ) {
+      return "West Coast";
+    }
+
+    if (
+      v.includes("denver") ||
+      v.includes("broomfield") ||
+      v.includes("colorado") ||
+      v.includes("austin") ||
+      v.includes("texas") ||
+      v.includes("tucson")
+    ) {
+      return "Central / Mountain";
+    }
+
+    if (v.includes("romania")) {
+      return "International";
+    }
 
     return "Other";
   }
@@ -122,7 +166,9 @@ async function loadDirectory() {
     const role = getRole(person);
     const company = getCompany(person);
 
-    if (!role) return `Most recently served at ${company}.`;
+    if (!role) {
+      return `Most recently served at ${company}.`;
+    }
 
     const roleLower = role.toLowerCase();
     const article = startsWithVowelSound(roleLower) ? "an" : "a";
@@ -131,29 +177,55 @@ async function loadDirectory() {
   }
 
   function renderLinkedIn(person) {
-    const link = getLinkedIn(person);
-    const isValid = /^https?:\/\//i.test(link);
+    let raw = getLinkedIn(person).trim();
 
-    if (isValid) {
-      return `
-        <a href="${link}" target="_blank" rel="noopener noreferrer" class="linkedin">
-          View LinkedIn →
-        </a>
-      `;
+    if (!raw) {
+      return `<span class="linkedin pending">Profile pending</span>`;
     }
 
-    return `<span class="linkedin pending">LinkedIn: Coming soon</span>`;
+    const lower = raw.toLowerCase();
+
+    const looksLikeLabelOnly =
+      lower.includes("linkedin") && !lower.includes("linkedin.com");
+
+    if (looksLikeLabelOnly) {
+      return `<span class="linkedin pending">Profile pending</span>`;
+    }
+
+    if (
+      raw.includes("linkedin.com") &&
+      !raw.startsWith("http://") &&
+      !raw.startsWith("https://")
+    ) {
+      raw = `https://${raw}`;
+    }
+
+    const isValid = /^https?:\/\/(www\.)?linkedin\.com\//i.test(raw);
+
+    if (!isValid) {
+      return `<span class="linkedin pending">Profile pending</span>`;
+    }
+
+    return `
+      <a href="${raw}" target="_blank" rel="noopener noreferrer" class="linkedin">
+        View Profile →
+      </a>
+    `;
   }
 
   function uniqueValuesFromPeople(list, getter) {
-    return [...new Set(list.map(getter).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+    return [...new Set(list.map(getter).filter(Boolean))].sort((a, b) =>
+      a.localeCompare(b)
+    );
   }
 
   function countBy(list, getter) {
     const counts = {};
     list.forEach((person) => {
       const key = getter(person);
-      if (key) counts[key] = (counts[key] || 0) + 1;
+      if (key) {
+        counts[key] = (counts[key] || 0) + 1;
+      }
     });
     return counts;
   }
@@ -163,6 +235,7 @@ async function loadDirectory() {
     const functions = uniqueValuesFromPeople(people, getFunction);
 
     functionFilter.innerHTML = `<option value="">All Functions</option>`;
+
     functions.forEach((fn) => {
       const option = document.createElement("option");
       option.value = fn;
@@ -176,7 +249,9 @@ async function loadDirectory() {
   function populateLocationFilter(baseList) {
     const currentValue = locationFilter.value;
     const counts = countBy(baseList, (person) => normalizeLocation(getRawLocation(person)));
-    const entries = Object.entries(counts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    const entries = Object.entries(counts).sort(
+      (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
+    );
 
     locationFilter.innerHTML = `<option value="">All Locations</option>`;
 
@@ -198,8 +273,12 @@ async function loadDirectory() {
     const functionCounts = countBy(people, getFunction);
     const regionCounts = countBy(people, (person) => getRegion(getRawLocation(person)));
 
-    const functionEntries = Object.entries(functionCounts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-    const regionEntries = Object.entries(regionCounts).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    const functionEntries = Object.entries(functionCounts).sort(
+      (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
+    );
+    const regionEntries = Object.entries(regionCounts).sort(
+      (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
+    );
 
     functionDashboard.innerHTML = "";
     locationDashboard.innerHTML = "";
@@ -211,6 +290,7 @@ async function loadDirectory() {
         <div class="function-name">${fn}</div>
         <div class="function-value">${count}</div>
       `;
+
       el.onclick = () => {
         functionFilter.value = fn;
         locationFilter.value = "";
@@ -220,6 +300,7 @@ async function loadDirectory() {
           block: "start"
         });
       };
+
       functionDashboard.appendChild(el);
     });
 
@@ -230,6 +311,15 @@ async function loadDirectory() {
         <div class="function-name">${region}</div>
         <div class="function-value">${count}</div>
       `;
+
+      el.onclick = () => {
+        applyRegionFilter(region);
+        document.getElementById("directory-section").scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      };
+
       locationDashboard.appendChild(el);
     });
 
@@ -265,11 +355,16 @@ async function loadDirectory() {
 
       card.innerHTML = `
         <div class="tag">Open to Work</div>
+
         <h3>${name}</h3>
         <p class="role">${role}</p>
+
         ${rawLocation ? `<div class="meta">📍 ${rawLocation}</div>` : ""}
+
         <p class="summary">${formatRole(person)}</p>
+
         ${description ? `<p class="description">${shortDescription(description)}</p>` : ""}
+
         <div class="footer">
           ${renderLinkedIn(person)}
         </div>
@@ -277,6 +372,19 @@ async function loadDirectory() {
 
       container.appendChild(card);
     });
+  }
+
+  function applyRegionFilter(region) {
+    searchBox.value = "";
+    functionFilter.value = "";
+    locationFilter.value = "";
+
+    const filtered = people.filter((person) => {
+      return getRegion(getRawLocation(person)) === region;
+    });
+
+    populateLocationFilter(filtered);
+    render(filtered);
   }
 
   function applyFilters() {
@@ -304,12 +412,15 @@ async function loadDirectory() {
       const haystack = [
         getName(person),
         getRole(person),
+        getTeam(person),
         getFunction(person),
         getRawLocation(person),
         getDescription(person),
         getCompany(person),
         getLinkedIn(person)
-      ].join(" ").toLowerCase();
+      ]
+        .join(" ")
+        .toLowerCase();
 
       const matchesSearch = !q || haystack.includes(q);
 
