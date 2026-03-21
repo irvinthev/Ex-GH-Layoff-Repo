@@ -38,7 +38,7 @@
     "Former Job Title": "Software Engineer II (FE)",
     "Former Team": "Engineering",
     "Function": "Engineering",
-    "Remote/Location": "Remote",
+    "Remote/Location": "Phoenix/Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/terrance-woods-20389684/",
     "Description": "Terrance Woods most recently served as Software Engineer II (FE) at Grubhub.",
     "Top 3 Skills": "Coding, Debugging, Problem-solving"
@@ -46,10 +46,10 @@
   {
     "First Name": "Ruthea",
     "Last Name": "Waller",
-    "Former Job Title": "Manager QA",
-    "Former Team": "",
+    "Former Job Title": "Quality Assurance Manager",
+    "Former Team": "Care",
     "Function": "Operations",
-    "Remote/Location": "Remote",
+    "Remote/Location": "Texas/Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/ruthea-waller-05023ba2?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
     "Description": "Ruthea  Waller most recently served as Manager QA at Grubhub within the  organization.",
     "Top 3 Skills": "Quality Assurance, Quality Management, Regression Testing"
@@ -148,7 +148,7 @@
     "Former Job Title": "Operations Manager - Business Insights",
     "Former Team": "Care",
     "Function": "Operations",
-    "Remote/Location": "Anywhere",
+    "Remote/Location": "New York/Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/carrin-strain/",
     "Description": "Carrin Strain most recently served as Operations Manager - Business Insights at Grubhub.",
     "Top 3 Skills": "Operations Management, Business Insights, Management"
@@ -159,7 +159,7 @@
     "Former Job Title": "Senior Software Engineer (FE)",
     "Former Team": "Engineering",
     "Function": "Engineering",
-    "Remote/Location": "Remote",
+    "Remote/Location": "Kansas/Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/mark-spooner-603b9b55/",
     "Description": "Mark Spooner most recently served as Senior Software Engineer (FE) at Grubhub.",
     "Top 3 Skills": "Front-End Web Development, TypeScript, React"
@@ -188,12 +188,12 @@
   },
   {
     "First Name": "Alicia",
-    "Last Name": "Roberts",
+    "Last Name": "Mack",
     "Former Job Title": "Program Manager",
-    "Former Team": "Corporate accounts",
+    "Former Team": "Corporate Accounts",
     "Function": "Go to Market",
-    "Remote/Location": "",
-    "LinkedIn URL": "",
+    "Remote/Location": "New York",
+    "LinkedIn URL": "https://www.linkedin.com/in/alicia-mack-clientops/",
     "Description": "Alicia Roberts most recently served as Program Manager at Grubhub.",
     "Top 3 Skills": "Program Management, Account Management, Go-to-Market Strategy"
   },
@@ -231,23 +231,12 @@
     "Top 3 Skills": "Team Leadership, Customer Service, Customer Support"
   },
   {
-    "First Name": "Anthony",
-    "Last Name": "Potrykus",
-    "Former Job Title": "Data Analyst III",
-    "Former Team": "Finance/Analytics",
-    "Function": "Data & Analytics",
-    "Remote/Location": "Austin/Hybrid Remote",
-    "LinkedIn URL": "",
-    "Description": "Anthony Potrykus  most recently served as Data Analyst III at Grubhub.",
-    "Top 3 Skills": "Data Analysis, Financial Analysis, Statistical Analysis"
-  },
-  {
     "First Name": "David",
     "Last Name": "Porosnicu",
     "Former Job Title": "Senior Software Engineer",
     "Former Team": "Engineering - Diner",
     "Function": "Engineering",
-    "Remote/Location": "Remote",
+    "Remote/Location": "Remote / Romania",
     "LinkedIn URL": "https://www.linkedin.com/in/david-porosnicu-881827144/",
     "Description": "David Porosnicu most recently served as Senior Software Engineer at Grubhub.",
     "Top 3 Skills": "Software Engineering, Software Development, System Design"
@@ -269,7 +258,7 @@
     "Former Job Title": "Software Engineer II (BE)",
     "Former Team": "Checkout Platform/Engineering",
     "Function": "Engineering",
-    "Remote/Location": "Chicago",
+    "Remote/Location": "Chicago/Remote",
     "LinkedIn URL": "www.linkedin.com/in/patel-prem",
     "Description": "Prem Patel most recently served as Software Engineer II (BE) at Grubhub.",
     "Top 3 Skills": "Backend Development, Software Engineering, Checkout Platforms"
@@ -379,7 +368,7 @@
     "Former Job Title": "Software Engineer ll FE",
     "Former Team": "Bottom of Funnel, Web Engineering",
     "Function": "Engineering",
-    "Remote/Location": "Remote",
+    "Remote/Location": "Remote / Romania",
     "LinkedIn URL": "https://www.linkedin.com/in/vladlintes/",
     "Description": "Vlad Lintes most recently served as Software Engineer ll FE at Grubhub.",
     "Top 3 Skills": "Software Engineering, Frontend Development, Web Engineering"
@@ -434,7 +423,7 @@
     "Former Job Title": "Technical Project Manager",
     "Former Team": "Product",
     "Function": "Product",
-    "Remote/Location": "Remote",
+    "Remote/Location": "Seattle/Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/kim-sean/",
     "Description": "Sean Kim most recently served as Technical Project Manager at Grubhub.",
     "Top 3 Skills": "Project Management, Agile Methodologies, Technical Leadership"
@@ -511,7 +500,7 @@
     "Former Job Title": "Senior Software Engineer (FE)",
     "Former Team": "Engineering",
     "Function": "Engineering",
-    "Remote/Location": "Remote",
+    "Remote/Location": "Remote / Romania",
     "LinkedIn URL": "https://www.linkedin.com/in/lucian-hij-web",
     "Description": "Lucian Hij most recently served as Senior Software Engineer (FE) at Grubhub.",
     "Top 3 Skills": "Frontend Development, JavaScript, Software Engineering"
@@ -588,7 +577,7 @@
     "Former Job Title": "Enterprise Data Onboarding, Team Lead",
     "Former Team": "Data",
     "Function": "Data & Analytics",
-    "Remote/Location": "Remote",
+    "Remote/Location": "Chicago/Remote",
     "LinkedIn URL": "www.linkedin.com/in/crystal-franklin-6b3238127",
     "Description": "Crystal Franklin most recently served as Enterprise Data Onboarding, Team Lead at Grubhub.",
     "Top 3 Skills": "Data Onboarding, Team Leadership, Data Analytics"
@@ -610,7 +599,7 @@
     "Former Job Title": "Sr. Specialist, Content Integrity",
     "Former Team": "Content Integrity/QA/Merchant Network",
     "Function": "Operations",
-    "Remote/Location": "Remote (originally Chicago)",
+    "Remote/Location": "Chicago/Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/ryan-eshleman/",
     "Description": "Ryan Eshleman most recently served as Sr. Specialist, Content Integrity at Grubhub.",
     "Top 3 Skills": "Content Integrity, Quality Assurance, Operations"
@@ -687,7 +676,7 @@
     "Former Job Title": "Staff Frontend Engineer",
     "Former Team": "Merchant Web",
     "Function": "Engineering",
-    "Remote/Location": "Chicago",
+    "Remote/Location": "Chicago/Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/imjoshdean/",
     "Description": "Josh Dean most recently served as Staff Frontend Engineer at Grubhub.",
     "Top 3 Skills": "Frontend Development, Web Engineering, User Interface Design"
@@ -698,7 +687,7 @@
     "Former Job Title": "Product Manager II",
     "Former Team": "Merchant Integrations",
     "Function": "Product",
-    "Remote/Location": "Boston",
+    "Remote/Location": "Boston/Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/pradipto-dasgupta/",
     "Description": "Strategic Product Manager II specializing in high-impact merchant integrations and growth.",
     "Top 3 Skills": "Product Management, Merchant Integrations, Growth"
@@ -775,7 +764,7 @@
     "Former Job Title": "Software Engineer II - Android",
     "Former Team": "Engineering",
     "Function": "Engineering",
-    "Remote/Location": "Remote",
+    "Remote/Location": "Bay Area / Remote",
     "LinkedIn URL": "www.linkedin.com/in/ankita-48349316",
     "Description": "Ankita Ankita most recently served as Software Engineer II - Android at Grubhub.",
     "Top 3 Skills": "Android, Software Engineering, Mobile Development"
@@ -808,7 +797,7 @@
     "Former Job Title": "Helpdesk Analyst II",
     "Former Team": "Corp IT",
     "Function": "Customer Care & Support",
-    "Remote/Location": "Chicago",
+    "Remote/Location": "Chicago/Remote",
     "LinkedIn URL": "linkedin.com/in/robert-holland752",
     "Description": "Experienced Helpdesk Analyst II delivering exceptional technical solutions and customer support.",
     "Top 3 Skills": "Technical solutions, Customer support, Helpdesk analysis"
