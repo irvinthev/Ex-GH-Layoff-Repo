@@ -7,7 +7,7 @@
     "Function": "Engineering",
     "Remote/Location": "Chicago",
     "LinkedIn URL": "www.linkedin.com/in/shaocheng-zhang-a03604220",
-    "Description": "Sean Zhang most recently served as Software Engineer I  at Grubhub.",
+    "Description": "Software Engineer building scalable backend and web applications\nBackend systems, APIs, full-stack development",
     "Top 3 Skills": "Software Engineering, Technical Solutions, Customer Support",
     "Open to Work": "Yes"
   },
@@ -19,7 +19,7 @@
     "Function": "Engineering",
     "Remote/Location": "NY City / Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/mingyang-yan/",
-    "Description": "Mindy Yan most recently served as Software engineer (Android) at Grubhub.",
+    "Description": "Android Engineer building high-performance mobile applications\nKotlin, Android, mobile architecture",
     "Top 3 Skills": "Android Development, Software Engineering, Mobile Development",
     "Open to Work": "Yes"
   },
@@ -31,7 +31,7 @@
     "Function": "Customer Care & Support",
     "Remote/Location": "Chicago/Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/jacqueline-wujec/",
-    "Description": "Jacqueline Wujec most recently served as Instructional Designer at Grubhub.",
+    "Description": "Instructional Designer creating scalable training and enablement programs\nLearning design, content development, customer support",
     "Top 3 Skills": "Curriculum development, instructional design, instructional technology",
     "Open to Work": "Yes"
   },
@@ -43,7 +43,7 @@
     "Function": "Engineering",
     "Remote/Location": "Phoenix/Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/terrance-woods-20389684/",
-    "Description": "Terrance Woods most recently served as Software Engineer II (FE) at Grubhub.",
+    "Description": "Frontend Engineer building responsive and user-focused web applications\nFrontend development, UI performance, web technologies",
     "Top 3 Skills": "Coding, Debugging, Problem-solving",
     "Open to Work": "Yes"
   },
@@ -55,7 +55,7 @@
     "Function": "Operations",
     "Remote/Location": "Texas/Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/ruthea-waller-05023ba2?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
-    "Description": "Ruthea  Waller most recently served as Manager QA at Grubhub within the  organization.",
+    "Description": "QA Manager leading quality strategy and process improvements across operations\nQuality assurance, process optimization, team leadership",
     "Top 3 Skills": "Quality Assurance, Quality Management, Regression Testing",
     "Open to Work": "Yes"
   },
@@ -67,7 +67,7 @@
     "Function": "Engineering",
     "Remote/Location": "Remote / Austin",
     "LinkedIn URL": "https://www.linkedin.com/in/stevencuy/",
-    "Description": "Steven Uy most recently served as Senior Software Engineer (iOS) at Grubhub.",
+    "Description": "Senior iOS Engineer building scalable and high-performance mobile applications\nSwift, iOS, mobile architectur",
     "Top 3 Skills": "iOS Development, Software Engineering, Mobile Development",
     "Open to Work": "Yes"
   },
@@ -79,7 +79,7 @@
     "Function": "Operations",
     "Remote/Location": "Remote/ Boston",
     "LinkedIn URL": "https://www.linkedin.com/in/lamquoctruong/",
-    "Description": "Lam  Truong most recently served as Senior Operations Engineer  at Grubhub.",
+    "Description": "Senior Operations Engineer improving system reliability and operational efficiency\nInfrastructure, systems operations, performance optimization",
     "Top 3 Skills": "Systems Engineering, Cloud Infrastructure, Process Optimization",
     "Open to Work": "Yes"
   },
@@ -91,7 +91,7 @@
     "Function": "Engineering",
     "Remote/Location": "Remote / Boston",
     "LinkedIn URL": "https://www.linkedin.com/in/austintrivett/",
-    "Description": "Austin Trivett most recently served as Software Engineer II (BE) at Grubhub.",
+    "Description": "Backend Engineer building scalable systems and platform services\nBackend development, APIs, distributed systems",
     "Top 3 Skills": "Software Engineering, Backend Development, Systems Architecture",
     "Open to Work": "Yes"
   },
@@ -907,7 +907,7 @@
     "Function": "Customer Care & Support",
     "Remote/Location": "Ohio/Remote",
     "LinkedIn URL": "https://www.linkedin.com/in/cassie-boone-2aaa7b228?trk=contact-info",
-    "Description": "Realtime monitoring of contact channels and providing comprehensive reporting on current and past trends.  Acted as liaison to BPOs and current needs to maintain adequate staffing and meet service  levels.",
+    "Description": "Operations leader monitoring contact channels and optimizing service levels across BPO partnerships\nWorkforce planning, reporting, vendor management",
     "Top 3 Skills": "Real-time Monitoring, Data Reporting, Workforce Management",
     "Open to Work": "Yes"
   },
@@ -919,7 +919,7 @@
     "Function": "Go to Market",
     "Remote/Location": "Phoenix, AZ",
     "LinkedIn URL": "https://www.linkedin.com/in/jeff-saltzman-123898a0/",
-    "Description": "10+ years of sales management experience in the 3rd party delivery space. Looking for an inside or regional sales position within the SMB space preferred.",
+    "Description": "Sales leader with 10+ years in delivery and SMB growth, driving revenue across third-party platforms\nSales management, partnerships, SMB strategy",
     "Top 3 Skills": "=AI(\"From the text below, extract exactly 3 professional skills. Return only comma-separated values, no explanation. Text: \" & C78 & \" \" & H78)",
     "Open to Work": ""
   },
@@ -931,7 +931,7 @@
     "Function": "Go to Market",
     "Remote/Location": "New York",
     "LinkedIn URL": "www.linkedin.com/in/amyweber12/",
-    "Description": "9+ years driving partnerships, revenue, and market expansion. Cross-functional leader with a track record of closing complex deals.",
+    "Description": "Partnerships leader with 9+ years driving revenue, market expansion, and complex deal execution\nCross-functional leadership, enterprise deals",
     "Top 3 Skills": "=AI(\"From the text below, extract exactly 3 professional skills. Return only comma-separated values, no explanation. Text: \" & C79 & \" \" & H79)",
     "Open to Work": ""
   },
@@ -943,8 +943,44 @@
     "Function": "Operations",
     "Remote/Location": "Denver, CO",
     "LinkedIn URL": "https://www.linkedin.com/in/aubrey-langley-a46048150",
-    "Description": "8+ years experience, dedicated to refining operational strategies, enhancing client satisfaction, and optimizing internal workflows. \n\nCurrently looking for positions where  I can drive high impact projects in a positive and productive manner. I am also looking for a position where growth is encouraged.",
+    "Description": "Operations leader with 8+ years improving workflows, client experience, and business performance\nProcess optimization, client success, strategy",
     "Top 3 Skills": "=AI(\"From the text below, extract exactly 3 professional skills. Return only comma-separated values, no explanation. Text: \" & C80 & \" \" & H80)",
+    "Open to Work": ""
+  },
+  {
+    "First Name": "Mike",
+    "Last Name": "Blaylock",
+    "Former Job Title": "Team Lead",
+    "Former Team": "Merchant Onboarding",
+    "Function": "Go to Market",
+    "Remote/Location": "Chicago, IL",
+    "LinkedIn URL": "https://www.linkedin.com/in/mike-blaylock-1a497087/",
+    "Description": "Team Lead in Merchant Onboarding, leading client implementation and coaching high-performing teams\nOnboarding, client services, process improvement",
+    "Top 3 Skills": "",
+    "Open to Work": ""
+  },
+  {
+    "First Name": "Gerard",
+    "Last Name": "Salerno",
+    "Former Job Title": "Account Executive",
+    "Former Team": "GrubHub Outside Sales(Campus)",
+    "Function": "Go to Market",
+    "Remote/Location": "Florida/Remote",
+    "LinkedIn URL": "www.linkedin.com/in/gerard-salerno-28825146",
+    "Description": "Account Executive with 25+ years in hospitality, driving revenue and client growth in restaurant partnerships\nOutside sales, account management, hospitality",
+    "Top 3 Skills": "",
+    "Open to Work": ""
+  },
+  {
+    "First Name": "Razvan",
+    "Last Name": "Onica",
+    "Former Job Title": "Senior Software Engineer [FE]",
+    "Former Team": "SEO",
+    "Function": "Engineering",
+    "Remote/Location": "Romania (remote)",
+    "LinkedIn URL": "https://www.linkedin.com/in/r%C4%83zvan-onica-984714124/",
+    "Description": "Senior Frontend Engineer building high-performance web apps across fintech, EV, and SaaS platforms\nReact, Vue, Angular, Node.js",
+    "Top 3 Skills": "",
     "Open to Work": ""
   }
 ]
