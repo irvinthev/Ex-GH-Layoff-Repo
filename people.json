@@ -920,7 +920,7 @@
     "Remote/Location": "Phoenix, AZ",
     "LinkedIn URL": "https://www.linkedin.com/in/jeff-saltzman-123898a0/",
     "Description": "10+ years of sales management experience in the 3rd party delivery space. Looking for an inside or regional sales position within the SMB space preferred.",
-    "Top 3 Skills": "",
+    "Top 3 Skills": "=AI(\"From the text below, extract exactly 3 professional skills. Return only comma-separated values, no explanation. Text: \" & C78 & \" \" & H78)",
     "Open to Work": ""
   },
   {
@@ -932,7 +932,19 @@
     "Remote/Location": "New York",
     "LinkedIn URL": "www.linkedin.com/in/amyweber12/",
     "Description": "9+ years driving partnerships, revenue, and market expansion. Cross-functional leader with a track record of closing complex deals.",
-    "Top 3 Skills": "",
+    "Top 3 Skills": "=AI(\"From the text below, extract exactly 3 professional skills. Return only comma-separated values, no explanation. Text: \" & C79 & \" \" & H79)",
+    "Open to Work": ""
+  },
+  {
+    "First Name": "Aubrey",
+    "Last Name": "Langley",
+    "Former Job Title": "Operations Program Manager",
+    "Former Team": "Campus",
+    "Function": "Operations",
+    "Remote/Location": "Denver, CO",
+    "LinkedIn URL": "https://www.linkedin.com/in/aubrey-langley-a46048150",
+    "Description": "8+ years experience, dedicated to refining operational strategies, enhancing client satisfaction, and optimizing internal workflows. \n\nCurrently looking for positions where  I can drive high impact projects in a positive and productive manner. I am also looking for a position where growth is encouraged.",
+    "Top 3 Skills": "=AI(\"From the text below, extract exactly 3 professional skills. Return only comma-separated values, no explanation. Text: \" & C80 & \" \" & H80)",
     "Open to Work": ""
   }
 ]
