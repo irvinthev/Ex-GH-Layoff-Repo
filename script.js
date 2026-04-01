@@ -64,16 +64,14 @@ async function loadDirectory() {
     ]);
   }
 
+  // ✅ FIXED: remove only the repetitive intro sentence, keep the rest
   function getDescription(person) {
-    const desc = getValue(person, ["description", "Description", "Short Description"]);
+    let desc = getValue(person, ["description", "Description", "Short Description"]);
     if (!desc) return "";
 
-    const lower = desc.toLowerCase();
-    if (lower.includes("most recently served") && lower.includes("grubhub")) {
-      return "";
-    }
+    desc = desc.replace(/most recently served as[^.]*\.\s*/i, "");
 
-    return desc;
+    return desc.trim();
   }
 
   function normalizeText(value) {
@@ -166,25 +164,6 @@ async function loadDirectory() {
     }
 
     return "Other";
-  }
-
-  function startsWithVowelSound(word) {
-    const clean = String(word || "").trim().toLowerCase();
-    return /^[aeiou]/.test(clean);
-  }
-
-  function formatRole(person) {
-    const role = getRole(person);
-    const company = getCompany(person);
-
-    if (!role) {
-      return `Most recently served at ${company}.`;
-    }
-
-    const roleLower = role.toLowerCase();
-    const article = startsWithVowelSound(roleLower) ? "an" : "a";
-
-    return `Most recently served as ${article} ${roleLower} at ${company}.`;
   }
 
   function renderLinkedIn(person) {
@@ -337,6 +316,7 @@ async function loadDirectory() {
     functionCount.textContent = Object.keys(functionCounts).length;
   }
 
+  // ✅ FIXED: removed summary line entirely
   function render(list) {
     container.innerHTML = "";
 
@@ -371,8 +351,6 @@ async function loadDirectory() {
         <p class="role">${role}</p>
 
         ${rawLocation ? `<div class="meta">📍 ${rawLocation}</div>` : ""}
-
-        <p class="summary">${formatRole(person)}</p>
 
         ${description ? `<p class="description">${shortDescription(description)}</p>` : ""}
 
