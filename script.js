@@ -18,10 +18,15 @@ async function loadDirectory() {
   function getValue(person, keys) {
     for (const key of keys) {
       const value = person[key];
-      if (value !== undefined && value !== null && String(value).trim() !== "") {
+      if (
+        value !== undefined &&
+        value !== null &&
+        String(value).trim() !== ""
+      ) {
         return String(value).trim();
       }
     }
+
     return "";
   }
 
@@ -31,27 +36,47 @@ async function loadDirectory() {
 
     const first = getValue(person, ["First Name", "firstName"]);
     const last = getValue(person, ["Last Name", "lastName"]);
+
     return `${first} ${last}`.trim();
   }
 
   function getRole(person) {
-    return getValue(person, ["formerRole", "Former Role", "Former Job Title", "role"]);
+    return getValue(person, [
+      "formerRole",
+      "Former Role",
+      "Former Job Title",
+      "role"
+    ]);
   }
 
   function getTeam(person) {
-    return getValue(person, ["Former Team", "Team", "formerTeam"]);
+    return getValue(person, [
+      "Former Team",
+      "Team",
+      "formerTeam"
+    ]);
   }
 
   function getFunction(person) {
-    return getValue(person, ["function", "Function"]);
+    return getValue(person, [
+      "function",
+      "Function"
+    ]);
   }
 
   function getCompany(person) {
-    return getValue(person, ["company", "Company"]) || "Grubhub";
+    return getValue(person, [
+      "company",
+      "Company"
+    ]) || "Grubhub";
   }
 
   function getRawLocation(person) {
-    return getValue(person, ["location", "Location", "Remote/Location"]);
+    return getValue(person, [
+      "location",
+      "Location",
+      "Remote/Location"
+    ]);
   }
 
   function getLinkedIn(person) {
@@ -64,12 +89,65 @@ async function loadDirectory() {
     ]);
   }
 
-  // ✅ FIXED: remove only the repetitive intro sentence, keep the rest
+  function getDateAdded(person) {
+    return getValue(person, [
+      "Date Added",
+      "dateAdded"
+    ]);
+  }
+
+  function isNewProfile(person) {
+    const rawDate = getDateAdded(person);
+
+    // Legacy profiles with no date are not considered new.
+    if (!rawDate) return false;
+
+    /*
+      people.json currently stores dates like:
+      2026-08-07
+
+      Adding T00:00:00 helps avoid UTC date-shift issues.
+    */
+    const added = new Date(`${rawDate}T00:00:00`);
+
+    // Protect against malformed dates.
+    if (Number.isNaN(added.getTime())) {
+      return false;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const diffMilliseconds = today.getTime() - added.getTime();
+    const diffDays = Math.floor(
+      diffMilliseconds / (1000 * 60 * 60 * 24)
+    );
+
+    /*
+      Rule:
+      blank       = not new
+      0-14 days   = NEW
+      15+ days    = not new
+
+      Future dates are also excluded.
+    */
+    return diffDays >= 0 && diffDays <= 14;
+  }
+
+  // Remove only the repetitive intro sentence, keep the rest.
   function getDescription(person) {
-    let desc = getValue(person, ["description", "Description", "Short Description"]);
+    let desc = getValue(person, [
+      "description",
+      "Description",
+      "Short Description"
+    ]);
+
     if (!desc) return "";
 
-    desc = desc.replace(/most recently served as[^.]*\.\s*/i, "");
+    desc = desc.replace(
+      /most recently served as[^.]*\.\s*/i,
+      ""
+    );
 
     return desc.trim();
   }
@@ -80,8 +158,12 @@ async function loadDirectory() {
 
   function shortDescription(text) {
     const clean = normalizeText(text);
+
     if (!clean) return "";
-    return clean.length > 140 ? `${clean.slice(0, 140).trim()}...` : clean;
+
+    return clean.length > 140
+      ? `${clean.slice(0, 140).trim()}...`
+      : clean;
   }
 
   function slugify(value) {
@@ -95,32 +177,72 @@ async function loadDirectory() {
   }
 
   function normalizeLocation(value) {
-    const v = String(value || "").toLowerCase().trim();
+    const v = String(value || "")
+      .toLowerCase()
+      .trim();
 
     if (!v) return "Unknown";
-    if (v.includes("new york") || v.includes("nyc") || v.includes("ny city") || v.includes("new york city")) return "New York";
+
+    if (
+      v.includes("new york") ||
+      v.includes("nyc") ||
+      v.includes("ny city") ||
+      v.includes("new york city")
+    ) {
+      return "New York";
+    }
+
     if (v.includes("chicago")) return "Chicago";
     if (v.includes("boston")) return "Boston";
-    if (v.includes("san francisco") || v.includes("bay area")) return "SF Bay Area";
+
+    if (
+      v.includes("san francisco") ||
+      v.includes("bay area")
+    ) {
+      return "SF Bay Area";
+    }
+
     if (v.includes("los angeles")) return "Los Angeles";
     if (v.includes("seattle")) return "Seattle";
     if (v.includes("oakland")) return "Oakland";
-    if (v.includes("denver") || v.includes("broomfield") || v.includes("colorado")) return "Colorado";
+
+    if (
+      v.includes("denver") ||
+      v.includes("broomfield") ||
+      v.includes("colorado")
+    ) {
+      return "Colorado";
+    }
+
     if (v.includes("austin")) return "Austin";
     if (v.includes("tucson")) return "Tucson";
     if (v.includes("rhode island")) return "Rhode Island";
     if (v.includes("north carolina")) return "North Carolina";
     if (v.includes("romania")) return "Romania";
-    if (v.includes("remote") || v.includes("anywhere")) return "Remote";
+
+    if (
+      v.includes("remote") ||
+      v.includes("anywhere")
+    ) {
+      return "Remote";
+    }
 
     return value || "Other";
   }
 
   function getRegion(value) {
-    const v = String(value || "").toLowerCase().trim();
+    const v = String(value || "")
+      .toLowerCase()
+      .trim();
 
     if (!v) return "Unknown";
-    if (v.includes("remote") || v.includes("anywhere")) return "Remote";
+
+    if (
+      v.includes("remote") ||
+      v.includes("anywhere")
+    ) {
+      return "Remote";
+    }
 
     if (
       v.includes("new york") ||
@@ -134,7 +256,10 @@ async function loadDirectory() {
       return "East Coast";
     }
 
-    if (v.includes("chicago") || v.includes("ohio")) {
+    if (
+      v.includes("chicago") ||
+      v.includes("ohio")
+    ) {
       return "Midwest";
     }
 
@@ -170,15 +295,25 @@ async function loadDirectory() {
     let raw = getLinkedIn(person).trim();
 
     if (!raw) {
-      return `<span class="linkedin pending">Profile pending</span>`;
+      return `
+        <span class="linkedin pending">
+          Profile pending
+        </span>
+      `;
     }
 
     const lower = raw.toLowerCase();
+
     const looksLikeLabelOnly =
-      lower.includes("linkedin") && !lower.includes("linkedin.com");
+      lower.includes("linkedin") &&
+      !lower.includes("linkedin.com");
 
     if (looksLikeLabelOnly) {
-      return `<span class="linkedin pending">Profile pending</span>`;
+      return `
+        <span class="linkedin pending">
+          Profile pending
+        </span>
+      `;
     }
 
     if (
@@ -189,46 +324,70 @@ async function loadDirectory() {
       raw = `https://${raw}`;
     }
 
-    const isValid = /^https?:\/\/(www\.)?linkedin\.com\//i.test(raw);
+    const isValid =
+      /^https?:\/\/(www\.)?linkedin\.com\//i.test(raw);
 
     if (!isValid) {
-      return `<span class="linkedin pending">Profile pending</span>`;
+      return `
+        <span class="linkedin pending">
+          Profile pending
+        </span>
+      `;
     }
 
     return `
-      <a href="${raw}" target="_blank" rel="noopener noreferrer" class="linkedin">
+      <a
+        href="${raw}"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="linkedin"
+      >
         View Profile →
       </a>
     `;
   }
 
   function uniqueValuesFromPeople(list, getter) {
-    return [...new Set(list.map(getter).filter(Boolean))].sort((a, b) =>
-      a.localeCompare(b)
-    );
+    return [
+      ...new Set(
+        list
+          .map(getter)
+          .filter(Boolean)
+      )
+    ].sort((a, b) => a.localeCompare(b));
   }
 
   function countBy(list, getter) {
     const counts = {};
+
     list.forEach((person) => {
       const key = getter(person);
+
       if (key) {
         counts[key] = (counts[key] || 0) + 1;
       }
     });
+
     return counts;
   }
 
   function populateFunctionFilter() {
     const currentValue = functionFilter.value;
-    const functions = uniqueValuesFromPeople(people, getFunction);
 
-    functionFilter.innerHTML = `<option value="">All Functions</option>`;
+    const functions = uniqueValuesFromPeople(
+      people,
+      getFunction
+    );
+
+    functionFilter.innerHTML =
+      `<option value="">All Functions</option>`;
 
     functions.forEach((fn) => {
       const option = document.createElement("option");
+
       option.value = fn;
       option.textContent = fn;
+
       functionFilter.appendChild(option);
     });
 
@@ -237,21 +396,37 @@ async function loadDirectory() {
 
   function populateLocationFilter(baseList) {
     const currentValue = locationFilter.value;
-    const counts = countBy(baseList, (person) => normalizeLocation(getRawLocation(person)));
-    const entries = Object.entries(counts).sort(
-      (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
+
+    const counts = countBy(
+      baseList,
+      (person) =>
+        normalizeLocation(
+          getRawLocation(person)
+        )
     );
 
-    locationFilter.innerHTML = `<option value="">All Locations</option>`;
+    const entries = Object.entries(counts).sort(
+      (a, b) =>
+        b[1] - a[1] ||
+        a[0].localeCompare(b[0])
+    );
+
+    locationFilter.innerHTML =
+      `<option value="">All Locations</option>`;
 
     entries.forEach(([location, count]) => {
       const option = document.createElement("option");
+
       option.value = location;
       option.textContent = `${location} (${count})`;
+
       locationFilter.appendChild(option);
     });
 
-    if (currentValue && counts[currentValue]) {
+    if (
+      currentValue &&
+      counts[currentValue]
+    ) {
       locationFilter.value = currentValue;
     } else {
       locationFilter.value = "";
@@ -259,35 +434,63 @@ async function loadDirectory() {
   }
 
   function renderDashboard() {
-    const functionCounts = countBy(people, getFunction);
-    const regionCounts = countBy(people, (person) => getRegion(getRawLocation(person)));
+    const functionCounts = countBy(
+      people,
+      getFunction
+    );
 
-    const functionEntries = Object.entries(functionCounts).sort(
-      (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
+    const regionCounts = countBy(
+      people,
+      (person) =>
+        getRegion(
+          getRawLocation(person)
+        )
     );
-    const regionEntries = Object.entries(regionCounts).sort(
-      (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
-    );
+
+    const functionEntries =
+      Object.entries(functionCounts).sort(
+        (a, b) =>
+          b[1] - a[1] ||
+          a[0].localeCompare(b[0])
+      );
+
+    const regionEntries =
+      Object.entries(regionCounts).sort(
+        (a, b) =>
+          b[1] - a[1] ||
+          a[0].localeCompare(b[0])
+      );
 
     functionDashboard.innerHTML = "";
     locationDashboard.innerHTML = "";
 
     functionEntries.forEach(([fn, count]) => {
       const el = document.createElement("div");
+
       el.className = "function-card";
+
       el.innerHTML = `
-        <div class="function-name">${fn}</div>
-        <div class="function-value">${count}</div>
+        <div class="function-name">
+          ${fn}
+        </div>
+
+        <div class="function-value">
+          ${count}
+        </div>
       `;
 
       el.onclick = () => {
         functionFilter.value = fn;
         locationFilter.value = "";
+
         applyFilters();
-        document.getElementById("directory-section").scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
+
+        document
+          .getElementById("directory-section")
+          .scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
       };
 
       functionDashboard.appendChild(el);
@@ -295,43 +498,61 @@ async function loadDirectory() {
 
     regionEntries.forEach(([region, count]) => {
       const el = document.createElement("div");
+
       el.className = "function-card";
+
       el.innerHTML = `
-        <div class="function-name">${region}</div>
-        <div class="function-value">${count}</div>
+        <div class="function-name">
+          ${region}
+        </div>
+
+        <div class="function-value">
+          ${count}
+        </div>
       `;
 
       el.onclick = () => {
         applyRegionFilter(region);
-        document.getElementById("directory-section").scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
+
+        document
+          .getElementById("directory-section")
+          .scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
       };
 
       locationDashboard.appendChild(el);
     });
 
     totalCount.textContent = people.length;
-    functionCount.textContent = Object.keys(functionCounts).length;
+    functionCount.textContent =
+      Object.keys(functionCounts).length;
   }
 
-  // ✅ FIXED: removed summary line entirely
   function render(list) {
     container.innerHTML = "";
 
     if (!list.length) {
       container.innerHTML = `
         <div class="empty-state">
-          No matches found. Try a different search or clear filters.
+          No matches found. Try a different search
+          or clear filters.
         </div>
       `;
-      if (resultsCount) resultsCount.textContent = "0 results";
+
+      if (resultsCount) {
+        resultsCount.textContent = "0 results";
+      }
+
       return;
     }
 
     if (resultsCount) {
-      resultsCount.textContent = `${list.length} result${list.length === 1 ? "" : "s"}`;
+      resultsCount.textContent =
+        `${list.length} result${
+          list.length === 1 ? "" : "s"
+        }`;
     }
 
     list.forEach((person) => {
@@ -341,18 +562,65 @@ async function loadDirectory() {
       const description = getDescription(person);
       const fn = getFunction(person);
 
+      const newProfile = isNewProfile(person);
+
       const card = document.createElement("article");
       card.className = "card";
 
       card.innerHTML = `
-        ${fn ? `<div class="badge badge-${slugify(fn)}">${fn}</div>` : ""}
+        <div class="badge-row">
 
-        <h3>${name}</h3>
-        <p class="role">${role}</p>
+          ${
+            fn
+              ? `
+                <div
+                  class="badge badge-${slugify(fn)}"
+                >
+                  ${fn}
+                </div>
+              `
+              : ""
+          }
 
-        ${rawLocation ? `<div class="meta">📍 ${rawLocation}</div>` : ""}
+          ${
+            newProfile
+              ? `
+                <div class="new-badge">
+                  NEW
+                </div>
+              `
+              : ""
+          }
 
-        ${description ? `<p class="description">${shortDescription(description)}</p>` : ""}
+        </div>
+
+        <h3>
+          ${name}
+        </h3>
+
+        <p class="role">
+          ${role}
+        </p>
+
+        ${
+          rawLocation
+            ? `
+              <div class="meta">
+                📍 ${rawLocation}
+              </div>
+            `
+            : ""
+        }
+
+        ${
+          description
+            ? `
+              <p class="description">
+                ${shortDescription(description)}
+              </p>
+            `
+            : ""
+        }
 
         <div class="footer">
           ${renderLinkedIn(person)}
@@ -368,22 +636,35 @@ async function loadDirectory() {
     functionFilter.value = "";
     locationFilter.value = "";
 
-    const filtered = people.filter((person) => {
-      return getRegion(getRawLocation(person)) === region;
-    });
+    const filtered = people.filter(
+      (person) =>
+        getRegion(
+          getRawLocation(person)
+        ) === region
+    );
 
     populateLocationFilter(filtered);
     render(filtered);
   }
 
   function applyFilters() {
-    const q = searchBox.value.toLowerCase().trim();
-    const selectedFunction = functionFilter.value.trim();
-    const selectedLocation = locationFilter.value.trim();
+    const q = searchBox.value
+      .toLowerCase()
+      .trim();
 
-    const functionFiltered = people.filter((person) => {
-      return !selectedFunction || getFunction(person) === selectedFunction;
-    });
+    const selectedFunction =
+      functionFilter.value.trim();
+
+    const selectedLocation =
+      locationFilter.value.trim();
+
+    const functionFiltered =
+      people.filter((person) => {
+        return (
+          !selectedFunction ||
+          getFunction(person) === selectedFunction
+        );
+      });
 
     populateLocationFilter(functionFiltered);
 
@@ -391,29 +672,42 @@ async function loadDirectory() {
       locationFilter.value = selectedLocation;
     }
 
-    const activeLocation = locationFilter.value.trim();
+    const activeLocation =
+      locationFilter.value.trim();
 
-    const filtered = functionFiltered.filter((person) => {
-      const personLocation = normalizeLocation(getRawLocation(person));
-      const matchesLocation = !activeLocation || personLocation === activeLocation;
+    const filtered =
+      functionFiltered.filter((person) => {
+        const personLocation =
+          normalizeLocation(
+            getRawLocation(person)
+          );
 
-      const haystack = [
-        getName(person),
-        getRole(person),
-        getTeam(person),
-        getFunction(person),
-        getRawLocation(person),
-        getDescription(person),
-        getCompany(person),
-        getLinkedIn(person)
-      ]
-        .join(" ")
-        .toLowerCase();
+        const matchesLocation =
+          !activeLocation ||
+          personLocation === activeLocation;
 
-      const matchesSearch = !q || haystack.includes(q);
+        const haystack = [
+          getName(person),
+          getRole(person),
+          getTeam(person),
+          getFunction(person),
+          getRawLocation(person),
+          getDescription(person),
+          getCompany(person),
+          getLinkedIn(person)
+        ]
+          .join(" ")
+          .toLowerCase();
 
-      return matchesLocation && matchesSearch;
-    });
+        const matchesSearch =
+          !q ||
+          haystack.includes(q);
+
+        return (
+          matchesLocation &&
+          matchesSearch
+        );
+      });
 
     render(filtered);
   }
@@ -422,6 +716,7 @@ async function loadDirectory() {
     searchBox.value = "";
     functionFilter.value = "";
     locationFilter.value = "";
+
     populateFunctionFilter();
     populateLocationFilter(people);
     render(people);
@@ -443,13 +738,19 @@ async function loadDirectory() {
 }
 
 loadDirectory().catch((error) => {
-  console.error("Failed to load directory:", error);
+  console.error(
+    "Failed to load directory:",
+    error
+  );
 
-  const container = document.getElementById("directory");
+  const container =
+    document.getElementById("directory");
+
   if (container) {
     container.innerHTML = `
       <div class="empty-state">
-        Something broke while loading the directory. Check your people.json file and file paths.
+        Something broke while loading the directory.
+        Check your people.json file and file paths.
       </div>
     `;
   }
