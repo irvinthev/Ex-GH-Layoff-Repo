@@ -493,6 +493,41 @@ img {
 }
 
 /* =====================
+   RECENTLY ADDED FILTER
+===================== */
+
+.recent-filter-btn {
+  min-height: 44px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: var(--primary);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.recent-filter-btn:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+  transform: translateY(-1px);
+}
+
+.recent-filter-btn.active {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.18);
+}
+
+/* =====================
    DIRECTORY GRID
 ===================== */
 
@@ -594,7 +629,7 @@ img {
 }
 
 /* =====================
-   FUNCTION BADGES
+   FUNCTION + NEW BADGES
 ===================== */
 
 .badge-row {
@@ -833,7 +868,8 @@ img {
 
   .controls input,
   .controls select,
-  .clear-btn {
+  .clear-btn,
+  .recent-filter-btn {
     width: 100%;
     min-width: 0;
     flex: 1 1 100%;
