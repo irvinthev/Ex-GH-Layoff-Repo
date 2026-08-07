@@ -15,9 +15,28 @@ async function loadDirectory() {
   const functionDashboard = document.getElementById("functionDashboard");
   const locationDashboard = document.getElementById("locationDashboard");
 
+  let recentOnly = false;
+
+  /* =====================
+     RECENTLY ADDED BUTTON
+  ===================== */
+
+  const recentBtn = document.createElement("button");
+  recentBtn.type = "button";
+  recentBtn.id = "recentFilter";
+  recentBtn.className = "recent-filter-btn";
+  recentBtn.textContent = "Recently Added";
+
+  clearBtn.parentNode.insertBefore(recentBtn, clearBtn);
+
+  /* =====================
+     DATA HELPERS
+  ===================== */
+
   function getValue(person, keys) {
     for (const key of keys) {
       const value = person[key];
+
       if (
         value !== undefined &&
         value !== null &&
@@ -32,6 +51,7 @@ async function loadDirectory() {
 
   function getName(person) {
     const fullName = getValue(person, ["name", "fullName"]);
+
     if (fullName) return fullName;
 
     const first = getValue(person, ["First Name", "firstName"]);
@@ -96,21 +116,19 @@ async function loadDirectory() {
     ]);
   }
 
+  /* =====================
+     NEW PROFILE LOGIC
+  ===================== */
+
   function isNewProfile(person) {
     const rawDate = getDateAdded(person);
 
-    // Legacy profiles with no date are not considered new.
+    // Blank = legacy profile, not new
     if (!rawDate) return false;
 
-    /*
-      people.json currently stores dates like:
-      2026-08-07
-
-      Adding T00:00:00 helps avoid UTC date-shift issues.
-    */
     const added = new Date(`${rawDate}T00:00:00`);
 
-    // Protect against malformed dates.
+    // Invalid date = not new
     if (Number.isNaN(added.getTime())) {
       return false;
     }
@@ -118,23 +136,22 @@ async function loadDirectory() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const diffMilliseconds = today.getTime() - added.getTime();
+    const diffMilliseconds =
+      today.getTime() - added.getTime();
+
     const diffDays = Math.floor(
-      diffMilliseconds / (1000 * 60 * 60 * 24)
+      diffMilliseconds /
+      (1000 * 60 * 60 * 24)
     );
 
-    /*
-      Rule:
-      blank       = not new
-      0-14 days   = NEW
-      15+ days    = not new
-
-      Future dates are also excluded.
-    */
+    // 0–14 days = NEW
     return diffDays >= 0 && diffDays <= 14;
   }
 
-  // Remove only the repetitive intro sentence, keep the rest.
+  /* =====================
+     DESCRIPTION
+  ===================== */
+
   function getDescription(person) {
     let desc = getValue(person, [
       "description",
@@ -175,6 +192,10 @@ async function loadDirectory() {
       .replace(/\s+/g, "-")
       .replace(/[^a-z0-9-]/g, "");
   }
+
+  /* =====================
+     LOCATION
+  ===================== */
 
   function normalizeLocation(value) {
     const v = String(value || "")
@@ -291,6 +312,10 @@ async function loadDirectory() {
     return "Other";
   }
 
+  /* =====================
+     LINKEDIN
+  ===================== */
+
   function renderLinkedIn(person) {
     let raw = getLinkedIn(person).trim();
 
@@ -347,6 +372,10 @@ async function loadDirectory() {
     `;
   }
 
+  /* =====================
+     COUNTS
+  ===================== */
+
   function uniqueValuesFromPeople(list, getter) {
     return [
       ...new Set(
@@ -370,6 +399,10 @@ async function loadDirectory() {
 
     return counts;
   }
+
+  /* =====================
+     FILTER CONTROLS
+  ===================== */
 
   function populateFunctionFilter() {
     const currentValue = functionFilter.value;
@@ -432,6 +465,10 @@ async function loadDirectory() {
       locationFilter.value = "";
     }
   }
+
+  /* =====================
+     DASHBOARD
+  ===================== */
 
   function renderDashboard() {
     const functionCounts = countBy(
@@ -529,6 +566,10 @@ async function loadDirectory() {
     functionCount.textContent =
       Object.keys(functionCounts).length;
   }
+
+  /* =====================
+     PROFILE CARDS
+  ===================== */
 
   function render(list) {
     container.innerHTML = "";
@@ -631,10 +672,29 @@ async function loadDirectory() {
     });
   }
 
+  /* =====================
+     FILTERING
+  ===================== */
+
+  function updateRecentButton() {
+    recentBtn.classList.toggle(
+      "active",
+      recentOnly
+    );
+
+    recentBtn.textContent =
+      recentOnly
+        ? "✓ Recently Added"
+        : "Recently Added";
+  }
+
   function applyRegionFilter(region) {
     searchBox.value = "";
     functionFilter.value = "";
     locationFilter.value = "";
+
+    recentOnly = false;
+    updateRecentButton();
 
     const filtered = people.filter(
       (person) =>
@@ -658,13 +718,21 @@ async function loadDirectory() {
     const selectedLocation =
       locationFilter.value.trim();
 
-    const functionFiltered =
+    let functionFiltered =
       people.filter((person) => {
         return (
           !selectedFunction ||
           getFunction(person) === selectedFunction
         );
       });
+
+    if (recentOnly) {
+      functionFiltered =
+        functionFiltered.filter(
+          (person) =>
+            isNewProfile(person)
+        );
+    }
 
     populateLocationFilter(functionFiltered);
 
@@ -712,13 +780,29 @@ async function loadDirectory() {
     render(filtered);
   }
 
+  /* =====================
+     EVENTS
+  ===================== */
+
+  recentBtn.onclick = () => {
+    recentOnly = !recentOnly;
+
+    updateRecentButton();
+    applyFilters();
+  };
+
   clearBtn.onclick = () => {
     searchBox.value = "";
     functionFilter.value = "";
     locationFilter.value = "";
 
+    recentOnly = false;
+
+    updateRecentButton();
+
     populateFunctionFilter();
     populateLocationFilter(people);
+
     render(people);
   };
 
@@ -731,8 +815,15 @@ async function loadDirectory() {
 
   locationFilter.onchange = applyFilters;
 
+  /* =====================
+     INITIAL LOAD
+  ===================== */
+
   populateFunctionFilter();
   populateLocationFilter(people);
+
+  updateRecentButton();
+
   renderDashboard();
   render(people);
 }
