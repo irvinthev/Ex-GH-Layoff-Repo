@@ -16,31 +16,56 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v4
 
-      - name: Download CSV from Google Sheets
+      - name: Download active directory CSV
         run: |
           curl -L "https://docs.google.com/spreadsheets/d/e/2PACX-1vTneLfd7McnMAUWannvW6a3h-tgjHxzgC7xKFTY3s1SjaRHa2Rw-JFQQYXPcOjBQ0UtACBo1S_mm9E-/pub?output=csv" -o people.csv
 
-      - name: Convert CSV to JSON
+      - name: Download placed users CSV
+        run: |
+          curl -L "https://docs.google.com/spreadsheets/d/e/2PACX-1vTneLfd7McnMAUWannvW6a3h-tgjHxzgC7xKFTY3s1SjaRHa2Rw-JFQQYXPcOjBQ0UtACBo1S_mm9E-/pub?gid=340284935&single=true&output=csv" -o placed.csv
+
+      - name: Convert CSV files to JSON
         run: |
           python - <<'EOF'
           import csv
           import json
 
-          rows = []
-          with open("people.csv", newline="", encoding="utf-8-sig") as f:
-              reader = csv.DictReader(f)
-              for row in reader:
-                  cleaned = {k.strip(): v.strip() for k, v in row.items() if k}
-                  rows.append(cleaned)
+          def convert_csv_to_json(csv_file, json_file):
+              rows = []
 
-          with open("people.json", "w", encoding="utf-8") as f:
-              json.dump(rows, f, indent=2, ensure_ascii=False)
+              with open(csv_file, newline="", encoding="utf-8-sig") as f:
+                  reader = csv.DictReader(f)
+
+                  for row in reader:
+                      cleaned = {
+                          k.strip(): v.strip()
+                          for k, v in row.items()
+                          if k
+                      }
+
+                      # Skip completely empty rows
+                      if any(cleaned.values()):
+                          rows.append(cleaned)
+
+              with open(json_file, "w", encoding="utf-8") as f:
+                  json.dump(
+                      rows,
+                      f,
+                      indent=2,
+                      ensure_ascii=False
+                  )
+
+          convert_csv_to_json("people.csv", "people.json")
+          convert_csv_to_json("placed.csv", "placed.json")
           EOF
 
       - name: Commit updated JSON
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add people.json
-          git diff --cached --quiet || git commit -m "Update people.json from Google Sheet"
+
+          git add people.json placed.json
+
+          git diff --cached --quiet || git commit -m "Update directory and placement data"
+
           git push
