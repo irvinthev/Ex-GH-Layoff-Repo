@@ -1,71 +1,56 @@
 name: Update Directory Data
 
 on:
-  schedule:
-    - cron: "0 * * * *"
   workflow_dispatch:
-
-permissions:
-  contents: write
+  schedule:
+    - cron: '0 6 * * *'
 
 jobs:
   update-data:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Check out repo
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download active directory CSV
+      - name: Download people CSV
         run: |
-          curl -L "https://docs.google.com/spreadsheets/d/e/2PACX-1vTneLfd7McnMAUWannvW6a3h-tgjHxzgC7xKFTY3s1SjaRHa2Rw-JFQQYXPcOjBQ0UtACBo1S_mm9E-/pub?output=csv" -o people.csv
+          curl -L "https://docs.google.com/spreadsheets/d/e/2PACX-1vTneLfd7McnMAUWannvW6a3h-tgjHxxgC7xKFTY3s1SjaRHa2Rw-JFQQYXPcOjBQ0UtACBo1S_m9E-/pub?output=csv" -o people.csv
 
-      - name: Download placed users CSV
+      - name: Convert people CSV to people.json
         run: |
-          curl -L "https://docs.google.com/spreadsheets/d/e/2PACX-1vTneLfd7McnMAUWannvW6a3h-tgjHxzgC7xKFTY3s1SjaRHa2Rw-JFQQYXPcOjBQ0UtACBo1S_mm9E-/pub?gid=340284935&single=true&output=csv" -o placed.csv
+          python3 - <<'PY'
+          import csv, json
+          with open('people.csv', newline='', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            rows = [r for r in reader]
+          with open('people.json','w',encoding='utf-8') as o:
+            json.dump(rows,o,ensure_ascii=False,indent=2)
+          PY
 
-      - name: Convert CSV files to JSON
+      - name: Download placed CSV
         run: |
-          python - <<'EOF'
-          import csv
-          import json
+          curl -L "https://docs.google.com/spreadsheets/d/e/2PACX-1vTneLfd7McnMAUWannvW6a3h-tgjHxxgC7xKFTY3s1SjaRHa2Rw-JFQQYXPcOjBQ0UtACBo1S_m9E-/pub?gid=340284935&single=true&output=csv" -o placed.csv
 
-          def convert_csv_to_json(csv_file, json_file):
-              rows = []
+      - name: Convert placed CSV to placed.json
+        run: |
+          python3 - <<'PY'
+          import csv, json
+          with open('placed.csv', newline='', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            rows = [r for r in reader]
+          with open('placed.json','w',encoding='utf-8') as o:
+            json.dump(rows,o,ensure_ascii=False,indent=2)
+          PY
 
-              with open(csv_file, newline="", encoding="utf-8-sig") as f:
-                  reader = csv.DictReader(f)
-
-                  for row in reader:
-                      cleaned = {
-                          k.strip(): v.strip()
-                          for k, v in row.items()
-                          if k
-                      }
-
-                      # Skip completely empty rows
-                      if any(cleaned.values()):
-                          rows.append(cleaned)
-
-              with open(json_file, "w", encoding="utf-8") as f:
-                  json.dump(
-                      rows,
-                      f,
-                      indent=2,
-                      ensure_ascii=False
-                  )
-
-          convert_csv_to_json("people.csv", "people.json")
-          convert_csv_to_json("placed.csv", "placed.json")
-          EOF
+      - name: Validate JSON data
+        run: |
+          python3 -m pip install --user jsonschema
+          python3 scripts/validate_data.py
 
       - name: Commit updated JSON
         run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add people.json placed.json
-
-          git diff --cached --quiet || git commit -m "Update directory and placement data"
-
+          git commit -m "Update directory data" || echo "No changes to commit"
           git push

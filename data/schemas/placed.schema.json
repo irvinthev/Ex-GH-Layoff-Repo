@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Placed Dataset",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "First Name": {"type": "string"},
+      "Last Name": {"type": "string"},
+      "Company": {"type": ["string", "null"]},
+      "Position": {"type": ["string", "null"]},
+      "Placement Flag": {"type": ["string", "null"]}
+    },
+    "required": ["First Name", "Last Name"]
+  }
+}

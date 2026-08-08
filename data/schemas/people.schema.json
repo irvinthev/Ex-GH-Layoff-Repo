@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "People Dataset",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "First Name": {"type": "string"},
+      "Last Name": {"type": "string"},
+      "Former Job Title": {"type": ["string", "null"]},
+      "Former Team": {"type": ["string", "null"]},
+      "Function": {"type": ["string", "null"]},
+      "Location": {"type": ["string", "null"]},
+      "LinkedIn URL": {"type": ["string", "null"]},
+      "Description": {"type": ["string", "null"]},
+      "Top 3 Skills": {"type": ["string", "array", "null"]},
+      "Open to Work": {"type": ["string", "null"]},
+      "Date Added": {"type": ["string", "null"]}
+    },
+    "required": ["First Name", "Last Name"]
+  }
+}
