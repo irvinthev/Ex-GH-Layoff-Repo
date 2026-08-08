@@ -3,25 +3,15 @@ async function loadDirectory() {
      LOAD DATA
   ===================== */
 
-  const [peopleRes, placedRes] = await Promise.all([
-    fetch("./people.json"),
-    fetch("./placed.json")
-  ]);
+  const res = await fetch("./people.json");
 
-  if (!peopleRes.ok) {
+  if (!res.ok) {
     throw new Error(
-      `Failed to load people.json: ${peopleRes.status}`
+      `Failed to load people.json: ${res.status}`
     );
   }
 
-  if (!placedRes.ok) {
-    throw new Error(
-      `Failed to load placed.json: ${placedRes.status}`
-    );
-  }
-
-  const people = await peopleRes.json();
-  const placedPeople = await placedRes.json();
+  const people = await res.json();
 
 
   /* =====================
@@ -43,26 +33,14 @@ async function loadDirectory() {
   const clearBtn =
     document.getElementById("clearFilters");
 
-  const totalProfilesStat =
-    document.getElementById("totalProfilesStat");
-
-  const placedStat =
-    document.getElementById("placedStat");
-
-  const placementsStat =
-    document.getElementById("placementsStat");
-
   const totalCount =
     document.getElementById("totalCount");
 
-  const placementRateStat =
-    document.getElementById("placementRateStat");
-
-  const companiesStat =
-    document.getElementById("companiesStat");
-
   const functionCount =
     document.getElementById("functionCount");
+
+  const recentCount =
+    document.getElementById("recentCount");
 
   const resultsCount =
     document.getElementById("resultsCount");
@@ -208,212 +186,6 @@ async function loadDirectory() {
 
 
   /* =====================
-     PERSON / PLACEMENT HELPERS
-  ===================== */
-
-  function normalizePersonPart(value) {
-    return String(value || "")
-      .toLowerCase()
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
-
-  function getPersonKey(person) {
-    const first =
-      normalizePersonPart(
-        getValue(person, [
-          "First Name",
-          "firstName"
-        ])
-      );
-
-    const last =
-      normalizePersonPart(
-        getValue(person, [
-          "Last Name",
-          "lastName"
-        ])
-      );
-
-    if (!first && !last) {
-      return "";
-    }
-
-    return `${first}|${last}`;
-  }
-
-
-  function isPlaced(person) {
-    const flag =
-      getValue(person, [
-        "Placement Flag",
-        "placementFlag",
-        "Status"
-      ]).toLowerCase();
-
-    return flag === "placed";
-  }
-
-
-  function getPlacedCompany(person) {
-    return getValue(person, [
-      "Company Clean",
-      "companyClean",
-      "Company",
-      "company"
-    ]);
-  }
-
-
-  function normalizeCompany(company) {
-    return String(company || "")
-      .toLowerCase()
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
-
-  /* =====================
-     LIVE HOMEPAGE STATS
-  ===================== */
-
-  function renderHomepageStats() {
-    /*
-      people.json
-      = people currently searching
-
-      placed.json
-      = placement history
-
-      A person may appear multiple times in placed.json
-      if they had multiple placement events.
-    */
-
-    const confirmedPlacements =
-      placedPeople.filter(isPlaced);
-
-
-    /* ---------------------
-       UNIQUE PEOPLE SEARCHING
-    --------------------- */
-
-    const searchingKeys = new Set(
-      people
-        .map(getPersonKey)
-        .filter(Boolean)
-    );
-
-    const stillLookingCount =
-      searchingKeys.size;
-
-
-    /* ---------------------
-       UNIQUE PEOPLE PLACED
-    --------------------- */
-
-    const placedKeys = new Set(
-      confirmedPlacements
-        .map(getPersonKey)
-        .filter(Boolean)
-    );
-
-    const peoplePlacedCount =
-      placedKeys.size;
-
-
-    /* ---------------------
-       TOTAL PLACEMENT EVENTS
-    --------------------- */
-
-    const placementCount =
-      confirmedPlacements.length;
-
-
-    /* ---------------------
-       UNIQUE PEOPLE TRACKED
-    --------------------- */
-
-    const allTrackedKeys = new Set([
-      ...searchingKeys,
-      ...placedKeys
-    ]);
-
-    const peopleTrackedCount =
-      allTrackedKeys.size;
-
-
-    /* ---------------------
-       PLACEMENT RATE
-    --------------------- */
-
-    const placementRate =
-      peopleTrackedCount > 0
-        ? Math.round(
-            (
-              peoplePlacedCount /
-              peopleTrackedCount
-            ) * 100
-          )
-        : 0;
-
-
-    /* ---------------------
-       DESTINATION COMPANIES
-    --------------------- */
-
-    const uniqueCompanies = new Set(
-      confirmedPlacements
-        .map(getPlacedCompany)
-        .map(normalizeCompany)
-        .filter((company) => {
-          return (
-            company &&
-            company !== "tbd" &&
-            company !== "contractor" &&
-            company !== "startup"
-          );
-        })
-    );
-
-
-    /* ---------------------
-       RENDER METRICS
-    --------------------- */
-
-    if (totalProfilesStat) {
-      totalProfilesStat.textContent =
-        peopleTrackedCount;
-    }
-
-    if (placedStat) {
-      placedStat.textContent =
-        peoplePlacedCount;
-    }
-
-    if (placementsStat) {
-      placementsStat.textContent =
-        placementCount;
-    }
-
-    if (totalCount) {
-      totalCount.textContent =
-        stillLookingCount;
-    }
-
-    if (placementRateStat) {
-      placementRateStat.textContent =
-        `${placementRate}%`;
-    }
-
-    if (companiesStat) {
-      companiesStat.textContent =
-        uniqueCompanies.size;
-    }
-  }
-
-
-  /* =====================
      NEW PROFILE LOGIC
   ===================== */
 
@@ -421,7 +193,6 @@ async function loadDirectory() {
     const rawDate =
       getDateAdded(person);
 
-    // Blank = legacy profile, not new
     if (!rawDate) {
       return false;
     }
@@ -431,7 +202,6 @@ async function loadDirectory() {
         `${rawDate}T00:00:00`
       );
 
-    // Invalid date = not new
     if (
       Number.isNaN(
         added.getTime()
@@ -460,7 +230,6 @@ async function loadDirectory() {
         (1000 * 60 * 60 * 24)
       );
 
-    // 0–14 days = NEW
     return (
       diffDays >= 0 &&
       diffDays <= 14
@@ -834,6 +603,41 @@ async function loadDirectory() {
 
 
   /* =====================
+     SUMMARY STATS
+  ===================== */
+
+  function renderSummaryStats() {
+    const functionCounts =
+      countBy(
+        people,
+        getFunction
+      );
+
+    const newProfiles =
+      people.filter(
+        isNewProfile
+      );
+
+    if (totalCount) {
+      totalCount.textContent =
+        people.length;
+    }
+
+    if (functionCount) {
+      functionCount.textContent =
+        Object.keys(
+          functionCounts
+        ).length;
+    }
+
+    if (recentCount) {
+      recentCount.textContent =
+        newProfiles.length;
+    }
+  }
+
+
+  /* =====================
      FILTER CONTROLS
   ===================== */
 
@@ -1070,13 +874,6 @@ async function loadDirectory() {
           .appendChild(el);
       }
     );
-
-    if (functionCount) {
-      functionCount.textContent =
-        Object.keys(
-          functionCounts
-        ).length;
-    }
   }
 
 
@@ -1419,7 +1216,7 @@ async function loadDirectory() {
 
   updateRecentButton();
 
-  renderHomepageStats();
+  renderSummaryStats();
 
   renderDashboard();
 
@@ -1447,7 +1244,7 @@ loadDirectory().catch(
       container.innerHTML = `
         <div class="empty-state">
           Something broke while loading the directory.
-          Check people.json, placed.json, and file paths.
+          Check people.json and file paths.
         </div>
       `;
     }
