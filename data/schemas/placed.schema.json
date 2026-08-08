@@ -6,11 +6,18 @@
     "type": "object",
     "properties": {
       "First Name": {"type": "string"},
+      "First Name ": {"type": "string"},
       "Last Name": {"type": "string"},
+      "Last Name ": {"type": "string"},
       "Company": {"type": ["string", "null"]},
       "Position": {"type": ["string", "null"]},
       "Placement Flag": {"type": ["string", "null"]}
     },
-    "required": ["First Name", "Last Name"]
+    "oneOf": [
+      {"required": ["First Name", "Last Name"]},
+      {"required": ["First Name ", "Last Name"]},
+      {"required": ["First Name", "Last Name "]},
+      {"required": ["First Name ", "Last Name "]}
+    ]
   }
 }
