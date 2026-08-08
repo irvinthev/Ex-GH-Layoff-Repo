@@ -380,14 +380,14 @@
   {
     "First Name": "Elisabeth",
     "Last Name": "Means",
-    "Company": "Doordash for Business",
+    "Company": "Doordash",
     "Position": "Senior enterprise account manager",
     "Placement Flag": "Placed"
   },
   {
     "First Name": "Eric",
     "Last Name": "Callan",
-    "Company": "Draft Kings",
+    "Company": "Draftkings",
     "Position": "Full Stack Engineering Manager",
     "Placement Flag": "Placed"
   },
@@ -1514,8 +1514,8 @@
   {
     "First Name": "Josh",
     "Last Name": "Dean",
-    "Company": "Staff Frontend Engineer",
-    "Position": "Merchant Web",
+    "Company": "Zocdocs",
+    "Position": "Sr Software Engineer",
     "Placement Flag": "Placed"
   },
   {
