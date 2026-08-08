@@ -203,5 +203,10 @@
     padding: 8px 12px;
     font-size: 13px;
   }
-
+  .resource-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 }
