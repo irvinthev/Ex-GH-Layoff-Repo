@@ -8,7 +8,7 @@
 
   <meta
     name="description"
-    content="Browse the Ex-GH Talent Network. Search impacted alumni by function, location, and role."
+    content="Browse the Ex-GH Talent Network. Search former Grubhub professionals by function, location, role, and recently added profiles."
   />
 
   <link rel="stylesheet" href="style.css" />
@@ -48,6 +48,7 @@
         </a>
 
       </div>
+
     </div>
   </nav>
 
@@ -85,9 +86,9 @@
 
         <a
           class="secondary-btn"
-          href="about.html"
+          href="about.html#network-outcomes"
         >
-          About This Network
+          See Network Outcomes
         </a>
 
       </div>
@@ -102,16 +103,13 @@
   ====================== -->
 
   <section class="site-note">
-
     <div class="site-note-inner">
 
       <p>
-        Profiles are opt-in, reviewed before publishing, and include
-        only publicly shareable information.
+        Profiles are opt-in, reviewed before publishing, and include only publicly shareable information.
       </p>
 
     </div>
-
   </section>
 
 
@@ -119,68 +117,12 @@
 
 
     <!-- =====================
-         LIVE NETWORK STATS
+         CURRENT TALENT SNAPSHOT
     ====================== -->
 
     <section class="stats-section">
 
-      <!-- PEOPLE TRACKED -->
-
       <div class="stat-card stat-card-primary">
-
-        <div
-          id="totalProfilesStat"
-          class="stat-number"
-        >
-          0
-        </div>
-
-        <div class="stat-label">
-          People Tracked
-        </div>
-
-      </div>
-
-
-      <!-- PEOPLE PLACED -->
-
-      <div class="stat-card">
-
-        <div
-          id="placedStat"
-          class="stat-number"
-        >
-          0
-        </div>
-
-        <div class="stat-label">
-          People Placed
-        </div>
-
-      </div>
-
-
-      <!-- PLACEMENTS -->
-
-      <div class="stat-card">
-
-        <div
-          id="placementsStat"
-          class="stat-number"
-        >
-          0
-        </div>
-
-        <div class="stat-label">
-          Placements
-        </div>
-
-      </div>
-
-
-      <!-- STILL LOOKING -->
-
-      <div class="stat-card">
 
         <div
           id="totalCount"
@@ -190,49 +132,11 @@
         </div>
 
         <div class="stat-label">
-          Still Looking
+          People Searching
         </div>
 
       </div>
 
-
-      <!-- PLACEMENT RATE -->
-
-      <div class="stat-card">
-
-        <div
-          id="placementRateStat"
-          class="stat-number"
-        >
-          0%
-        </div>
-
-        <div class="stat-label">
-          Placement Rate
-        </div>
-
-      </div>
-
-
-      <!-- DESTINATION COMPANIES -->
-
-      <div class="stat-card">
-
-        <div
-          id="companiesStat"
-          class="stat-number"
-        >
-          0
-        </div>
-
-        <div class="stat-label">
-          Destination Companies
-        </div>
-
-      </div>
-
-
-      <!-- FUNCTIONS -->
 
       <div class="stat-card">
 
@@ -245,6 +149,22 @@
 
         <div class="stat-label">
           Functions Represented
+        </div>
+
+      </div>
+
+
+      <div class="stat-card">
+
+        <div
+          id="recentCount"
+          class="stat-number"
+        >
+          0
+        </div>
+
+        <div class="stat-label">
+          Recently Added
         </div>
 
       </div>
@@ -331,27 +251,20 @@
 
 
         <select id="functionFilter">
-
           <option value="">
             All Functions
           </option>
-
         </select>
 
 
         <select id="locationFilter">
-
           <option value="">
             All Locations
           </option>
-
         </select>
 
 
-        <!--
-          Recently Added button is inserted
-          automatically by script.js
-        -->
+        <!-- Recently Added button inserted by script.js -->
 
 
         <button
