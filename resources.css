@@ -1,0 +1,207 @@
+/* =====================
+   RESOURCE FILTERS
+===================== */
+
+.resource-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 18px 0 24px;
+}
+
+.resource-filter-btn {
+  appearance: none;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #475569;
+
+  padding: 8px 14px;
+
+  border-radius: 999px;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.resource-filter-btn.active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+
+/* =====================
+   RESOURCE GRID
+===================== */
+
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+
+/* =====================
+   RESOURCE CARD
+===================== */
+
+.resource-card {
+  display: flex;
+  flex-direction: column;
+
+  padding: 22px;
+
+  min-width: 0;
+  min-height: 260px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+
+  box-shadow:
+    0 4px 14px rgba(15, 23, 42, 0.05);
+}
+
+.resource-card.featured {
+  border-color: #bfdbfe;
+
+  box-shadow:
+    0 8px 20px rgba(37, 99, 235, 0.08);
+}
+
+
+/* =====================
+   LABELS
+===================== */
+
+.resource-card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  flex-wrap: wrap;
+
+  margin-bottom: 14px;
+}
+
+.resource-series,
+.resource-category {
+  display: inline-flex;
+  align-items: center;
+
+  width: fit-content;
+
+  padding: 4px 9px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.resource-series {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.resource-category {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+
+/* =====================
+   TYPOGRAPHY
+===================== */
+
+.resource-card h3 {
+  margin: 0 0 10px;
+
+  font-size: 21px;
+  line-height: 1.3;
+
+  color: #111827;
+}
+
+.content-page .resource-description {
+  margin: 0 0 16px;
+
+  font-size: 15px;
+  line-height: 1.6;
+
+  color: #6b7280;
+}
+
+.content-page .resource-date {
+  margin: auto 0 14px;
+
+  padding-top: 10px;
+
+  font-size: 13px;
+  line-height: 1.4;
+
+  color: #6b7280;
+}
+
+
+/* =====================
+   RESOURCE LINK
+===================== */
+
+.resource-link {
+  display: inline-flex;
+  align-items: center;
+
+  width: fit-content;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  color: #2563eb;
+
+  text-decoration: none;
+}
+
+.resource-link:hover {
+  text-decoration: underline;
+}
+
+.resource-link-pending {
+  color: #6b7280;
+}
+
+
+/* =====================
+   MOBILE
+===================== */
+
+@media (max-width: 640px) {
+
+  .resource-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .resource-card {
+    min-height: 0;
+    padding: 20px;
+  }
+
+  .resource-card h3 {
+    font-size: 20px;
+  }
+
+  .content-page .resource-description {
+    font-size: 15px;
+  }
+
+  .resource-filter-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+}
