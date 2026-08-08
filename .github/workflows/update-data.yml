@@ -8,38 +8,69 @@ on:
 jobs:
   update-data:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Download people CSV
         run: |
-          curl -L "https://docs.google.com/spreadsheets/d/e/2PACX-1vTneLfd7McnMAUWannvW6a3h-tgjHxxgC7xKFTY3s1SjaRHa2Rw-JFQQYXPcOjBQ0UtACBo1S_m9E-/pub?output=csv" -o people.csv
+          curl -L \
+          "https://docs.google.com/spreadsheets/d/e/2PACX-1vTneLfd7McnMAUWannvW6a3h-tgjHxzgC7xKFTY3s1SjaRHa2Rw-JFQQYXPcOjBQ0UtACBo1S_mm9E-/pub?output=csv" \
+          -o people.csv
+
+      - name: Validate people CSV download
+        run: |
+          if grep -qi "<!DOCTYPE html" people.csv; then
+            echo "ERROR: people.csv download returned HTML instead of CSV"
+            exit 1
+          fi
 
       - name: Convert people CSV to people.json
         run: |
           python3 - <<'PY'
           import csv, json
+
           with open('people.csv', newline='', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            rows = [r for r in reader]
-          with open('people.json','w',encoding='utf-8') as o:
-            json.dump(rows,o,ensure_ascii=False,indent=2)
+              reader = csv.DictReader(f)
+
+              rows = [
+                  r for r in reader
+                  if any(str(v).strip() for v in r.values())
+              ]
+
+          with open('people.json', 'w', encoding='utf-8') as o:
+              json.dump(rows, o, ensure_ascii=False, indent=2)
           PY
 
       - name: Download placed CSV
         run: |
-          curl -L "https://docs.google.com/spreadsheets/d/e/2PACX-1vTneLfd7McnMAUWannvW6a3h-tgjHxxgC7xKFTY3s1SjaRHa2Rw-JFQQYXPcOjBQ0UtACBo1S_m9E-/pub?gid=340284935&single=true&output=csv" -o placed.csv
+          curl -L \
+          "https://docs.google.com/spreadsheets/d/e/2PACX-1vTneLfd7McnMAUWannvW6a3h-tgjHxzgC7xKFTY3s1SjaRHa2Rw-JFQQYXPcOjBQ0UtACBo1S_mm9E-/pub?gid=340284935&single=true&output=csv" \
+          -o placed.csv
+
+      - name: Validate placed CSV download
+        run: |
+          if grep -qi "<!DOCTYPE html" placed.csv; then
+            echo "ERROR: placed.csv download returned HTML instead of CSV"
+            exit 1
+          fi
 
       - name: Convert placed CSV to placed.json
         run: |
           python3 - <<'PY'
           import csv, json
+
           with open('placed.csv', newline='', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            rows = [r for r in reader]
-          with open('placed.json','w',encoding='utf-8') as o:
-            json.dump(rows,o,ensure_ascii=False,indent=2)
+              reader = csv.DictReader(f)
+
+              rows = [
+                  r for r in reader
+                  if any(str(v).strip() for v in r.values())
+              ]
+
+          with open('placed.json', 'w', encoding='utf-8') as o:
+              json.dump(rows, o, ensure_ascii=False, indent=2)
           PY
 
       - name: Validate JSON data
@@ -51,6 +82,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
           git add people.json placed.json
+
           git commit -m "Update directory data" || echo "No changes to commit"
+
           git push
