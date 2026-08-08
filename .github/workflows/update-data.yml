@@ -9,9 +9,16 @@ jobs:
   update-data:
     runs-on: ubuntu-latest
 
+    # Grant the job permission to write repository contents so the job can push
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Ensure the checkout action preserves the GITHUB_TOKEN credentials
+          persist-credentials: true
 
       - name: Download people CSV
         run: |
