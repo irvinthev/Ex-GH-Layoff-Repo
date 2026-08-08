@@ -886,4 +886,117 @@ img {
   .section-header {
     align-items: flex-start;
   }
+  
+  /* =====================
+   ABOUT PAGE POLISH
+===================== */
+
+.about-metrics-section,
+.about-company-section {
+  margin-top: 8px;
 }
+
+.about-section-intro {
+  margin-top: 10px;
+  margin-bottom: 18px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.about-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.metric-definition-box {
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #f8fafc;
+}
+
+.metric-definition-box p {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.metric-definition-box ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.metric-definition-box li {
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.metric-definition-box li:last-child {
+  margin-bottom: 0;
+}
+
+.about-data-note {
+  margin-top: -6px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* =====================
+   ABOUT COMPANY TABLE
+===================== */
+
+.about-company-section .company-table {
+  margin-top: 14px;
+}
+
+.about-company-section .company-row {
+  gap: 16px;
+}
+
+.about-company-section .company-row span:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.about-company-section .company-row span:last-child {
+  flex: 0 0 auto;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.about-company-section .company-row:nth-child(-n + 3) {
+  background: #f8fbff;
+}
+
+/* =====================
+   MOBILE ABOUT PAGE
+===================== */
+
+@media (max-width: 640px) {
+  .about-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .about-section-intro {
+    font-size: 14px;
+  }
+
+  .metric-definition-box {
+    padding: 16px;
+  }
+
+  .about-company-section .company-row {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+}
+
