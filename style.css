@@ -130,7 +130,7 @@ img {
       #f3f6fb 100%
     );
 
-  padding: 64px 20px 42px;
+  padding: 58px 20px 34px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -171,7 +171,7 @@ img {
 
   color: var(--primary);
 
-  margin: 0 0 14px;
+  margin: 0 0 12px;
   padding: 6px 10px;
 
   background: rgba(37, 99, 235, 0.08);
@@ -191,21 +191,54 @@ img {
 
 .hero-subtext {
   max-width: 760px;
-  margin: 18px auto 0;
+  margin: 16px auto 0;
 
   font-size: 18px;
-  line-height: 1.65;
+  line-height: 1.6;
 
   color: var(--text-muted);
 }
 
-.hero-actions {
-  margin-top: 30px;
 
+/* =====================
+   HERO ACTIONS
+===================== */
+
+.hero-actions {
   display: flex;
-  gap: 12px;
   justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
+}
+
+.hero-actions-primary {
+  margin-top: 26px;
+  gap: 12px;
+}
+
+.hero-actions-secondary {
+  margin-top: 16px;
+  gap: 10px;
+}
+
+.hero-text-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.hero-text-link:hover {
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.hero-action-divider {
+  color: #cbd5e1;
 }
 
 
@@ -221,7 +254,7 @@ img {
 .site-note-inner {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 14px 20px;
+  padding: 12px 20px;
 }
 
 .site-note p {
@@ -418,6 +451,7 @@ img {
   background: var(--card);
 
   border-radius: 16px;
+
   padding: 24px;
 
   box-shadow:
@@ -562,6 +596,7 @@ img {
   display: flex;
 
   gap: 12px;
+
   flex-wrap: wrap;
 
   padding-top: 18px;
@@ -749,6 +784,7 @@ img {
 
   font-size: 22px;
   font-weight: 700;
+
   letter-spacing: -0.01em;
 
   color: var(--text);
@@ -862,6 +898,7 @@ img {
 
 .new-badge {
   display: inline-flex;
+
   align-items: center;
 
   padding: 4px 10px;
@@ -1417,8 +1454,27 @@ img {
 
 @media (max-width: 640px) {
 
+  .site-nav-inner {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+
   .hero {
-    padding: 44px 16px 28px;
+    padding: 36px 16px 24px;
+  }
+
+  .eyebrow {
+    margin-bottom: 10px;
   }
 
   .hero h1 {
@@ -1426,16 +1482,39 @@ img {
   }
 
   .hero-subtext {
+    margin-top: 14px;
     font-size: 16px;
+    line-height: 1.55;
   }
 
-  .hero-actions {
+  .hero-actions-primary {
     width: 100%;
+    margin-top: 22px;
+    gap: 10px;
   }
 
-  .hero-actions a {
-    flex: 1 1 100%;
+  .hero-actions-primary a {
+    flex: 1 1 calc(50% - 5px);
     text-align: center;
+    padding: 11px 14px;
+  }
+
+  .hero-actions-secondary {
+    margin-top: 14px;
+    gap: 8px;
+  }
+
+  .hero-text-link {
+    font-size: 13px;
+  }
+
+  .site-note-inner {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .site-note p {
+    font-size: 13px;
   }
 
   .stats-section,
@@ -1447,6 +1526,10 @@ img {
   .site-note-inner {
     padding-left: 16px;
     padding-right: 16px;
+  }
+
+  .stats-section {
+    margin-top: 18px;
   }
 
   .controls input,
@@ -1518,3 +1601,28 @@ img {
 
 }
 
+
+/* =====================
+   EXTRA SMALL MOBILE
+===================== */
+
+@media (max-width: 430px) {
+
+  .hero-actions-primary {
+    flex-direction: column;
+  }
+
+  .hero-actions-primary a {
+    width: 100%;
+    flex: 1 1 auto;
+  }
+
+  .hero-actions-secondary {
+    flex-wrap: wrap;
+  }
+
+  .hero h1 {
+    font-size: 32px;
+  }
+
+}
