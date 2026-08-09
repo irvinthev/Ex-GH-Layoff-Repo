@@ -51,7 +51,11 @@ async function loadDirectory() {
   const locationDashboard =
     document.getElementById("locationDashboard");
 
+  const filterBreadcrumb =
+    document.getElementById("filterBreadcrumb");
+
   let recentOnly = false;
+  let searchTimeout = null;
 
 
   /* =====================
@@ -64,6 +68,8 @@ async function loadDirectory() {
   recentBtn.type = "button";
   recentBtn.id = "recentFilter";
   recentBtn.className = "recent-filter-btn";
+  recentBtn.title = "Shows talent added in the last 14 days";
+  recentBtn.setAttribute("aria-label", "Filter to recently added profiles");
   recentBtn.textContent = "Recently Added";
 
   clearBtn.parentNode.insertBefore(
@@ -638,6 +644,112 @@ async function loadDirectory() {
 
 
   /* =====================
+     FILTER BREADCRUMB
+  ===================== */
+
+  function updateFilterBreadcrumb() {
+    if (!filterBreadcrumb) {
+      return;
+    }
+
+    const activeFilters = [];
+
+    const selectedFunction =
+      functionFilter.value.trim();
+
+    if (selectedFunction) {
+      activeFilters.push({
+        label: `Function: ${selectedFunction}`,
+        clear: () => {
+          functionFilter.value = "";
+          locationFilter.value = "";
+          applyFilters();
+        }
+      });
+    }
+
+    const selectedLocation =
+      locationFilter.value.trim();
+
+    if (selectedLocation) {
+      activeFilters.push({
+        label: `Location: ${selectedLocation}`,
+        clear: () => {
+          locationFilter.value = "";
+          applyFilters();
+        }
+      });
+    }
+
+    if (recentOnly) {
+      activeFilters.push({
+        label: "Recently Added (14 days)",
+        clear: () => {
+          recentOnly = false;
+          updateRecentButton();
+          applyFilters();
+        }
+      });
+    }
+
+    const searchValue =
+      searchBox.value.trim();
+
+    if (searchValue) {
+      activeFilters.push({
+        label: `Search: "${searchValue}"`,
+        clear: () => {
+          searchBox.value = "";
+          applyFilters();
+        }
+      });
+    }
+
+    if (activeFilters.length === 0) {
+      filterBreadcrumb.innerHTML = "";
+      return;
+    }
+
+    filterBreadcrumb.innerHTML = activeFilters
+      .map(
+        (filter) => `
+          <div class="filter-breadcrumb-item">
+            ${filter.label}
+            <span 
+              class="filter-breadcrumb-remove" 
+              role="button" 
+              tabindex="0"
+              aria-label="Remove ${filter.label} filter"
+            >
+              ×
+            </span>
+          </div>
+        `
+      )
+      .join("");
+
+    const removeButtons =
+      filterBreadcrumb.querySelectorAll(
+        ".filter-breadcrumb-remove"
+      );
+
+    removeButtons.forEach(
+      (btn, index) => {
+        btn.onclick = () => {
+          activeFilters[index].clear();
+        };
+
+        btn.onkeydown = (e) => {
+          if (e.key === "Enter") {
+            activeFilters[index].clear();
+          }
+        };
+      }
+    );
+  }
+
+
+  /* =====================
      FILTER CONTROLS
   ===================== */
 
@@ -888,8 +1000,8 @@ async function loadDirectory() {
     if (!list.length) {
       container.innerHTML = `
         <div class="empty-state">
-          No matches found. Try a different search
-          or clear filters.
+          <strong>No matches found.</strong>
+          <p>Try a different search, broaden your filters, or check your spelling. You can also <a href="javascript:clearFilters()" class="empty-state-link">clear all filters</a> to see all talent.</p>
         </div>
       `;
 
@@ -927,6 +1039,9 @@ async function loadDirectory() {
           getDescription(
             person
           );
+
+        const fullDescription =
+          description;
 
         const fn =
           getFunction(person);
@@ -996,6 +1111,11 @@ async function loadDirectory() {
                   ${shortDescription(
                     description
                   )}
+                  ${fullDescription && fullDescription.length > 140 ? `
+                    <div class="description-preview">
+                      ${fullDescription}
+                    </div>
+                  ` : ""}
                 </p>
               `
               : ""
@@ -1024,11 +1144,6 @@ async function loadDirectory() {
       "active",
       recentOnly
     );
-
-    recentBtn.textContent =
-      recentOnly
-        ? "✓ Recently Added"
-        : "Recently Added";
   }
 
 
@@ -1058,6 +1173,7 @@ async function loadDirectory() {
     );
 
     render(filtered);
+    updateFilterBreadcrumb();
   }
 
 
@@ -1153,6 +1269,22 @@ async function loadDirectory() {
       );
 
     render(filtered);
+    updateFilterBreadcrumb();
+  }
+
+
+  /* =====================
+     DEBOUNCED SEARCH
+  ===================== */
+
+  function debouncedSearch() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(
+      () => {
+        applyFilters();
+      },
+      300
+    );
   }
 
 
@@ -1184,11 +1316,12 @@ async function loadDirectory() {
     );
 
     render(people);
+    updateFilterBreadcrumb();
   };
 
 
   searchBox.oninput =
-    applyFilters;
+    debouncedSearch;
 
 
   functionFilter.onchange =
@@ -1221,6 +1354,7 @@ async function loadDirectory() {
   renderDashboard();
 
   render(people);
+  updateFilterBreadcrumb();
 }
 
 
@@ -1243,8 +1377,8 @@ loadDirectory().catch(
     if (container) {
       container.innerHTML = `
         <div class="empty-state">
-          Something broke while loading the directory.
-          Check people.json and file paths.
+          <strong>Something broke while loading the directory.</strong>
+          <p>Check people.json and file paths in your browser console for details.</p>
         </div>
       `;
     }
