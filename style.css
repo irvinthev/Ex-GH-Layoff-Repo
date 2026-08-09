@@ -1470,26 +1470,27 @@ img {
   }
 
   .hero {
-    padding: 36px 16px 24px;
+    padding: 28px 16px 20px;
   }
 
   .eyebrow {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   .hero h1 {
-    font-size: 34px;
+    font-size: 32px;
+    line-height: 1.02;
   }
 
   .hero-subtext {
-    margin-top: 14px;
-    font-size: 16px;
-    line-height: 1.55;
+    margin-top: 12px;
+    font-size: 15px;
+    line-height: 1.5;
   }
 
   .hero-actions-primary {
     width: 100%;
-    margin-top: 22px;
+    margin-top: 18px;
     gap: 10px;
   }
 
@@ -1501,11 +1502,17 @@ img {
 
   .hero-actions-secondary {
     margin-top: 14px;
-    gap: 8px;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .hero-action-divider {
+    display: none;
   }
 
   .hero-text-link {
-    font-size: 13px;
+    font-size: 14px;
+    line-height: 1.4;
   }
 
   .site-note-inner {
