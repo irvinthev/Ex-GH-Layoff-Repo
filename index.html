@@ -263,37 +263,64 @@
 
       <div class="section-header">
 
-        <h2>
-          Browse the Directory
-        </h2>
-
-        <p
-          id="resultsCount"
-          class="results-count"
-        >
-          0 results
-        </p>
+        <div class="section-header-left">
+          <h2>
+            Browse the Directory
+          </h2>
+          <p
+            id="resultsCount"
+            class="results-count"
+          >
+            0 results
+          </p>
+        </div>
 
       </div>
+
+      <!-- ACTIVE FILTERS BREADCRUMB -->
+      <div
+        id="filterBreadcrumb"
+        class="filter-breadcrumb"
+        aria-live="polite"
+      ></div>
 
 
       <div class="controls">
 
-        <input
-          id="search"
-          type="text"
-          placeholder="Search by name, role, function, team, or keyword..."
-        />
+        <div class="search-wrapper">
+          <input
+            id="search"
+            type="text"
+            placeholder="Search by name, role, function, team, location, or skills..."
+            aria-label="Search talent directory"
+          />
+          <button
+            class="search-help-btn"
+            title="Tips: Search across name, role, function, team, location, and professional skills"
+            aria-label="Search tips"
+          >
+            ?
+          </button>
+          <div class="search-help-tooltip">
+            <strong>Search across:</strong> name, role, function, team, location, and professional skills
+          </div>
+        </div>
 
 
-        <select id="functionFilter">
+        <select 
+          id="functionFilter"
+          aria-label="Filter by function"
+        >
           <option value="">
             All Functions
           </option>
         </select>
 
 
-        <select id="locationFilter">
+        <select 
+          id="locationFilter"
+          aria-label="Filter by location"
+        >
           <option value="">
             All Locations
           </option>
@@ -307,6 +334,7 @@
           id="clearFilters"
           class="clear-btn"
           type="button"
+          aria-label="Clear all filters"
         >
           Clear Filters
         </button>
