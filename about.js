@@ -355,7 +355,7 @@ async function loadAboutPage() {
 
 
   /* =====================
-     RENDER COMPANY TABLE
+     RENDER COMPANY CHART
   ===================== */
 
   if (companyTable) {
@@ -370,24 +370,37 @@ async function loadAboutPage() {
 
     if (!topCompanies.length) {
       companyTable.innerHTML = `
-        <div class="company-row">
-          <span>No placement data available.</span>
-          <span></span>
+        <div class="company-bar-row">
+          <span class="company-name">No placement data available.</span>
+          <div class="bar-container"><div class="bar" style="width: 0%"></div></div>
+          <span class="company-count">0</span>
         </div>
       `;
       return;
     }
+
+    /* Find max count for bar scaling */
+    const maxCount = Math.max(
+      ...topCompanies.map(c => c.count)
+    );
 
     topCompanies.forEach((company) => {
       const row =
         document.createElement("div");
 
       row.className =
-        "company-row";
+        "company-bar-row";
+
+      /* Calculate bar width percentage */
+      const barWidthPercent =
+        (company.count / maxCount) * 100;
 
       row.innerHTML = `
-        <span>${company.name}</span>
-        <span>${company.count}</span>
+        <span class="company-name">${company.name}</span>
+        <div class="bar-container">
+          <div class="bar" style="width: ${barWidthPercent}%"></div>
+        </div>
+        <span class="company-count">${company.count}</span>
       `;
 
       companyTable.appendChild(row);
@@ -413,11 +426,12 @@ loadAboutPage().catch((error) => {
 
   if (companyTable) {
     companyTable.innerHTML = `
-      <div class="company-row">
-        <span>
+      <div class="company-bar-row">
+        <span class="company-name">
           Placement data could not be loaded.
         </span>
-        <span></span>
+        <div class="bar-container"><div class="bar" style="width: 0%"></div></div>
+        <span class="company-count">0</span>
       </div>
     `;
   }
