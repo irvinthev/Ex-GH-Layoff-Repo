@@ -998,197 +998,127 @@ img {
 }
 
 .footer {
-  margin-top: 14px;
+  background: #111827;
+  color: #e5e7eb;
+  padding: 40px 20px;
+  text-align: center;
+  margin-top: 60px;
+}
 
-  display: flex;
-  align-items: center;
+.footer p {
+  margin: 0 0 12px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.footer p:last-child {
+  margin-bottom: 0;
+}
+
+.footer a {
+  color: #60a5fa;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  color: #93c5fd;
+  text-decoration: underline;
 }
 
 
 /* =====================
-   SPLIT CTA SECTION
+   COMPANY CHART
 ===================== */
 
-.split {
-  display: grid;
-
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
-
-  gap: 18px;
-
+.company-chart {
   margin-top: 20px;
-}
-
-.split .card {
-  padding: 24px;
-
-  border-radius: 18px;
-}
-
-.split .card p:last-child {
-  margin-bottom: 0;
-}
-
-
-/* =====================
-   FUNCTION + NEW BADGES
-===================== */
-
-.badge-row {
   display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
+.company-bar-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 40px;
   align-items: center;
-
-  gap: 8px;
-
-  flex-wrap: wrap;
-
-  margin-bottom: 12px;
+  gap: 16px;
 }
 
-.badge {
-  display: inline-block;
-
-  padding: 4px 10px;
-
-  margin-bottom: 0;
-
-  border-radius: 999px;
-
-  font-size: 0.75rem;
-  font-weight: 600;
-
-  background: #f1f5f9;
-
-  color: #334155;
-}
-
-.new-badge {
-  display: inline-flex;
-
-  align-items: center;
-
-  padding: 4px 10px;
-
-  border-radius: 999px;
-
-  font-size: 0.75rem;
-  font-weight: 700;
-
-  letter-spacing: 0.04em;
-
-  background: #dbeafe;
-
-  color: #1d4ed8;
-
-  border: 1px solid #bfdbfe;
-}
-
-.badge-product-design {
-  background: #f3e8ff;
-  color: #7c3aed;
-}
-
-.badge-it {
-  background: #e0f2fe;
-  color: #0369a1;
-}
-
-.badge-go-to-market {
-  background: #ecfdf5;
-  color: #047857;
-}
-
-.badge-engineering {
-  background: #e0edff;
-  color: #2563eb;
-}
-
-.badge-operations {
-  background: #fff4e5;
-  color: #f59e0b;
-}
-
-.badge-design {
-  background: #f3e8ff;
-  color: #8b5cf6;
-}
-
-.badge-customer-care-and-support {
-  background: #e6fffa;
-  color: #14b8a6;
-}
-
-.badge-customer-support {
-  background: #e6fffa;
-  color: #14b8a6;
-}
-
-.badge-sales {
-  background: #ecfdf5;
-  color: #22c55e;
-}
-
-.badge-product {
-  background: #eef2ff;
-  color: #6366f1;
-}
-
-.badge-data-and-analytics {
-  background: #ecfeff;
-  color: #06b6d4;
-}
-
-.badge-marketing {
-  background: #fdf2f8;
-  color: #ec4899;
-}
-
-
-/* =====================
-   LINKEDIN CTA
-===================== */
-
-.linkedin {
-  display: inline-block;
-
-  margin-top: 12px;
-
-  padding: 10px 14px;
-
+.company-name {
   font-size: 14px;
   font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-  border-radius: 10px;
+.bar-container {
+  height: 24px;
+  background: #f3f4f6;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
 
-  background: #f1f5f9;
+.bar {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--primary) 0%,
+    #60a5fa 100%
+  );
+  border-radius: 6px;
+  min-width: 2px;
+  transition: width 0.4s ease;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15);
+}
 
+.company-count {
+  font-size: 14px;
+  font-weight: 700;
   color: var(--primary);
-
-  text-decoration: none;
-
-  transition:
-    background 0.15s ease,
-    color 0.15s ease,
-    transform 0.15s ease;
+  text-align: right;
+  min-width: 40px;
 }
 
-.linkedin:hover {
-  background: #e0e7ff;
 
-  transform: translateY(-1px);
+/* =====================
+   RESPONSIVE
+===================== */
+
+@media (max-width: 768px) {
+  .company-bar-row {
+    grid-template-columns: 100px 1fr 32px;
+    gap: 12px;
+  }
+
+  .company-name {
+    font-size: 13px;
+  }
+
+  .company-count {
+    font-size: 13px;
+    min-width: 32px;
+  }
 }
 
-.linkedin.pending {
-  background: #fff4e5;
+@media (max-width: 600px) {
+  .company-bar-row {
+    grid-template-columns: 80px 1fr 28px;
+    gap: 8px;
+  }
 
-  color: #f59e0b;
+  .company-name {
+    font-size: 12px;
+  }
 
-  cursor: default;
-  pointer-events: none;
+  .bar-container {
+    height: 20px;
+  }
 
-  opacity: 0.6;
-
-  font-style: italic;
+  .company-count {
+    font-size: 12px;
+    min-width: 28px;
+  }
 }
