@@ -464,8 +464,7 @@ img {
    SECTIONS
 ===================== */
 
-.controls-section,
-.network-snapshot {
+.controls-section {
   max-width: 1100px;
   margin: 0 auto;
   padding: 0 20px;
@@ -475,22 +474,8 @@ img {
   padding-top: 32px;
 }
 
-.network-snapshot {
-  margin-top: 64px;
-  padding-bottom: 64px;
-}
-
 .dashboard-section {
   margin-top: 32px;
-}
-
-.section-kicker {
-  margin: 0 0 6px;
-  color: var(--primary);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
 }
 
 .section-header {
@@ -531,6 +516,105 @@ img {
   font-weight: 600;
 
   color: var(--primary);
+}
+
+
+/* =====================
+   TALENT EXPLORER
+===================== */
+
+.talent-explorer {
+  max-width: 1060px;
+  margin: 18px auto 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.talent-explorer summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.talent-explorer summary::-webkit-details-marker {
+  display: none;
+}
+
+.talent-explorer summary > span:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.talent-explorer summary strong {
+  font-size: 15px;
+}
+
+.talent-explorer summary small {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.explorer-toggle::before {
+  content: "+";
+  color: var(--primary);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.talent-explorer[open] .explorer-toggle::before {
+  content: "–";
+}
+
+.talent-explorer-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.talent-explorer .dashboard-section {
+  margin-top: 16px;
+}
+
+.talent-explorer .function-dashboard {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.talent-explorer .function-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+.talent-explorer .function-card:hover {
+  transform: translateY(-1px);
+}
+
+.talent-explorer .function-name {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.talent-explorer .function-value {
+  margin-top: 0;
+  color: var(--primary);
+  font-size: 18px;
 }
 
 
@@ -1067,10 +1151,6 @@ img {
     display: none;
   }
 
-  .network-snapshot {
-    margin-top: 48px;
-  }
-
   .company-bar-row {
     grid-template-columns: 100px 1fr 32px;
     gap: 12px;
@@ -1129,10 +1209,31 @@ img {
     padding: 0 14px;
   }
 
-  .controls-section,
-  .network-snapshot {
+  .controls-section {
     padding-left: 14px;
     padding-right: 14px;
+  }
+
+  .talent-explorer {
+    margin-left: 14px;
+    margin-right: 14px;
+  }
+
+  .talent-explorer-content {
+    display: block;
+  }
+
+  .talent-explorer .function-dashboard {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scroll-snap-type: x proximity;
+  }
+
+  .talent-explorer .function-card {
+    flex: 0 0 155px;
+    scroll-snap-align: start;
   }
 
   .card {
