@@ -1545,5 +1545,68 @@
     "Company": "Activate",
     "Position": "Managed Service Team Lead",
     "Placement Flag": "Placed"
+  },
+  {
+    "First Name ": "Austin",
+    "Last Name": "Trivett",
+    "Company": "Toast",
+    "Position": "Software Engineer",
+    "Placement Flag": "Placed"
+  },
+  {
+    "First Name ": "Lam ",
+    "Last Name": "Truong",
+    "Company": "Checkbox",
+    "Position": "Engineer",
+    "Placement Flag": "Placed"
+  },
+  {
+    "First Name ": "Gema ",
+    "Last Name": "Del Real",
+    "Company": "Uber",
+    "Position": "Senior Care Specialist",
+    "Placement Flag": "Placed"
+  },
+  {
+    "First Name ": "Alexandra (Alex)",
+    "Last Name": "Beckman",
+    "Company": "Double Good",
+    "Position": "Senior Lifecycle and CRM Strategist",
+    "Placement Flag": "Placed"
+  },
+  {
+    "First Name ": "Cassie",
+    "Last Name": "Boone",
+    "Company": "Aqua Finance ",
+    "Position": "Diaper Ops Specialist ",
+    "Placement Flag": "Placed"
+  },
+  {
+    "First Name ": "Jeff",
+    "Last Name": "Saltzman",
+    "Company": "Zip Recruiter",
+    "Position": "Sales",
+    "Placement Flag": "Placed"
+  },
+  {
+    "First Name ": "Mike",
+    "Last Name": "Blaylock",
+    "Company": "Medline ",
+    "Position": "Recruiter",
+    "Placement Flag": "Placed"
+  },
+  {
+    "First Name ": "Ninneth Karla ",
+    "Last Name": "Hernandez ",
+    "Company": "Yelp",
+    "Position": "Account Executive ",
+    "Placement Flag": "Placed"
+  },
+  {
+    "First Name ": "Steven",
+    "Last Name": "Uy",
+    "Company": "Oura",
+    "Position": "Senior Software Engineer (iOS)",
+    "Placement Flag": "Placed"
   }
 ]
