@@ -54,7 +54,17 @@ async function loadDirectory() {
   const filterBreadcrumb =
     document.getElementById("filterBreadcrumb");
 
+  const talentExplorer =
+    document.getElementById("talentExplorer");
+
   let searchTimeout = null;
+
+  if (
+    talentExplorer &&
+    window.matchMedia("(min-width: 769px)").matches
+  ) {
+    talentExplorer.open = true;
+  }
 
 
   /* =====================
@@ -888,7 +898,7 @@ async function loadDirectory() {
 
           document
             .getElementById(
-              "directory-section"
+              "directory"
             )
             .scrollIntoView({
               behavior: "smooth",
@@ -929,7 +939,7 @@ async function loadDirectory() {
 
           document
             .getElementById(
-              "directory-section"
+              "directory"
             )
             .scrollIntoView({
               behavior: "smooth",
@@ -1270,4 +1280,3 @@ loadDirectory().catch(
     }
   }
 );
-
