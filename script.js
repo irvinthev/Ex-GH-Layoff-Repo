@@ -39,8 +39,8 @@ async function loadDirectory() {
   const functionCount =
     document.getElementById("functionCount");
 
-  const recentCount =
-    document.getElementById("recentCount");
+  const heroTalentCount =
+    document.getElementById("heroTalentCount");
 
   const resultsCount =
     document.getElementById("resultsCount");
@@ -54,28 +54,7 @@ async function loadDirectory() {
   const filterBreadcrumb =
     document.getElementById("filterBreadcrumb");
 
-  let recentOnly = false;
   let searchTimeout = null;
-
-
-  /* =====================
-     RECENTLY ADDED BUTTON
-  ===================== */
-
-  const recentBtn =
-    document.createElement("button");
-
-  recentBtn.type = "button";
-  recentBtn.id = "recentFilter";
-  recentBtn.className = "recent-filter-btn";
-  recentBtn.title = "Shows talent added in the last 14 days";
-  recentBtn.setAttribute("aria-label", "Filter to recently added profiles");
-  recentBtn.textContent = "Recently Added";
-
-  clearBtn.parentNode.insertBefore(
-    recentBtn,
-    clearBtn
-  );
 
 
   /* =====================
@@ -183,63 +162,28 @@ async function loadDirectory() {
   }
 
 
-  function getDateAdded(person) {
-    return getValue(person, [
-      "Date Added",
-      "dateAdded"
+  function getSkills(person) {
+    const skills = getValue(person, [
+      "Top 3 Skills",
+      "topSkills",
+      "skills",
+      "Skills"
     ]);
+
+    return skills.startsWith("=AI(")
+      ? ""
+      : skills;
   }
 
 
-  /* =====================
-     NEW PROFILE LOGIC
-  ===================== */
+  function isActivelySearching(person) {
+    const value = getValue(person, [
+      "Open to Work",
+      "openToWork",
+      "availability"
+    ]).toLowerCase();
 
-  function isNewProfile(person) {
-    const rawDate =
-      getDateAdded(person);
-
-    if (!rawDate) {
-      return false;
-    }
-
-    const added =
-      new Date(
-        `${rawDate}T00:00:00`
-      );
-
-    if (
-      Number.isNaN(
-        added.getTime()
-      )
-    ) {
-      return false;
-    }
-
-    const today =
-      new Date();
-
-    today.setHours(
-      0,
-      0,
-      0,
-      0
-    );
-
-    const diffMilliseconds =
-      today.getTime() -
-      added.getTime();
-
-    const diffDays =
-      Math.floor(
-        diffMilliseconds /
-        (1000 * 60 * 60 * 24)
-      );
-
-    return (
-      diffDays >= 0 &&
-      diffDays <= 14
-    );
+    return ["yes", "true", "active", "actively searching"].includes(value);
   }
 
 
@@ -269,10 +213,52 @@ async function loadDirectory() {
   }
 
 
+  function getProfileSummary(person) {
+    const description = getDescription(person);
+
+    if (!description) {
+      return "";
+    }
+
+    return description
+      .split(/\r?\n/)
+      .map((part) => part.trim())
+      .filter(Boolean)[0] || "";
+  }
+
+
+  function getDisplayTags(person) {
+    const descriptionLines = getDescription(person)
+      .split(/\r?\n/)
+      .map((part) => part.trim())
+      .filter(Boolean);
+
+    const tagSource = descriptionLines.length > 1
+      ? descriptionLines[descriptionLines.length - 1]
+      : getSkills(person);
+
+    return tagSource
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean)
+      .slice(0, 3);
+  }
+
+
   function normalizeText(value) {
     return String(
       value || ""
     ).trim();
+  }
+
+
+  function escapeHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
   }
 
 
@@ -289,22 +275,6 @@ async function loadDirectory() {
           .slice(0, 140)
           .trim()}...`
       : clean;
-  }
-
-
-  function slugify(value) {
-    return String(
-      value || ""
-    )
-      .trim()
-      .toLowerCase()
-      .replace(/&/g, "and")
-      .replace(/[\/,]/g, " ")
-      .replace(/\s+/g, "-")
-      .replace(
-        /[^a-z0-9-]/g,
-        ""
-      );
   }
 
 
@@ -553,12 +523,12 @@ async function loadDirectory() {
 
     return `
       <a
-        href="${raw}"
+        href="${escapeHtml(raw)}"
         target="_blank"
         rel="noopener noreferrer"
         class="linkedin"
       >
-        View Profile →
+        View LinkedIn →
       </a>
     `;
   }
@@ -619,14 +589,14 @@ async function loadDirectory() {
         getFunction
       );
 
-    const newProfiles =
-      people.filter(
-        isNewProfile
-      );
-
     if (totalCount) {
       totalCount.textContent =
         people.length;
+    }
+
+    if (heroTalentCount) {
+      heroTalentCount.textContent =
+        `${people.length} former Grubhub professionals`;
     }
 
     if (functionCount) {
@@ -636,10 +606,6 @@ async function loadDirectory() {
         ).length;
     }
 
-    if (recentCount) {
-      recentCount.textContent =
-        newProfiles.length;
-    }
   }
 
 
@@ -676,17 +642,6 @@ async function loadDirectory() {
         label: `Location: ${selectedLocation}`,
         clear: () => {
           locationFilter.value = "";
-          applyFilters();
-        }
-      });
-    }
-
-    if (recentOnly) {
-      activeFilters.push({
-        label: "Recently Added (14 days)",
-        clear: () => {
-          recentOnly = false;
-          updateRecentButton();
           applyFilters();
         }
       });
@@ -1035,21 +990,19 @@ async function loadDirectory() {
             person
           );
 
-        const description =
-          getDescription(
+        const summary =
+          getProfileSummary(
             person
           );
-
-        const fullDescription =
-          description;
 
         const fn =
           getFunction(person);
 
-        const newProfile =
-          isNewProfile(
-            person
-          );
+        const tags =
+          getDisplayTags(person);
+
+        const activelySearching =
+          isActivelySearching(person);
 
         const card =
           document.createElement(
@@ -1060,68 +1013,37 @@ async function loadDirectory() {
           "card";
 
         card.innerHTML = `
-          <div class="badge-row">
-
-            ${
-              fn
-                ? `
-                  <div
-                    class="badge badge-${slugify(fn)}"
-                  >
-                    ${fn}
-                  </div>
-                `
-                : ""
-            }
-
-            ${
-              newProfile
-                ? `
-                  <div class="new-badge">
-                    NEW
-                  </div>
-                `
-                : ""
-            }
-
-          </div>
-
           <h3>
-            ${name}
+            ${escapeHtml(name)}
           </h3>
 
           <p class="role">
-            ${role}
+            ${escapeHtml(role)}
           </p>
 
+          <div class="candidate-context">
+            ${fn ? `<span>${escapeHtml(fn)}</span>` : ""}
+            ${fn && rawLocation ? `<span aria-hidden="true">·</span>` : ""}
+            ${rawLocation ? `<span>📍 ${escapeHtml(rawLocation)}</span>` : ""}
+          </div>
+
           ${
-            rawLocation
+            tags.length
               ? `
-                <div class="meta">
-                  📍 ${rawLocation}
+                <div class="skill-tags" aria-label="Professional strengths">
+                  ${tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}
                 </div>
               `
               : ""
           }
 
-          ${
-            description
-              ? `
-                <p class="description">
-                  ${shortDescription(
-                    description
-                  )}
-                  ${fullDescription && fullDescription.length > 140 ? `
-                    <div class="description-preview">
-                      ${fullDescription}
-                    </div>
-                  ` : ""}
-                </p>
-              `
-              : ""
-          }
+          ${summary ? `<p class="description">${escapeHtml(shortDescription(summary))}</p>` : ""}
 
-          <div class="footer">
+          <div class="card-footer">
+            <span class="availability ${activelySearching ? "active" : "unverified"}">
+              <span class="status-dot" aria-hidden="true"></span>
+              ${activelySearching ? "Actively searching" : "Availability unverified"}
+            </span>
             ${renderLinkedIn(
               person
             )}
@@ -1139,24 +1061,12 @@ async function loadDirectory() {
      FILTERING
   ===================== */
 
-  function updateRecentButton() {
-    recentBtn.classList.toggle(
-      "active",
-      recentOnly
-    );
-  }
-
-
   function applyRegionFilter(
     region
   ) {
     searchBox.value = "";
     functionFilter.value = "";
     locationFilter.value = "";
-
-    recentOnly = false;
-
-    updateRecentButton();
 
     const filtered =
       people.filter(
@@ -1204,16 +1114,6 @@ async function loadDirectory() {
         }
       );
 
-    if (recentOnly) {
-      functionFiltered =
-        functionFiltered.filter(
-          (person) =>
-            isNewProfile(
-              person
-            )
-        );
-    }
-
     populateLocationFilter(
       functionFiltered
     );
@@ -1249,6 +1149,7 @@ async function loadDirectory() {
             getFunction(person),
             getRawLocation(person),
             getDescription(person),
+            getSkills(person),
             getCompany(person),
             getLinkedIn(person)
           ]
@@ -1292,23 +1193,10 @@ async function loadDirectory() {
      EVENTS
   ===================== */
 
-  recentBtn.onclick = () => {
-    recentOnly =
-      !recentOnly;
-
-    updateRecentButton();
-    applyFilters();
-  };
-
-
   clearBtn.onclick = () => {
     searchBox.value = "";
     functionFilter.value = "";
     locationFilter.value = "";
-
-    recentOnly = false;
-
-    updateRecentButton();
 
     populateFunctionFilter();
     populateLocationFilter(
@@ -1347,8 +1235,6 @@ async function loadDirectory() {
     people
   );
 
-  updateRecentButton();
-
   renderSummaryStats();
 
   renderDashboard();
@@ -1384,3 +1270,4 @@ loadDirectory().catch(
     }
   }
 );
+
