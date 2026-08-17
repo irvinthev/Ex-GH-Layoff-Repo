@@ -212,6 +212,40 @@
 
 
     <!-- =====================
+         OPTIONAL TALENT EXPLORER
+    ====================== -->
+
+    <details
+      id="talentExplorer"
+      class="talent-explorer"
+    >
+      <summary>
+        <span>
+          <strong>Explore by function or region</strong>
+          <small>View the talent breakdown</small>
+        </span>
+        <span class="explorer-toggle" aria-hidden="true"></span>
+      </summary>
+
+      <div class="talent-explorer-content">
+        <section class="dashboard-section">
+          <div class="section-header">
+            <h3>Talent by Function</h3>
+          </div>
+          <div id="functionDashboard" class="function-dashboard"></div>
+        </section>
+
+        <section class="dashboard-section">
+          <div class="section-header">
+            <h3>Talent by Region</h3>
+          </div>
+          <div id="locationDashboard" class="function-dashboard"></div>
+        </section>
+      </div>
+    </details>
+
+
+    <!-- =====================
          DIRECTORY
     ====================== -->
 
@@ -219,46 +253,6 @@
       id="directory"
       class="directory-grid"
     ></section>
-
-
-    <!-- =====================
-         NETWORK SNAPSHOT
-    ====================== -->
-
-    <section class="network-snapshot" aria-labelledby="snapshot-heading">
-      <div class="section-header">
-        <div class="section-header-left">
-          <p class="section-kicker">Network snapshot</p>
-          <h2 id="snapshot-heading">Explore the talent pool</h2>
-        </div>
-      </div>
-
-      <div class="stats-section">
-        <div class="stat-card stat-card-primary">
-          <div id="totalCount" class="stat-number">0</div>
-          <div class="stat-label">People Searching</div>
-        </div>
-
-        <div class="stat-card">
-          <div id="functionCount" class="stat-number">0</div>
-          <div class="stat-label">Functions Represented</div>
-        </div>
-      </div>
-
-      <section class="dashboard-section">
-        <div class="section-header">
-          <h3>Talent by Function</h3>
-        </div>
-        <div id="functionDashboard" class="function-dashboard"></div>
-      </section>
-
-      <section class="dashboard-section">
-        <div class="section-header">
-          <h3>Talent by Region</h3>
-        </div>
-        <div id="locationDashboard" class="function-dashboard"></div>
-      </section>
-    </section>
 
   </main>
 
