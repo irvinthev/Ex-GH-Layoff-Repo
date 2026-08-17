@@ -8,7 +8,7 @@
 
   <meta
     name="description"
-    content="Browse the Ex-GH Talent Network. Search former Grubhub professionals by function, location, role, and recently added profiles."
+    content="Search former Grubhub professionals by role, function, location, and skills."
   />
 
   <link rel="stylesheet" href="style.css" />
@@ -74,9 +74,8 @@
       </h1>
 
       <p class="hero-subtext">
-        A curated directory of former Grubhub employees actively exploring
-        new opportunities — built to help recruiters find strong talent,
-        connect people with open roles, and help candidates get seen.
+        <strong id="heroTalentCount">Former Grubhub professionals</strong>
+        currently searching — organized to help recruiters find relevant talent faster.
       </p>
 
 
@@ -88,7 +87,7 @@
           class="primary-btn"
           href="#directory-section"
         >
-          Browse Talent
+          Search Talent
         </a>
 
         <a
@@ -98,33 +97,6 @@
           rel="noopener noreferrer"
         >
           Share an Open Role
-        </a>
-
-      </div>
-
-
-      <!-- SECONDARY ACTIONS -->
-
-      <div class="hero-actions hero-actions-secondary">
-
-        <a
-          class="hero-text-link"
-          href="https://docs.google.com/forms/d/e/1FAIpQLSehawGkkedBDJJCGhzKEy33epkB2GeRQ7sB8x8fQ-Uz_kxgAQ/viewform"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Join the Network
-        </a>
-
-        <span class="hero-action-divider">
-          ·
-        </span>
-
-        <a
-          class="hero-text-link"
-          href="about.html#network-outcomes"
-        >
-          See Network Outcomes
         </a>
 
       </div>
@@ -151,107 +123,6 @@
 
   <main class="page">
 
-
-    <!-- =====================
-         CURRENT TALENT SNAPSHOT
-    ====================== -->
-
-    <section class="stats-section">
-
-      <div class="stat-card stat-card-primary">
-
-        <div
-          id="totalCount"
-          class="stat-number"
-        >
-          0
-        </div>
-
-        <div class="stat-label">
-          People Searching
-        </div>
-
-      </div>
-
-
-      <div class="stat-card">
-
-        <div
-          id="functionCount"
-          class="stat-number"
-        >
-          0
-        </div>
-
-        <div class="stat-label">
-          Functions Represented
-        </div>
-
-      </div>
-
-
-      <div class="stat-card">
-
-        <div
-          id="recentCount"
-          class="stat-number"
-        >
-          0
-        </div>
-
-        <div class="stat-label">
-          Recently Added
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =====================
-         TALENT BY FUNCTION
-    ====================== -->
-
-    <section class="dashboard-section">
-
-      <div class="section-header">
-
-        <h2>
-          Talent by Function
-        </h2>
-
-      </div>
-
-      <div
-        id="functionDashboard"
-        class="function-dashboard"
-      ></div>
-
-    </section>
-
-
-    <!-- =====================
-         TALENT BY REGION
-    ====================== -->
-
-    <section class="dashboard-section">
-
-      <div class="section-header">
-
-        <h2>
-          Talent by Region
-        </h2>
-
-      </div>
-
-      <div
-        id="locationDashboard"
-        class="function-dashboard"
-      ></div>
-
-    </section>
-
-
     <!-- =====================
          DIRECTORY CONTROLS
     ====================== -->
@@ -265,7 +136,7 @@
 
         <div class="section-header-left">
           <h2>
-            Browse the Directory
+            Search talent
           </h2>
           <p
             id="resultsCount"
@@ -291,7 +162,7 @@
           <input
             id="search"
             type="text"
-            placeholder="Search by name, role, function, team, location, or skills..."
+            placeholder="Product Manager, Python, Chicago, Customer Success..."
             aria-label="Search talent directory"
           />
           <button
@@ -326,10 +197,6 @@
           </option>
         </select>
 
-
-        <!-- Recently Added button inserted by script.js -->
-
-
         <button
           id="clearFilters"
           class="clear-btn"
@@ -352,6 +219,46 @@
       id="directory"
       class="directory-grid"
     ></section>
+
+
+    <!-- =====================
+         NETWORK SNAPSHOT
+    ====================== -->
+
+    <section class="network-snapshot" aria-labelledby="snapshot-heading">
+      <div class="section-header">
+        <div class="section-header-left">
+          <p class="section-kicker">Network snapshot</p>
+          <h2 id="snapshot-heading">Explore the talent pool</h2>
+        </div>
+      </div>
+
+      <div class="stats-section">
+        <div class="stat-card stat-card-primary">
+          <div id="totalCount" class="stat-number">0</div>
+          <div class="stat-label">People Searching</div>
+        </div>
+
+        <div class="stat-card">
+          <div id="functionCount" class="stat-number">0</div>
+          <div class="stat-label">Functions Represented</div>
+        </div>
+      </div>
+
+      <section class="dashboard-section">
+        <div class="section-header">
+          <h3>Talent by Function</h3>
+        </div>
+        <div id="functionDashboard" class="function-dashboard"></div>
+      </section>
+
+      <section class="dashboard-section">
+        <div class="section-header">
+          <h3>Talent by Region</h3>
+        </div>
+        <div id="locationDashboard" class="function-dashboard"></div>
+      </section>
+    </section>
 
   </main>
 
