@@ -1615,5 +1615,26 @@
     "Company": "Doordash",
     "Position": "Machine Learning Engineer",
     "Placement Flag": "Placed"
+  },
+  {
+    "First Name ": "Christopher ",
+    "Last Name": "Johnson",
+    "Company": "Outreach",
+    "Position": "Application Administrator ",
+    "Placement Flag": "Placed"
+  },
+  {
+    "First Name ": "Kimberly ",
+    "Last Name": "Hirschey",
+    "Company": "Priceline ",
+    "Position": "Market Manager",
+    "Placement Flag": "Placed"
+  },
+  {
+    "First Name ": "Warren",
+    "Last Name": "Waller",
+    "Company": "Uber",
+    "Position": "Account Executive ",
+    "Placement Flag": ""
   }
 ]
