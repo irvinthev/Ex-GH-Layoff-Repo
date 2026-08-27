@@ -25,13 +25,13 @@ jobs:
       - name: Download people CSV
         run: |
           curl \
-            --fail \
             --location \
             --max-time 30 \
             --retry 3 \
             --retry-delay 2 \
             --retry-all-errors \
-            -A "Mozilla/5.0" \
+            -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/140 Safari/537.36" \
+            -H "Accept: text/csv,text/plain,*/*" \
             "https://docs.google.com/spreadsheets/d/e/2PACX-1vTneLfd7McnMAUWannvW6a3h-tgjHxzgC7xKFTY3s1SjaRHa2Rw-JFQQYXPcOjBQ0UtACBo1S_mm9E-/pub?output=csv" \
             -o people.csv
 
@@ -39,10 +39,17 @@ jobs:
 
       - name: Validate people CSV download
         run: |
+          echo "File size:"
+          wc -c people.csv
+
+          echo "File type:"
+          file people.csv
+
+          echo "First 5 lines:"
+          head -5 people.csv
+
           if grep -qiE '<!DOCTYPE html|<html' people.csv; then
             echo "ERROR: people.csv download returned HTML instead of CSV"
-            echo "Google response:"
-            head -20 people.csv
             exit 1
           fi
 
@@ -51,8 +58,7 @@ jobs:
             exit 1
           fi
 
-          echo "people.csv looks valid"
-          head -3 people.csv
+          echo "people.csv appears valid"
 
       - name: Convert people CSV to people.json
         run: |
@@ -81,24 +87,31 @@ jobs:
       - name: Download placed CSV
         run: |
           curl \
-            --fail \
             --location \
             --max-time 30 \
             --retry 3 \
             --retry-delay 2 \
             --retry-all-errors \
-            -A "Mozilla/5.0" \
-            "https://docs.google.com/spreadsheets/d/1DofZ3-SNFwYXlVv8T_-fLRJCtypaJKGHPAiOyk1y28A/gviz/tq?tqx=out:csv&gid=340284935" \
+            -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/140 Safari/537.36" \
+            -H "Accept: text/csv,text/plain,*/*" \
+            "https://docs.google.com/spreadsheets/d/e/2PACX-1vTneLfd7McnMAUWannvW6a3h-tgjHxzgC7xKFTY3s1SjaRHa2Rw-JFQQYXPcOjBQ0UtACBo1S_mm9E-/pub?gid=340284935&single=true&output=csv" \
             -o placed.csv
 
           echo "Downloaded $(wc -c < placed.csv) bytes"
 
       - name: Validate placed CSV download
         run: |
+          echo "File size:"
+          wc -c placed.csv
+
+          echo "File type:"
+          file placed.csv
+
+          echo "First 30 lines:"
+          head -30 placed.csv
+
           if grep -qiE '<!DOCTYPE html|<html' placed.csv; then
-            echo "ERROR: placed.csv download returned HTML instead of CSV"
-            echo "Google response:"
-            head -20 placed.csv
+            echo "ERROR: Google returned HTML instead of CSV"
             exit 1
           fi
 
@@ -107,8 +120,7 @@ jobs:
             exit 1
           fi
 
-          echo "placed.csv looks valid"
-          head -3 placed.csv
+          echo "placed.csv appears valid"
 
       - name: Convert placed CSV to placed.json
         run: |
@@ -131,7 +143,7 @@ jobs:
           PY
 
       # -------------------------
-      # VALIDATE
+      # VALIDATE JSON
       # -------------------------
 
       - name: Validate JSON data
