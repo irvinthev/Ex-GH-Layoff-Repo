@@ -9,7 +9,6 @@ jobs:
   update-data:
     runs-on: ubuntu-latest
 
-    # Grant the job permission to write repository contents so the job can push
     permissions:
       contents: write
 
@@ -17,26 +16,49 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          # Ensure the checkout action preserves the GITHUB_TOKEN credentials
           persist-credentials: true
+
+      # -------------------------
+      # PEOPLE
+      # -------------------------
 
       - name: Download people CSV
         run: |
-          curl -L \
-          "https://docs.google.com/spreadsheets/d/e/2PACX-1vTneLfd7McnMAUWannvW6a3h-tgjHxzgC7xKFTY3s1SjaRHa2Rw-JFQQYXPcOjBQ0UtACBo1S_mm9E-/pub?output=csv" \
-          -o people.csv
+          curl \
+            --fail \
+            --location \
+            --max-time 30 \
+            --retry 3 \
+            --retry-delay 2 \
+            --retry-all-errors \
+            -A "Mozilla/5.0" \
+            "https://docs.google.com/spreadsheets/d/e/2PACX-1vTneLfd7McnMAUWannvW6a3h-tgjHxzgC7xKFTY3s1SjaRHa2Rw-JFQQYXPcOjBQ0UtACBo1S_mm9E-/pub?output=csv" \
+            -o people.csv
+
+          echo "Downloaded $(wc -c < people.csv) bytes"
 
       - name: Validate people CSV download
         run: |
-          if grep -qi "<!DOCTYPE html" people.csv; then
+          if grep -qiE '<!DOCTYPE html|<html' people.csv; then
             echo "ERROR: people.csv download returned HTML instead of CSV"
+            echo "Google response:"
+            head -20 people.csv
             exit 1
           fi
+
+          if [ ! -s people.csv ]; then
+            echo "ERROR: people.csv is empty"
+            exit 1
+          fi
+
+          echo "people.csv looks valid"
+          head -3 people.csv
 
       - name: Convert people CSV to people.json
         run: |
           python3 - <<'PY'
-          import csv, json
+          import csv
+          import json
 
           with open('people.csv', newline='', encoding='utf-8') as f:
               reader = csv.DictReader(f)
@@ -48,25 +70,51 @@ jobs:
 
           with open('people.json', 'w', encoding='utf-8') as o:
               json.dump(rows, o, ensure_ascii=False, indent=2)
+
+          print(f"Converted {len(rows)} people records")
           PY
+
+      # -------------------------
+      # PLACED
+      # -------------------------
 
       - name: Download placed CSV
         run: |
-          curl -L \
-          "https://docs.google.com/spreadsheets/d/e/2PACX-1vTneLfd7McnMAUWannvW6a3h-tgjHxzgC7xKFTY3s1SjaRHa2Rw-JFQQYXPcOjBQ0UtACBo1S_mm9E-/pub?gid=340284935&single=true&output=csv" \
-          -o placed.csv
+          curl \
+            --fail \
+            --location \
+            --max-time 30 \
+            --retry 3 \
+            --retry-delay 2 \
+            --retry-all-errors \
+            -A "Mozilla/5.0" \
+            "https://docs.google.com/spreadsheets/d/1DofZ3-SNFwYXlVv8T_-fLRJCtypaJKGHPAiOyk1y28A/gviz/tq?tqx=out:csv&gid=340284935" \
+            -o placed.csv
+
+          echo "Downloaded $(wc -c < placed.csv) bytes"
 
       - name: Validate placed CSV download
         run: |
-          if grep -qi "<!DOCTYPE html" placed.csv; then
+          if grep -qiE '<!DOCTYPE html|<html' placed.csv; then
             echo "ERROR: placed.csv download returned HTML instead of CSV"
+            echo "Google response:"
+            head -20 placed.csv
             exit 1
           fi
+
+          if [ ! -s placed.csv ]; then
+            echo "ERROR: placed.csv is empty"
+            exit 1
+          fi
+
+          echo "placed.csv looks valid"
+          head -3 placed.csv
 
       - name: Convert placed CSV to placed.json
         run: |
           python3 - <<'PY'
-          import csv, json
+          import csv
+          import json
 
           with open('placed.csv', newline='', encoding='utf-8') as f:
               reader = csv.DictReader(f)
@@ -78,12 +126,22 @@ jobs:
 
           with open('placed.json', 'w', encoding='utf-8') as o:
               json.dump(rows, o, ensure_ascii=False, indent=2)
+
+          print(f"Converted {len(rows)} placed records")
           PY
+
+      # -------------------------
+      # VALIDATE
+      # -------------------------
 
       - name: Validate JSON data
         run: |
           python3 -m pip install --user jsonschema
           python3 scripts/validate_data.py
+
+      # -------------------------
+      # COMMIT + PUSH
+      # -------------------------
 
       - name: Commit updated JSON
         run: |
@@ -92,6 +150,9 @@ jobs:
 
           git add people.json placed.json
 
-          git commit -m "Update directory data" || echo "No changes to commit"
-
-          git push
+          if git diff --cached --quiet; then
+            echo "No directory data changes"
+          else
+            git commit -m "Update directory data"
+            git push
+          fi
