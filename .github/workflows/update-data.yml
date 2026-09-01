@@ -3,7 +3,7 @@ name: Update Directory Data
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 6 * * *'
+    - cron: "0 6 * * *"
 
 jobs:
   update-data:
@@ -25,14 +25,15 @@ jobs:
       - name: Download people CSV
         run: |
           curl \
+            --fail-with-body \
             --location \
+            --silent \
+            --show-error \
             --max-time 30 \
             --retry 3 \
             --retry-delay 2 \
             --retry-all-errors \
-            -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/140 Safari/537.36" \
-            -H "Accept: text/csv,text/plain,*/*" \
-            "https://docs.google.com/spreadsheets/d/e/2PACX-1vTneLfd7McnMAUWannvW6a3h-tgjHxzgC7xKFTY3s1SjaRHa2Rw-JFQQYXPcOjBQ0UtACBo1S_mm9E-/pub?output=csv" \
+            "https://docs.google.com/spreadsheets/d/e/2PACX-1vTneLfd7McnMAUWannvW6a3h-tgjHxzgC7xKFTY3s1SjaRHa2Rw-JFQQYXPcOjBQ0UtACBo1S_mm9E-/pub?gid=0&single=true&output=csv" \
             -o people.csv
 
           echo "Downloaded $(wc -c < people.csv) bytes"
@@ -45,20 +46,36 @@ jobs:
           echo "File type:"
           file people.csv
 
-          echo "First 5 lines:"
-          head -5 people.csv
+          if [ ! -s people.csv ]; then
+            echo "ERROR: people.csv is empty"
+            exit 1
+          fi
 
           if grep -qiE '<!DOCTYPE html|<html' people.csv; then
             echo "ERROR: people.csv download returned HTML instead of CSV"
             exit 1
           fi
 
-          if [ ! -s people.csv ]; then
-            echo "ERROR: people.csv is empty"
-            exit 1
-          fi
+          python3 - <<'PY'
+          import csv
+          import sys
 
-          echo "people.csv appears valid"
+          with open("people.csv", newline="", encoding="utf-8-sig") as f:
+              reader = csv.reader(f)
+              headers = next(reader, [])
+
+          required_headers = {"First Name", "Last Name"}
+          missing_headers = required_headers - set(headers)
+
+          if missing_headers:
+              print(
+                  "ERROR: people.csv is missing expected headers: "
+                  + ", ".join(sorted(missing_headers))
+              )
+              sys.exit(1)
+
+          print("people.csv appears valid")
+          PY
 
       - name: Convert people CSV to people.json
         run: |
@@ -66,16 +83,17 @@ jobs:
           import csv
           import json
 
-          with open('people.csv', newline='', encoding='utf-8') as f:
+          with open("people.csv", newline="", encoding="utf-8-sig") as f:
               reader = csv.DictReader(f)
 
               rows = [
-                  r for r in reader
-                  if any(str(v).strip() for v in r.values())
+                  row
+                  for row in reader
+                  if any(str(value or "").strip() for value in row.values())
               ]
 
-          with open('people.json', 'w', encoding='utf-8') as o:
-              json.dump(rows, o, ensure_ascii=False, indent=2)
+          with open("people.json", "w", encoding="utf-8") as output:
+              json.dump(rows, output, ensure_ascii=False, indent=2)
 
           print(f"Converted {len(rows)} people records")
           PY
@@ -87,13 +105,14 @@ jobs:
       - name: Download placed CSV
         run: |
           curl \
+            --fail-with-body \
             --location \
+            --silent \
+            --show-error \
             --max-time 30 \
             --retry 3 \
             --retry-delay 2 \
             --retry-all-errors \
-            -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/140 Safari/537.36" \
-            -H "Accept: text/csv,text/plain,*/*" \
             "https://docs.google.com/spreadsheets/d/e/2PACX-1vTneLfd7McnMAUWannvW6a3h-tgjHxzgC7xKFTY3s1SjaRHa2Rw-JFQQYXPcOjBQ0UtACBo1S_mm9E-/pub?gid=340284935&single=true&output=csv" \
             -o placed.csv
 
@@ -107,20 +126,40 @@ jobs:
           echo "File type:"
           file placed.csv
 
-          echo "First 30 lines:"
-          head -30 placed.csv
-
-          if grep -qiE '<!DOCTYPE html|<html' placed.csv; then
-            echo "ERROR: Google returned HTML instead of CSV"
-            exit 1
-          fi
-
           if [ ! -s placed.csv ]; then
             echo "ERROR: placed.csv is empty"
             exit 1
           fi
 
-          echo "placed.csv appears valid"
+          if grep -qiE '<!DOCTYPE html|<html' placed.csv; then
+            echo "ERROR: placed.csv download returned HTML instead of CSV"
+            exit 1
+          fi
+
+          python3 - <<'PY'
+          import csv
+          import sys
+
+          with open("placed.csv", newline="", encoding="utf-8-sig") as f:
+              reader = csv.reader(f)
+              headers = next(reader, [])
+
+          required_headers = {
+              "First Name",
+              "Last Name",
+              "Placement Flag",
+          }
+          missing_headers = required_headers - set(headers)
+
+          if missing_headers:
+              print(
+                  "ERROR: placed.csv is missing expected headers: "
+                  + ", ".join(sorted(missing_headers))
+              )
+              sys.exit(1)
+
+          print("placed.csv appears valid")
+          PY
 
       - name: Convert placed CSV to placed.json
         run: |
@@ -128,16 +167,17 @@ jobs:
           import csv
           import json
 
-          with open('placed.csv', newline='', encoding='utf-8') as f:
+          with open("placed.csv", newline="", encoding="utf-8-sig") as f:
               reader = csv.DictReader(f)
 
               rows = [
-                  r for r in reader
-                  if any(str(v).strip() for v in r.values())
+                  row
+                  for row in reader
+                  if any(str(value or "").strip() for value in row.values())
               ]
 
-          with open('placed.json', 'w', encoding='utf-8') as o:
-              json.dump(rows, o, ensure_ascii=False, indent=2)
+          with open("placed.json", "w", encoding="utf-8") as output:
+              json.dump(rows, output, ensure_ascii=False, indent=2)
 
           print(f"Converted {len(rows)} placed records")
           PY
@@ -146,10 +186,11 @@ jobs:
       # VALIDATE JSON
       # -------------------------
 
+      - name: Install validation dependency
+        run: python3 -m pip install --user jsonschema
+
       - name: Validate JSON data
-        run: |
-          python3 -m pip install --user jsonschema
-          python3 scripts/validate_data.py
+        run: python3 scripts/validate_data.py
 
       # -------------------------
       # COMMIT + PUSH
