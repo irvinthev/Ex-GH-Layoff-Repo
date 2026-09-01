@@ -819,19 +819,6 @@
     "Date Added": ""
   },
   {
-    "First Name": "Dipti",
-    "Last Name": "Darne",
-    "Former Job Title": "Software Engineer",
-    "Former Team": "Backend/Fullstack",
-    "Function": "Engineering",
-    "Location": "SF Bay Area/Remote",
-    "LinkedIn URL": "https://linkedin.com/in/dipti-darne",
-    "Description": "Software Engineer with several years of experience in backend/full-stack engineering working across ed-tech, e-commerce and payroll applications using RoR, Python and Java.",
-    "Top 3 Skills": "Backend Engineering, Python, Java",
-    "Open to Work": "Yes",
-    "Date Added": ""
-  },
-  {
     "First Name": "Serena",
     "Last Name": "Maldonado",
     "Former Job Title": "Specialist",
@@ -868,7 +855,7 @@
     "Description": "I am a Senior Partnerships Manager with 10+ years experience in logistics and technology. I am looking for client relationship roles (Account Manager, Customer Success Manager, etc.) and am excited to apply my skills and knowledge I've developed over the years toward my next position.",
     "Top 3 Skills": "Account Management, Partnerships, Client Relationships",
     "Open to Work": "Yes",
-    "Date Added": "46241"
+    "Date Added": ""
   },
   {
     "First Name": "Shemeal ",
@@ -880,7 +867,7 @@
     "LinkedIn URL": "www.linkedin.com/in/shemealdabrams",
     "Description": "Communications professional with 20+ years of customer and client-facing experience. Seeking remote opportunities in Communications, Employee Engagement, Culture & People, or Junior Graphic Design, with a target salary of $50,000+.",
     "Top 3 Skills": "Communications, Employee Engagement, Graphic Design",
-    "Open to Work": "",
+    "Open to Work": "Yes",
     "Date Added": ""
   },
   {
@@ -893,6 +880,32 @@
     "LinkedIn URL": "https://www.linkedin.com/in/laura-pranckus",
     "Description": "Background in enterprise account management and in-house creative agencies, with current experience spanning marketing, strategy, and vendor management on behalf of franchisees. Interested in roles that leverage account management, marketing strategy, creative operations, and cross-functional coordination.",
     "Top 3 Skills": "Account Management, Marketing Strategy, Vendor Management",
+    "Open to Work": "Yes",
+    "Date Added": ""
+  },
+  {
+    "First Name": "Christine",
+    "Last Name": "Quaderer",
+    "Former Job Title": "Senior Analyst, Procurement Operations",
+    "Former Team": "Procurement Ops",
+    "Function": "Operations",
+    "Location": "Chicago",
+    "LinkedIn URL": "www.linkedin.com/in/christine-quad-mba",
+    "Description": "CLM Implementation and workflow expert. AI forward. Looking to being significant impact to an organization's procurement or legal operations function. ",
+    "Top 3 Skills": "",
+    "Open to Work": "",
+    "Date Added": ""
+  },
+  {
+    "First Name": "Roxanne ",
+    "Last Name": "Dean",
+    "Former Job Title": "Sr associate- Corporate RevOps",
+    "Former Team": "Corporate RevOps ",
+    "Function": "Operations",
+    "Location": "Texas- remote ",
+    "LinkedIn URL": "https://www.linkedin.com/in/roxanne-dean-856bb0216",
+    "Description": "I’m an experienced Revenue Operations professional with a strong background in Salesforce, process optimization, data management, and leading cross-functional system implementations that improve efficiency and customer experience. I’m looking for a role where I can leverage my RevOps and project management experience, take greater ownership of strategic initiatives, and continue growing within a collaborative, technology-driven organization.",
+    "Top 3 Skills": "",
     "Open to Work": "",
     "Date Added": ""
   }
