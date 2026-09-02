@@ -1,7 +1,7 @@
 /**
  * Talent Network Impact Widget - Phase 1
  * 
- * Displays three headline metrics and a 24-hour activity strip.
+ * Displays three headline metrics and recent member activity.
  * Uses source JSON files as-is; does not deduplicate or reconcile identities.
  */
 
@@ -10,65 +10,82 @@
 ===================== */
 
 /**
- * Simple date parser. Accepts ISO format, US format, or other valid strings.
- * Returns Date object or null if invalid.
+ * Parses dates from the tracker.
+ * Google Sheets currently outputs DD/MM/YYYY.
+ * Falls back to standard JavaScript date parsing for ISO/other formats.
  */
 function parseDate(value) {
   if (!value) return null;
-  const date = new Date(String(value).trim());
+
+  const raw = String(value).trim();
+
+  // Handle DD/MM/YYYY
+  const match = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+
+  if (match) {
+    const day = Number(match[1]);
+    const month = Number(match[2]) - 1;
+    const year = Number(match[3]);
+
+    const date = new Date(year, month, day);
+
+    if (
+      date.getFullYear() === year &&
+      date.getMonth() === month &&
+      date.getDate() === day
+    ) {
+      return date;
+    }
+
+    return null;
+  }
+
+  const date = new Date(raw);
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-/**
- * Returns true if a date is within the last 24 hours.
- */
-function isWithinLast24Hours(date) {
-  if (!date || !(date instanceof Date)) {
-    return false;
-  }
+/** Returns true if the date is today. */
+function isToday(date) {
+  if (!date || !(date instanceof Date)) return false;
 
-  const now = new Date();
-  const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-
-  return date >= twentyFourHoursAgo && date <= now;
+  const today = new Date();
+  return (
+    date.getFullYear() === today.getFullYear() &&
+    date.getMonth() === today.getMonth() &&
+    date.getDate() === today.getDate()
+  );
 }
 
 /**
- * Returns true if a date is within the last 30 calendar days (including today).
+ * Returns true if the date is within the rolling last 7 calendar days,
+ * including today.
  */
-function isWithinLast30Days(date) {
-  if (!date || !(date instanceof Date)) {
-    return false;
-  }
+function isWithinLast7Days(date) {
+  if (!date || !(date instanceof Date)) return false;
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const thirtyDaysAgo = new Date(today);
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 29);
+  const sevenDaysAgo = new Date(today);
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
 
-  return date >= thirtyDaysAgo && date <= today;
+  const comparisonDate = new Date(date);
+  comparisonDate.setHours(0, 0, 0, 0);
+
+  return comparisonDate >= sevenDaysAgo && comparisonDate <= today;
 }
 
 /* =====================
    PROPERTY NORMALIZATION
 ===================== */
 
-/**
- * Normalizes property names by trimming surrounding whitespace.
- */
 function normalizePropertyNames(record) {
-  if (!record || typeof record !== 'object') {
-    return {};
-  }
+  if (!record || typeof record !== 'object') return {};
 
   const normalized = {};
-  
   for (const [key, value] of Object.entries(record)) {
-    const trimmedKey = String(key).trim();
-    normalized[trimmedKey] = value;
+    normalized[String(key).trim()] = value;
   }
-  
   return normalized;
 }
 
@@ -76,13 +93,8 @@ function normalizePropertyNames(record) {
    VALIDATION
 ===================== */
 
-/**
- * Validates a person record: requires both first and last names.
- */
 function isValidPerson(person) {
-  if (!person || typeof person !== 'object') {
-    return false;
-  }
+  if (!person || typeof person !== 'object') return false;
 
   const firstName = (person['First Name'] || '').trim();
   const lastName = (person['Last Name'] || '').trim();
@@ -90,138 +102,94 @@ function isValidPerson(person) {
   return firstName.length > 0 && lastName.length > 0;
 }
 
-/**
- * Checks if a person is actively searching (Open to Work field).
- * Blank, "Yes", "True", or "Open to Work" (case-insensitive) count as active.
- */
 function isOpenToWork(person) {
   const value = (person['Open to Work'] || '').trim().toLowerCase();
-  
-  return value === '' || value === 'yes' || value === 'true' || value === 'open to work';
+
+  return (
+    value === '' ||
+    value === 'yes' ||
+    value === 'true' ||
+    value === 'open to work'
+  );
 }
 
 /* =====================
    METRIC CALCULATIONS
 ===================== */
 
-/**
- * Calculates metrics from people.json and placed.json.
- * Returns object with all metrics or null for 24-hour results if no valid dates.
- */
 function calculateMetrics(peopleList, placedList) {
-  // Count Open to Work (valid people.json records that are actively searching)
   let openToWorkCount = 0;
 
   for (const rawPerson of peopleList) {
     const person = normalizePropertyNames(rawPerson);
-
     if (isValidPerson(person) && isOpenToWork(person)) {
       openToWorkCount++;
     }
   }
 
-  // Count Placed (all valid placed.json records)
   let placedCount = 0;
 
   for (const rawPerson of placedList) {
     const person = normalizePropertyNames(rawPerson);
-
     if (isValidPerson(person)) {
       placedCount++;
     }
   }
 
-  // Total People Supported
-  const totalPeopleTracked = openToWorkCount + placedCount;
+  const totalPeopleSupported = openToWorkCount + placedCount;
 
-  // Last 24 Hours - Added to network
-  let last24HoursAddedCount = 0;
-  let hasValidAddedDate = false;
+  let newMembersLast7Days = 0;
+  let newMembersToday = 0;
 
   for (const rawPerson of peopleList) {
     const person = normalizePropertyNames(rawPerson);
 
-    if (!isValidPerson(person)) {
-      continue;
-    }
+    if (!isValidPerson(person)) continue;
 
-    // Try Date Added first, then Timestamp
     let dateAdded = parseDate(person['Date Added']);
     if (!dateAdded) {
       dateAdded = parseDate(person['Timestamp']);
     }
 
-    if (dateAdded) {
-      hasValidAddedDate = true;
+    if (!dateAdded) continue;
 
-      if (isWithinLast24Hours(dateAdded)) {
-        last24HoursAddedCount++;
-      }
+    if (isWithinLast7Days(dateAdded)) {
+      newMembersLast7Days++;
+    }
+
+    if (isToday(dateAdded)) {
+      newMembersToday++;
     }
   }
-
-  const last24HoursAddedResult = hasValidAddedDate ? last24HoursAddedCount : null;
-
-  // Last 24 Hours - Placed
-  let last24HoursPlacedCount = 0;
-  let hasValidPlacedDate = false;
-
-  for (const rawPerson of placedList) {
-    const person = normalizePropertyNames(rawPerson);
-
-    if (!isValidPerson(person)) {
-      continue;
-    }
-
-    const datePlaced = parseDate(person['Date Placed']);
-
-    if (datePlaced) {
-      hasValidPlacedDate = true;
-
-      if (isWithinLast24Hours(datePlaced)) {
-        last24HoursPlacedCount++;
-      }
-    }
-  }
-
-  const last24HoursPlacedResult = hasValidPlacedDate ? last24HoursPlacedCount : null;
 
   return {
     openToWork: openToWorkCount,
     placed: placedCount,
-    peopleTracked: totalPeopleTracked,
-    last24HoursAdded: last24HoursAddedResult,
-    last24HoursPlaced: last24HoursPlacedResult
+    peopleSupported: totalPeopleSupported,
+    newMembersLast7Days,
+    newMembersToday
   };
+}
+
+/* =====================
+   FORMATTING
+===================== */
+
+function formatMetricNumber(value) {
+  return value === null || value === undefined ? '—' : String(value);
+}
+
+function formatActivityValue(value) {
+  return value === null || value === undefined ? '—' : `+${value}`;
 }
 
 /* =====================
    RENDERING
 ===================== */
 
-/**
- * Formats a metric number or returns em dash.
- */
-function formatMetricNumber(value) {
-  return value === null ? '—' : String(value);
-}
-
-/**
- * Formats a 24-hour activity value with plus sign or em dash.
- */
-function formatActivityValue(value) {
-  if (value === null) {
-    return '—';
-  }
-  return `+${value}`;
-}
-
-/**
- * Renders the Talent Network Impact widget.
- */
 function renderTalentImpactWidget(metrics) {
   const container = document.getElementById('talent-impact-widget');
-  
+
   if (!container) {
     console.warn('talent-impact-widget container not found');
     return;
@@ -229,15 +197,15 @@ function renderTalentImpactWidget(metrics) {
 
   const openToWorkValue = formatMetricNumber(metrics.openToWork);
   const placedValue = formatMetricNumber(metrics.placed);
-  const peopleTrackedValue = formatMetricNumber(metrics.peopleTracked);
-  const last24HoursPlacedValue = formatActivityValue(metrics.last24HoursPlaced);
-  const last24HoursAddedValue = formatActivityValue(metrics.last24HoursAdded);
+  const peopleSupportedValue = formatMetricNumber(metrics.peopleSupported);
+  const newMembersLast7DaysValue = formatActivityValue(metrics.newMembersLast7Days);
+  const newMembersTodayValue = formatActivityValue(metrics.newMembersToday);
 
   container.innerHTML = `
     <div class="talent-impact-container">
       <h2 class="impact-headline">Talent Network Impact</h2>
       <p class="impact-tagline">Real outcomes from our community</p>
-      
+
       <div class="impact-metrics">
         <div class="impact-metric open-to-work">
           <div class="impact-number">${openToWorkValue}</div>
@@ -250,19 +218,19 @@ function renderTalentImpactWidget(metrics) {
         </div>
 
         <div class="impact-metric people-tracked">
-          <div class="impact-number">${peopleTrackedValue}</div>
-          <div class="impact-label">People Tracked</div>
+          <div class="impact-number">${peopleSupportedValue}</div>
+          <div class="impact-label">People Supported</div>
         </div>
       </div>
 
       <div class="impact-activity-strip">
-        <div class="activity-title">Last 24 Hours</div>
+        <div class="activity-title">Recent Activity</div>
         <dl class="activity-items">
-          <dt class="activity-label">Placements</dt>
-          <dd class="activity-value">${last24HoursPlacedValue}</dd>
-          
-          <dt class="activity-label">New Members</dt>
-          <dd class="activity-value">${last24HoursAddedValue}</dd>
+          <dt class="activity-label">New Members — Last 7 Days</dt>
+          <dd class="activity-value">${newMembersLast7DaysValue}</dd>
+
+          <dt class="activity-label">Joined Today</dt>
+          <dd class="activity-value">${newMembersTodayValue}</dd>
         </dl>
       </div>
 
@@ -272,17 +240,11 @@ function renderTalentImpactWidget(metrics) {
     </div>
   `;
 
-  // Update aria-busy
   container.setAttribute('aria-busy', 'false');
 }
 
-/**
- * Renders loading state.
- */
 function renderTalentImpactLoading(container) {
-  if (!container) {
-    return;
-  }
+  if (!container) return;
 
   container.setAttribute('aria-busy', 'true');
   container.innerHTML = `
@@ -292,13 +254,8 @@ function renderTalentImpactLoading(container) {
   `;
 }
 
-/**
- * Renders error state.
- */
 function renderTalentImpactError(container, message) {
-  if (!container) {
-    return;
-  }
+  if (!container) return;
 
   container.setAttribute('aria-busy', 'false');
   container.innerHTML = `
@@ -315,9 +272,6 @@ function renderTalentImpactError(container, message) {
    DATA LOADING
 ===================== */
 
-/**
- * Loads people.json with cache busting.
- */
 async function loadPeopleData() {
   const cacheBuster = `?t=${Date.now()}`;
   const res = await fetch(`./people.json${cacheBuster}`);
@@ -335,9 +289,6 @@ async function loadPeopleData() {
   return data;
 }
 
-/**
- * Loads placed.json with cache busting.
- */
 async function loadPlacedData() {
   const cacheBuster = `?t=${Date.now()}`;
   const res = await fetch(`./placed.json${cacheBuster}`);
@@ -359,31 +310,23 @@ async function loadPlacedData() {
    INITIALIZATION
 ===================== */
 
-/**
- * Initializes the Talent Impact widget.
- */
 async function initTalentImpactWidget() {
   const container = document.getElementById('talent-impact-widget');
-  
+
   if (!container) {
     console.warn('talent-impact-widget container not found');
     return;
   }
 
-  // Show loading state
   renderTalentImpactLoading(container);
 
   try {
-    // Load both data files
     const [peopleList, placedList] = await Promise.all([
       loadPeopleData(),
       loadPlacedData()
     ]);
 
-    // Calculate metrics
     const metrics = calculateMetrics(peopleList, placedList);
-
-    // Render widget
     renderTalentImpactWidget(metrics);
   } catch (error) {
     console.error('Error loading Talent Network Impact:', error);
@@ -391,7 +334,6 @@ async function initTalentImpactWidget() {
   }
 }
 
-// Initialize when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initTalentImpactWidget);
 } else {
