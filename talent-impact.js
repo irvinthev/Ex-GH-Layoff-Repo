@@ -222,6 +222,7 @@ function renderTalentImpactWidget(metrics) {
   container.innerHTML = `
     <div class="talent-impact-container">
       <h2 class="impact-headline">Talent Network Impact</h2>
+      <p class="impact-tagline">Real outcomes from our community</p>
       
       <div class="impact-metrics">
         <div class="impact-metric open-to-work">
