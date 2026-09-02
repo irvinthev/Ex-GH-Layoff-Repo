@@ -1,0 +1,207 @@
+/* =====================
+   TALENT IMPACT WIDGET
+===================== */
+
+.talent-impact-section {
+  margin: 2rem auto;
+  padding: 0;
+}
+
+.talent-impact-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.impact-headline {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0 0 2rem 0;
+  text-align: center;
+}
+
+.impact-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.impact-metric {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 6px;
+  border-left: 4px solid #6366f1;
+  text-align: center;
+}
+
+.impact-metric.placed {
+  border-left-color: #10b981;
+  background: #f0fdf4;
+}
+
+.impact-metric.open-to-work {
+  border-left-color: #f59e0b;
+  background: #fffbf0;
+}
+
+.impact-metric.people-tracked {
+  border-left-color: #1a202c;
+  background: #f8f9fa;
+}
+
+.impact-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 0.5rem 0;
+}
+
+.impact-metric.placed .impact-number {
+  color: #10b981;
+}
+
+.impact-metric.open-to-work .impact-number {
+  color: #f59e0b;
+}
+
+.impact-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.impact-activity-strip {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 6px;
+  border-top: 2px solid #e5e7eb;
+  margin-bottom: 1rem;
+}
+
+.activity-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+
+.activity-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+.activity-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #6b7280;
+  margin: 0 0 0.25rem 0;
+}
+
+.activity-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0;
+}
+
+.impact-footer {
+  font-size: 0.8125rem;
+  color: #9ca3af;
+  margin: 0;
+  text-align: center;
+}
+
+.impact-loading {
+  text-align: center;
+  color: #6b7280;
+  padding: 2rem;
+  margin: 0;
+}
+
+.impact-error {
+  background: #fef2f2;
+  border-left: 4px solid #ef4444;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.impact-error p {
+  margin: 0.5rem 0;
+  color: #7f1d1d;
+}
+
+.impact-error p:first-child {
+  margin-top: 0;
+}
+
+.impact-error p:last-child {
+  margin-bottom: 0;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .talent-impact-container {
+    padding: 1rem;
+  }
+
+  .impact-headline {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .impact-metrics {
+    gap: 1rem;
+  }
+
+  .impact-metric {
+    padding: 1rem;
+  }
+
+  .impact-number {
+    font-size: 2rem;
+  }
+
+  .activity-items {
+    gap: 1rem;
+  }
+
+  .activity-value {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .talent-impact-container {
+    padding: 0.75rem;
+  }
+
+  .impact-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .impact-metric {
+    padding: 0.875rem;
+  }
+
+  .impact-number {
+    font-size: 1.75rem;
+  }
+
+  .activity-items {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
