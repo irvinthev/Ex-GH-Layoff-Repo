@@ -1,7 +1,7 @@
 /**
  * Talent Network Impact Widget - Phase 1
  * 
- * Displays three headline metrics and a 30-day activity strip.
+ * Displays three headline metrics and a 24-hour activity strip.
  * Uses source JSON files as-is; does not deduplicate or reconcile identities.
  */
 
@@ -17,6 +17,20 @@ function parseDate(value) {
   if (!value) return null;
   const date = new Date(String(value).trim());
   return Number.isNaN(date.getTime()) ? null : date;
+}
+
+/**
+ * Returns true if a date is within the last 24 hours.
+ */
+function isWithinLast24Hours(date) {
+  if (!date || !(date instanceof Date)) {
+    return false;
+  }
+
+  const now = new Date();
+  const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+  return date >= twentyFourHoursAgo && date <= now;
 }
 
 /**
@@ -92,7 +106,7 @@ function isOpenToWork(person) {
 
 /**
  * Calculates metrics from people.json and placed.json.
- * Returns object with all metrics or null for 30-day results if no valid dates.
+ * Returns object with all metrics or null for 24-hour results if no valid dates.
  */
 function calculateMetrics(peopleList, placedList) {
   // Count Open to Work (valid people.json records that are actively searching)
@@ -120,8 +134,8 @@ function calculateMetrics(peopleList, placedList) {
   // Total People Supported
   const totalPeopleTracked = openToWorkCount + placedCount;
 
-  // Last 30 Days - Added to network
-  let last30DaysAddedCount = 0;
+  // Last 24 Hours - Added to network
+  let last24HoursAddedCount = 0;
   let hasValidAddedDate = false;
 
   for (const rawPerson of peopleList) {
@@ -140,16 +154,16 @@ function calculateMetrics(peopleList, placedList) {
     if (dateAdded) {
       hasValidAddedDate = true;
 
-      if (isWithinLast30Days(dateAdded)) {
-        last30DaysAddedCount++;
+      if (isWithinLast24Hours(dateAdded)) {
+        last24HoursAddedCount++;
       }
     }
   }
 
-  const last30DaysAddedResult = hasValidAddedDate ? last30DaysAddedCount : null;
+  const last24HoursAddedResult = hasValidAddedDate ? last24HoursAddedCount : null;
 
-  // Last 30 Days - Placed
-  let last30DaysPlacedCount = 0;
+  // Last 24 Hours - Placed
+  let last24HoursPlacedCount = 0;
   let hasValidPlacedDate = false;
 
   for (const rawPerson of placedList) {
@@ -164,20 +178,20 @@ function calculateMetrics(peopleList, placedList) {
     if (datePlaced) {
       hasValidPlacedDate = true;
 
-      if (isWithinLast30Days(datePlaced)) {
-        last30DaysPlacedCount++;
+      if (isWithinLast24Hours(datePlaced)) {
+        last24HoursPlacedCount++;
       }
     }
   }
 
-  const last30DaysPlacedResult = hasValidPlacedDate ? last30DaysPlacedCount : null;
+  const last24HoursPlacedResult = hasValidPlacedDate ? last24HoursPlacedCount : null;
 
   return {
     openToWork: openToWorkCount,
     placed: placedCount,
     peopleTracked: totalPeopleTracked,
-    last30DaysAdded: last30DaysAddedResult,
-    last30DaysPlaced: last30DaysPlacedResult
+    last24HoursAdded: last24HoursAddedResult,
+    last24HoursPlaced: last24HoursPlacedResult
   };
 }
 
@@ -193,7 +207,7 @@ function formatMetricNumber(value) {
 }
 
 /**
- * Formats a 30-day activity value with plus sign or em dash.
+ * Formats a 24-hour activity value with plus sign or em dash.
  */
 function formatActivityValue(value) {
   if (value === null) {
@@ -216,8 +230,8 @@ function renderTalentImpactWidget(metrics) {
   const openToWorkValue = formatMetricNumber(metrics.openToWork);
   const placedValue = formatMetricNumber(metrics.placed);
   const peopleTrackedValue = formatMetricNumber(metrics.peopleTracked);
-  const last30DaysPlacedValue = formatActivityValue(metrics.last30DaysPlaced);
-  const last30DaysAddedValue = formatActivityValue(metrics.last30DaysAdded);
+  const last24HoursPlacedValue = formatActivityValue(metrics.last24HoursPlaced);
+  const last24HoursAddedValue = formatActivityValue(metrics.last24HoursAdded);
 
   container.innerHTML = `
     <div class="talent-impact-container">
@@ -242,13 +256,13 @@ function renderTalentImpactWidget(metrics) {
       </div>
 
       <div class="impact-activity-strip">
-        <div class="activity-title">Last 30 Days</div>
+        <div class="activity-title">Last 24 Hours</div>
         <dl class="activity-items">
           <dt class="activity-label">Placements</dt>
-          <dd class="activity-value">${last30DaysPlacedValue}</dd>
+          <dd class="activity-value">${last24HoursPlacedValue}</dd>
           
           <dt class="activity-label">New Members</dt>
-          <dd class="activity-value">${last30DaysAddedValue}</dd>
+          <dd class="activity-value">${last24HoursAddedValue}</dd>
         </dl>
       </div>
 
