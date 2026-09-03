@@ -226,56 +226,20 @@
 
 
     <!-- =====================
-         COMMUNITY REACH
+         TALENT NETWORK IMPACT
     ====================== -->
 
-    <section class="about-metrics-section">
-
-      <div class="section-header">
-        <h2>
-          Community Reach
-        </h2>
+    <section
+      id="talent-impact-widget"
+      class="talent-impact-widget"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <div class="talent-impact-container">
+        <p class="impact-loading">
+          Loading Talent Network Impact...
+        </p>
       </div>
-
-      <p class="about-section-intro">
-        We track both current search activity and placement outcomes.
-      </p>
-
-      <div class="about-stats-grid">
-
-        <div class="stat-card stat-card-primary">
-
-          <div
-            id="aboutPeopleTracked"
-            class="stat-number"
-          >
-            0
-          </div>
-
-          <div class="stat-label">
-            People Tracked
-          </div>
-
-        </div>
-
-
-        <div class="stat-card">
-
-          <div
-            id="aboutStillLooking"
-            class="stat-number"
-          >
-            0
-          </div>
-
-          <div class="stat-label">
-            Still Looking
-          </div>
-
-        </div>
-
-      </div>
-
     </section>
 
 
@@ -283,7 +247,7 @@
 
 
     <!-- =====================
-         NETWORK OUTCOMES
+         PLACEMENT TRACKER
     ====================== -->
 
     <section
@@ -293,31 +257,15 @@
 
       <div class="section-header">
         <h2>
-          Network Outcomes
+          Placement Tracker
         </h2>
       </div>
 
       <p class="about-section-intro">
-        The placement history captures both unique people who landed and total placement events over time.
+        A running count of confirmed placements recorded by the network.
       </p>
 
-      <div class="about-stats-grid">
-
-        <div class="stat-card">
-
-          <div
-            id="aboutPeoplePlaced"
-            class="stat-number"
-          >
-            0
-          </div>
-
-          <div class="stat-label">
-            People Placed
-          </div>
-
-        </div>
-
+      <div class="about-stats-grid placement-tracker-grid">
 
         <div class="stat-card">
 
@@ -329,77 +277,10 @@
           </div>
 
           <div class="stat-label">
-            Placements
+            Placements Tracked
           </div>
 
         </div>
-
-
-        <div class="stat-card">
-
-          <div
-            id="aboutPlacementRate"
-            class="stat-number"
-          >
-            0%
-          </div>
-
-          <div class="stat-label">
-            Placement Rate
-          </div>
-
-        </div>
-
-
-        <div class="stat-card">
-
-          <div
-            id="aboutDestinationCompanies"
-            class="stat-number"
-          >
-            0
-          </div>
-
-          <div class="stat-label">
-            Destination Companies
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <div class="metric-definition-box">
-
-        <p>
-          <strong>
-            How these metrics work:
-          </strong>
-        </p>
-
-        <ul>
-
-          <li>
-            <strong>People Placed</strong>
-            = unique people with at least one confirmed placement.
-          </li>
-
-          <li>
-            <strong>Placements</strong>
-            = total confirmed placement events.
-          </li>
-
-          <li>
-            <strong>Placement Rate</strong>
-            = unique people placed divided by unique people tracked.
-          </li>
-
-          <li>
-            <strong>Destination Companies</strong>
-            = unique companies represented in placement history.
-          </li>
-
-        </ul>
 
       </div>
 
@@ -582,6 +463,7 @@
        ABOUT PAGE DATA
   ====================== -->
 
+  <script src="talent-impact.js"></script>
   <script src="about.js"></script>
 
 </body>
