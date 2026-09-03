@@ -113,6 +113,16 @@ function isOpenToWork(person) {
   );
 }
 
+function isConfirmedPlacement(person) {
+  const value = (
+    person['Placement Flag'] ||
+    person['Status'] ||
+    ''
+  ).trim().toLowerCase();
+
+  return value === 'placed';
+}
+
 /* =====================
    METRIC CALCULATIONS
 ===================== */
@@ -131,7 +141,7 @@ function calculateMetrics(peopleList, placedList) {
 
   for (const rawPerson of placedList) {
     const person = normalizePropertyNames(rawPerson);
-    if (isValidPerson(person)) {
+    if (isValidPerson(person) && isConfirmedPlacement(person)) {
       placedCount++;
     }
   }
