@@ -1487,7 +1487,7 @@ select:focus {
   margin-top: 24px;
 }
 
-.placement-tracker-grid {
+.about-stats-grid.placement-tracker-grid {
   grid-template-columns: minmax(0, 360px);
 }
 
