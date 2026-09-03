@@ -1487,6 +1487,10 @@ select:focus {
   margin-top: 24px;
 }
 
+.placement-tracker-grid {
+  grid-template-columns: minmax(0, 360px);
+}
+
 .metric-definition-box {
   margin-top: 24px;
   padding: 20px;
