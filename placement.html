@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Placement Intelligence | Ex-GH Talent Network</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="placement.css" />
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="site-nav-inner">
+      <div class="nav-brand"><a href="index.html">Ex-GH Talent Network</a></div>
+      <div class="nav-links"><a href="index.html">Directory</a></div>
+    </div>
+  </nav>
+
+  <main class="placement-shell">
+    <header class="placement-header">
+      <p class="eyebrow">Admin workspace</p>
+      <h1>Placement Intelligence</h1>
+      <p>Paste a role to rank opted-in alumni using visible evidence. Scores are decision support—not hiring decisions.</p>
+    </header>
+
+    <section id="authPanel" class="placement-panel auth-panel" aria-labelledby="authHeading">
+      <div>
+        <h2 id="authHeading">Secure sign in</h2>
+        <p>A passwordless sign-in link will be sent to the authorized admin email.</p>
+      </div>
+      <form id="loginForm" class="login-form">
+        <label for="email">Email</label>
+        <div class="inline-form">
+          <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+          <button class="primary-btn" type="submit">Send sign-in link</button>
+        </div>
+      </form>
+      <p id="authStatus" class="status-message" role="status"></p>
+    </section>
+
+    <section id="workspace" class="workspace" hidden>
+      <div class="session-bar">
+        <span>Signed in as <strong id="sessionEmail"></strong></span>
+        <button id="signOut" class="text-button" type="button">Sign out</button>
+      </div>
+
+      <section class="placement-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="step-label">Single evaluation</p>
+            <h2>Describe the opportunity</h2>
+          </div>
+          <p>All fields except the job description are optional.</p>
+        </div>
+
+        <form id="evaluationForm" class="evaluation-form">
+          <div class="form-grid">
+            <label>Role title<input id="roleTitle" name="title" placeholder="Senior Product Manager" /></label>
+            <label>Location<input id="roleLocation" name="location" placeholder="Boston, MA" /></label>
+            <label>Work model
+              <select id="remoteType" name="remoteType">
+                <option value="">Not specified</option>
+                <option value="Remote">Remote</option>
+                <option value="Hybrid">Hybrid</option>
+                <option value="On-site">On-site</option>
+              </select>
+            </label>
+          </div>
+          <label>Job description
+            <textarea id="jobDescription" name="description" rows="14" minlength="50" required placeholder="Paste the complete job description here..."></textarea>
+          </label>
+          <div class="form-actions">
+            <button id="evaluateButton" class="primary-btn" type="submit">Evaluate candidates</button>
+            <span id="evaluationStatus" class="status-message" role="status"></span>
+          </div>
+        </form>
+      </section>
+
+      <section id="resultsSection" hidden>
+        <div id="evaluationSummary" class="evaluation-summary"></div>
+        <div id="results" class="match-list"></div>
+      </section>
+    </section>
+  </main>
+
+  <script type="module" src="placement.js"></script>
+</body>
+</html>
