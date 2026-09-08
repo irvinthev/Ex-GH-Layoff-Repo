@@ -16,6 +16,8 @@ const evaluationStatus = document.querySelector("#evaluationStatus");
 const resultsSection = document.querySelector("#resultsSection");
 const evaluationSummary = document.querySelector("#evaluationSummary");
 const results = document.querySelector("#results");
+const jobUrlInput = document.querySelector("#jobUrl");
+const jobDescription = document.querySelector("#jobDescription");
 
 function setStatus(element, message, kind = "") {
   element.textContent = message;
@@ -66,11 +68,15 @@ function renderList(items) {
 
 function renderMatches(data) {
   const role = data.evaluation.role;
+  const source = data.evaluation.sourceUrl
+    ? `<a class="summary-pill summary-link" href="${escapeHtml(data.evaluation.sourceUrl)}" target="_blank" rel="noopener noreferrer">Open source job ↗</a>`
+    : `<span class="summary-pill">Pasted description</span>`;
   evaluationSummary.innerHTML = [
     `<span class="summary-pill"><strong>${escapeHtml(role?.roleFamily ?? "Unclassified")}</strong> role family</span>`,
     `<span class="summary-pill"><strong>${escapeHtml(data.evaluation.seniority ?? "Not detected")}</strong> seniority</span>`,
     `<span class="summary-pill"><strong>${data.evaluation.candidateCount}</strong> opted-in candidates</span>`,
     `<span class="summary-pill">Manual review required</span>`,
+    source,
   ].join("");
 
   const labels = {
@@ -113,8 +119,15 @@ function renderMatches(data) {
 
 evaluationForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+  const jobUrl = jobUrlInput.value.trim();
+  const description = jobDescription.value.trim();
+  if (!jobUrl && description.length < 50) {
+    setStatus(evaluationStatus, "Add a public job URL or paste at least 50 characters of the description.", "error");
+    jobUrlInput.focus();
+    return;
+  }
   evaluateButton.disabled = true;
-  setStatus(evaluationStatus, "Evaluating opted-in candidates…");
+  setStatus(evaluationStatus, jobUrl ? "Reading the job page and evaluating candidates…" : "Evaluating opted-in candidates…");
   resultsSection.hidden = true;
 
   const form = new FormData(evaluationForm);
@@ -132,6 +145,11 @@ evaluationForm.addEventListener("submit", async (event) => {
     setStatus(evaluationStatus, message, "error");
     return;
   }
-  setStatus(evaluationStatus, "Evaluation complete.", "success");
+  const completionMessage = data.evaluation.importWarning
+    ? `Evaluation complete. ${data.evaluation.importWarning}`
+    : data.evaluation.sourceMode === "structured"
+      ? "Job page imported and evaluation complete."
+      : "Evaluation complete.";
+  setStatus(evaluationStatus, completionMessage, data.evaluation.importWarning ? "warning" : "success");
   renderMatches(data);
 });

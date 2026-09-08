@@ -5,7 +5,7 @@ This MVP provides a private, role-first matching workflow for the Ex-GH Talent N
 ## What it does
 
 1. An administrator signs in with a Supabase passwordless email link.
-2. The administrator pastes a job title, description, location, and work model.
+2. The administrator provides a public job URL, a pasted description, or both. Public pages are imported when readable; the paste workflow remains available when a job board blocks automated access.
 3. The `evaluate-job` Edge Function verifies the user JWT and checks the server-only admin allowlist.
 4. Only opted-in, open-to-work candidates are scored and returned.
 5. The page displays the score breakdown, supporting evidence, and gaps requiring review.
@@ -33,6 +33,7 @@ Scores are deterministic decision support. They are not hiring recommendations a
 - Function: `supabase/functions/evaluate-job/index.ts`
 - Function configuration: JWT verification must remain enabled.
 - Browser key: the Supabase publishable key in `placement.js` is designed to be public. Never add a service-role key to browser code.
+- URL imports accept public HTTPS pages, follow only validated redirects, stop after 10 seconds, and limit downloaded HTML to 1 MB. Imported descriptions are not saved by this MVP.
 
 ## Supabase Auth redirect
 

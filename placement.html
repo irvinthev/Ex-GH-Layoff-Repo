@@ -20,7 +20,7 @@
     <header class="placement-header">
       <p class="eyebrow">Admin workspace</p>
       <h1>Placement Intelligence</h1>
-      <p>Paste a role to rank opted-in alumni using visible evidence. Scores are decision support—not hiring decisions.</p>
+      <p>Paste a job URL or description to rank opted-in alumni using visible evidence. Scores are decision support—not hiring decisions.</p>
     </header>
 
     <section id="authPanel" class="placement-panel auth-panel" aria-labelledby="authHeading">
@@ -50,10 +50,14 @@
             <p class="step-label">Single evaluation</p>
             <h2>Describe the opportunity</h2>
           </div>
-          <p>All fields except the job description are optional.</p>
+          <p>Provide a public job URL, a description, or both.</p>
         </div>
 
         <form id="evaluationForm" class="evaluation-form">
+          <label class="job-source-field">Job URL
+            <input id="jobUrl" name="jobUrl" type="url" inputmode="url" autocomplete="url" placeholder="https://company.com/jobs/role" />
+            <span class="field-help">We’ll try to read the public job page. If the site blocks access, paste the description below.</span>
+          </label>
           <div class="form-grid">
             <label>Role title<input id="roleTitle" name="title" placeholder="Senior Product Manager" /></label>
             <label>Location<input id="roleLocation" name="location" placeholder="Boston, MA" /></label>
@@ -67,7 +71,7 @@
             </label>
           </div>
           <label>Job description
-            <textarea id="jobDescription" name="description" rows="14" minlength="50" required placeholder="Paste the complete job description here..."></textarea>
+            <textarea id="jobDescription" name="description" rows="14" minlength="50" placeholder="Optional when the job URL can be read. Otherwise, paste the complete description here..."></textarea>
           </label>
           <div class="form-actions">
             <button id="evaluateButton" class="primary-btn" type="submit">Evaluate candidates</button>

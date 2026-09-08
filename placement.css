@@ -11,6 +11,8 @@
 .inline-form { display: flex; gap: 10px; }
 .inline-form input { flex: 1; }
 label { display: grid; gap: 7px; color: var(--text); font-size: 14px; font-weight: 650; }
+.job-source-field { padding: 14px; background: var(--primary-light); border: 1px solid var(--primary-border); border-radius: 12px; }
+.field-help { color: var(--text-muted); font-size: 12px; font-weight: 500; line-height: 1.4; }
 input, textarea, .evaluation-form select { width: 100%; padding: 13px 14px; color: var(--text); background: #fff; border: 1.5px solid var(--border); border-radius: 11px; }
 textarea { resize: vertical; min-height: 230px; line-height: 1.5; }
 input:focus, textarea:focus, .evaluation-form select:focus { outline: 0; border-color: var(--primary); box-shadow: var(--focus-ring); }
@@ -26,9 +28,12 @@ button { border: 0; cursor: pointer; }
 .status-message { min-height: 22px; color: var(--text-muted); font-size: 14px; }
 .status-message.error { color: #b42318; }
 .status-message.success { color: #067647; }
+.status-message.warning { color: #9a6700; }
 .evaluation-summary { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin: 8px 0 16px; }
 .summary-pill { padding: 8px 11px; border-radius: 999px; background: #fff; border: 1px solid var(--border); font-size: 13px; color: var(--text-muted); }
 .summary-pill strong { color: var(--text); }
+.summary-link { color: var(--primary); font-weight: 700; text-decoration: none; }
+.summary-link:hover { text-decoration: underline; }
 .match-list { display: grid; gap: 16px; }
 .match-card { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 22px; background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 22px; box-shadow: var(--shadow-card); }
 .score-column { display: grid; align-content: start; justify-items: center; gap: 7px; }

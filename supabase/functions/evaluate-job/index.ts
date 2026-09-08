@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.95.0";
+import { importJobFromUrl } from "./job-import.ts";
 
 const ALLOWED_ORIGINS = new Set([
   "https://irvinthev.github.io",
@@ -361,11 +362,39 @@ Deno.serve(async (req: Request) => {
     authorizedAdmin = true;
 
     const payload = await req.json().catch(() => null) as Record<string, unknown> | null;
-    const title = String(payload?.title ?? "").trim().slice(0, 300);
-    const description = String(payload?.description ?? "").trim().slice(0, 50000);
-    const location = String(payload?.location ?? "").trim().slice(0, 300);
-    const remoteType = String(payload?.remoteType ?? "").trim().slice(0, 100);
-    if (!description || description.length < 50) return json(req, { error: "Paste at least 50 characters of the job description" }, 400);
+    let title = String(payload?.title ?? "").trim().slice(0, 300);
+    let description = String(payload?.description ?? "").trim().slice(0, 50000);
+    let location = String(payload?.location ?? "").trim().slice(0, 300);
+    let remoteType = String(payload?.remoteType ?? "").trim().slice(0, 100);
+    const jobUrl = String(payload?.jobUrl ?? "").trim().slice(0, 2048);
+    let sourceUrl: string | null = null;
+    let sourceMode: "structured" | "page_text" | "pasted" | "url_plus_paste" = "pasted";
+    let importWarning: string | null = null;
+
+    if (jobUrl) {
+      try {
+        const imported = await importJobFromUrl(jobUrl);
+        sourceUrl = imported.canonicalUrl;
+        sourceMode = description.length >= 50 ? "url_plus_paste" : imported.sourceMode;
+        title ||= imported.title;
+        description ||= imported.description;
+        location ||= imported.location;
+        remoteType ||= imported.remoteType;
+      } catch (importError) {
+        if (description.length < 50) {
+          const detail = importError instanceof Error ? importError.message : "The job page could not be read";
+          return json(req, {
+            error: `${detail}. Paste the job description below and try again.`,
+            code: "JOB_URL_UNREADABLE",
+          }, 422);
+        }
+        importWarning = "The job page could not be read, so the pasted description was used.";
+      }
+    }
+
+    if (description.length < 50) {
+      return json(req, { error: "Add a public job URL or paste at least 50 characters of the job description" }, 400);
+    }
 
     const [rolesResult, membersResult, featuresResult, preferencesResult] = await Promise.all([
       admin.from("role_taxonomy").select("slug,function_name,role_family,specialty,aliases").eq("active", true),
@@ -405,6 +434,9 @@ Deno.serve(async (req: Request) => {
         candidateCount: matches.length,
         evaluatedAt: new Date().toISOString(),
         methodology: "Evidence-aware deterministic scoring v2; manual review required",
+        sourceUrl,
+        sourceMode,
+        importWarning,
       },
       matches,
     });
