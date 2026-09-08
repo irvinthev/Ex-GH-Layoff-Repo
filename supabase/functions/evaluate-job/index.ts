@@ -230,9 +230,24 @@ function json(req: Request, body: unknown, status = 200): Response {
   });
 }
 
+function getDefaultKey(currentName: string, legacyName: string): string {
+  const current = Deno.env.get(currentName);
+  if (current) {
+    try {
+      const keys = JSON.parse(current) as Record<string, string>;
+      if (keys.default) return keys.default;
+    } catch {
+      console.error(`Could not parse ${currentName}`);
+    }
+  }
+  return Deno.env.get(legacyName) ?? "";
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders(req) });
   if (req.method !== "POST") return json(req, { error: "Method not allowed" }, 405);
+
+  let authorizedAdmin = false;
 
   try {
     const authHeader = req.headers.get("Authorization") ?? "";
@@ -240,8 +255,8 @@ Deno.serve(async (req: Request) => {
     if (!token) return json(req, { error: "Authentication required" }, 401);
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-    const publishableKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    const publishableKey = getDefaultKey("SUPABASE_PUBLISHABLE_KEYS", "SUPABASE_ANON_KEY");
+    const serviceRoleKey = getDefaultKey("SUPABASE_SECRET_KEYS", "SUPABASE_SERVICE_ROLE_KEY");
     if (!supabaseUrl || !publishableKey || !serviceRoleKey) throw new Error("Function environment is incomplete");
 
     const authClient = createClient(supabaseUrl, publishableKey, {
@@ -263,6 +278,7 @@ Deno.serve(async (req: Request) => {
       .maybeSingle();
     if (allowlistError) throw allowlistError;
     if (!allowlistEntry) return json(req, { error: "This account is not authorized for Placement Intelligence" }, 403);
+    authorizedAdmin = true;
 
     const payload = await req.json().catch(() => null) as Record<string, unknown> | null;
     const title = String(payload?.title ?? "").trim().slice(0, 300);
@@ -306,6 +322,15 @@ Deno.serve(async (req: Request) => {
     });
   } catch (error) {
     console.error("evaluate-job failed", error);
-    return json(req, { error: "The evaluation could not be completed" }, 500);
+    const detail = error instanceof Error
+      ? error.message
+      : typeof error === "object" && error && "message" in error
+        ? String(error.message)
+        : String(error);
+    return json(req, {
+      error: authorizedAdmin
+        ? `Evaluation failed: ${detail}`
+        : "The evaluation could not be completed",
+    }, 500);
   }
 });
