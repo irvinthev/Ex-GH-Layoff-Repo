@@ -1643,5 +1643,19 @@
     "Company": "Amplify",
     "Position": "Software Engineer",
     "Placement Flag": "Placed"
+  },
+  {
+    "First Name": "Troy",
+    "Last Name": "Hickey",
+    "Company": "Doordash",
+    "Position": "Enterprise Sales Executive",
+    "Placement Flag": "Placed"
+  },
+  {
+    "First Name": "Sean",
+    "Last Name": "Kim",
+    "Company": "Unify Consulting",
+    "Position": "Product Manager Consulting ",
+    "Placement Flag": "Placed"
   }
 ]
