@@ -223,9 +223,8 @@ export async function importJobFromUrl(value: string): Promise<ImportedJob> {
   for (let redirect = 0; redirect <= MAX_REDIRECTS; redirect += 1) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
-    let response: Response;
     try {
-      response = await fetch(url, {
+      const response = await fetch(url, {
         method: "GET",
         redirect: "manual",
         signal: controller.signal,
@@ -234,23 +233,28 @@ export async function importJobFromUrl(value: string): Promise<ImportedJob> {
           "User-Agent": "Ex-GH-Talent-Network-Job-Importer/1.0",
         },
       });
+
+      if ([301, 302, 303, 307, 308].includes(response.status)) {
+        const location = response.headers.get("location");
+        if (!location || redirect === MAX_REDIRECTS) throw new Error("The job page redirected too many times");
+        url = validatePublicJobUrl(new URL(location, url).href);
+        continue;
+      }
+      if (!response.ok) throw new Error(`The job page returned HTTP ${response.status}`);
+      const contentType = response.headers.get("content-type")?.toLowerCase() ?? "";
+      if (!contentType.includes("text/html") && !contentType.includes("application/xhtml+xml")) {
+        throw new Error("The URL did not return a readable web page");
+      }
+      const html = await readLimitedText(response);
+      return extractJobPostingHtml(html, url.href);
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        throw new Error("The job page took too long to respond");
+      }
+      throw error;
     } finally {
       clearTimeout(timeout);
     }
-
-    if ([301, 302, 303, 307, 308].includes(response.status)) {
-      const location = response.headers.get("location");
-      if (!location || redirect === MAX_REDIRECTS) throw new Error("The job page redirected too many times");
-      url = validatePublicJobUrl(new URL(location, url).href);
-      continue;
-    }
-    if (!response.ok) throw new Error(`The job page returned HTTP ${response.status}`);
-    const contentType = response.headers.get("content-type")?.toLowerCase() ?? "";
-    if (!contentType.includes("text/html") && !contentType.includes("application/xhtml+xml")) {
-      throw new Error("The URL did not return a readable web page");
-    }
-    const html = await readLimitedText(response);
-    return extractJobPostingHtml(html, url.href);
   }
   throw new Error("The job page could not be imported");
 }
