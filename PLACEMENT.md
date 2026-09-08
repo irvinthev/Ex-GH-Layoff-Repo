@@ -23,7 +23,9 @@ No match is saved, published, or sent to a candidate in this version.
 | Seniority | 10 |
 | Location / work model | 10 |
 
-Scores are deterministic decision support. They are not hiring recommendations and always require human review.
+The matcher uses both literal signals and a controlled set of adjacent concepts, such as implementation/onboarding and workflow/process design. Verified resume evidence can support a secondary role family even when a candidate's former title differs. A stated target role alone is not treated as proof of qualification.
+
+Scores are deterministic decision support. They are not hiring recommendations and always require human review. There are no candidate-specific score bonuses.
 
 ## Deployment
 
@@ -39,4 +41,3 @@ Add the deployed placement page to **Authentication → URL Configuration → Re
 `https://irvinthev.github.io/Ex-GH-Layoff-Repo/placement.html`
 
 For local testing, also add `http://localhost:8000/placement.html` and serve the repository with a static HTTP server.
-

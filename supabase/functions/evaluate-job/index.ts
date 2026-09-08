@@ -34,7 +34,26 @@ type Features = {
   seniority: string | null;
   skills: string[];
   domains: string[];
+  evidence: Record<string, unknown>;
 };
+
+type RolePreference = {
+  candidate_id: string;
+  role_slug: string;
+  preference: "target" | "open" | "avoid";
+  priority: number | null;
+};
+
+const CONCEPT_GROUPS = [
+  { label: "Implementation lifecycle", terms: ["implementation", "onboarding", "deployment", "rollout", "launch", "go live", "cutover", "adoption"] },
+  { label: "Customer delivery", terms: ["customer delivery", "customer success", "client delivery", "client services", "customer implementation"] },
+  { label: "Process and workflow design", terms: ["process improvement", "process optimization", "workflow transformation", "workflow design", "operating model", "scalable workflow"] },
+  { label: "Data and integrations", terms: ["data migration", "data onboarding", "data flow", "data integration", "integration", "api", "webhook"] },
+  { label: "Risk and escalations", terms: ["risk management", "implementation risk", "escalation", "issue resolution", "troubleshooting", "compliance"] },
+  { label: "Cross-functional leadership", terms: ["cross functional", "stakeholder management", "multiple stakeholders", "partnering across", "executive update", "sales and engineering", "cross team collaboration"] },
+  { label: "Automation", terms: ["automation", "automated", "scripting", "python"] },
+  { label: "Change and enablement", terms: ["change management", "enablement", "training", "organizational change"] },
+] as const;
 
 const STOP_WORDS = new Set([
   "and", "the", "with", "for", "from", "that", "this", "you", "your", "our",
@@ -67,7 +86,17 @@ function normalize(value: unknown): string {
 }
 
 function tokens(value: unknown): string[] {
-  return [...new Set(normalize(value).split(" ").filter((word) => word.length > 2 && !STOP_WORDS.has(word)))];
+  return [...new Set(
+    normalize(value)
+      .split(" ")
+      .filter((word) => word.length > 2 && !STOP_WORDS.has(word))
+      .map((word) => {
+        if (word.length > 5 && word.endsWith("sses")) return word.slice(0, -2);
+        if (word.length > 4 && word.endsWith("ies")) return `${word.slice(0, -3)}y`;
+        if (word.length > 4 && word.endsWith("s") && !word.endsWith("ss")) return word.slice(0, -1);
+        return word;
+      }),
+  )];
 }
 
 function includesPhrase(text: string, phrase: string): boolean {
@@ -80,6 +109,13 @@ function overlapRatio(left: string[], right: string[]): number {
   const rightSet = new Set(right);
   const overlap = left.filter((word) => rightSet.has(word)).length;
   return Math.min(1, overlap / Math.min(left.length, right.length));
+}
+
+function conceptLabels(value: unknown): string[] {
+  const text = normalize(value);
+  return CONCEPT_GROUPS
+    .filter((group) => group.terms.some((term) => includesPhrase(text, term)))
+    .map((group) => group.label);
 }
 
 function inferSeniority(title: string, description: string): string | null {
@@ -144,14 +180,41 @@ function locationScore(candidateLocation: string | null, jobLocation: string, re
   return ratio > 0 ? { score: 10, aligned: true, note: "Location appears aligned" } : { score: 2, aligned: false, note: "Location needs review" };
 }
 
-function scoreCandidate(member: Member, feature: Features, role: Role | null, title: string, description: string, location: string, remoteType: string) {
+function scoreCandidate(member: Member, feature: Features, preferences: RolePreference[], role: Role | null, title: string, description: string, location: string, remoteType: string) {
   const jobText = normalize(`${title} ${description}`);
+  const candidateEvidence = normalize([
+    member.former_job_title,
+    member.former_team,
+    member.public_description,
+    ...(member.public_skills ?? []),
+    ...(feature.skills ?? []),
+    ...(feature.domains ?? []),
+    JSON.stringify(feature.evidence ?? {}),
+  ].join(" "));
   const candidateRole = feature.primary_role_slug;
-  const roleScore = role && candidateRole === role.slug
-    ? 30
-    : role && normalize(member.function_name) === normalize(role.function_name)
-      ? 18
-      : 0;
+  const targetPreference = role
+    ? preferences.find((item) => item.role_slug === role.slug && item.preference !== "avoid")
+    : null;
+  const avoidedRole = role
+    ? preferences.some((item) => item.role_slug === role.slug && item.preference === "avoid")
+    : false;
+  const rolePhrases = role
+    ? [role.role_family, role.specialty, ...role.aliases].filter(Boolean) as string[]
+    : [];
+  const evidenceRoleMatch = rolePhrases.some((phrase) => includesPhrase(candidateEvidence, phrase));
+  const roleScore = !role || avoidedRole
+    ? 0
+    : candidateRole === role.slug
+      ? 30
+      : targetPreference && evidenceRoleMatch
+        ? 28
+        : evidenceRoleMatch
+          ? 24
+          : normalize(member.function_name) === normalize(role.function_name)
+            ? 18
+            : targetPreference
+              ? 12
+              : 0;
 
   const candidateTitleTokens = tokens(`${member.former_job_title} ${member.former_team}`);
   const targetTitleTokens = tokens(`${title} ${role?.role_family ?? ""} ${role?.specialty ?? ""}`);
@@ -162,11 +225,19 @@ function scoreCandidate(member: Member, feature: Features, role: Role | null, ti
     const phrase = normalize(skill);
     return includesPhrase(jobText, phrase) || overlapRatio(tokens(skill), tokens(jobText)) >= 0.67;
   });
-  const skillScore = allSkills.length ? Math.round((matchedSkills.length / allSkills.length) * 20) : 0;
+  const jobConcepts = conceptLabels(jobText);
+  const candidateConcepts = conceptLabels(candidateEvidence);
+  const matchedConcepts = jobConcepts.filter((label) => candidateConcepts.includes(label));
+  const conceptCoverage = jobConcepts.length ? matchedConcepts.length / jobConcepts.length : 0;
+  const skillScore = Math.min(20, Math.min(6, matchedSkills.length * 2) + Math.round(conceptCoverage * 14));
 
   const domains = feature.domains ?? [];
-  const matchedDomains = domains.filter((domain) => includesPhrase(jobText, domain) || overlapRatio(tokens(domain), tokens(jobText)) >= 0.67);
-  const domainScore = domains.length ? Math.round((matchedDomains.length / domains.length) * 15) : 0;
+  const matchedDomains = domains.filter((domain) =>
+    includesPhrase(jobText, domain)
+    || overlapRatio(tokens(domain), tokens(jobText)) >= 0.67
+    || conceptLabels(domain).some((label) => jobConcepts.includes(label))
+  );
+  const domainScore = Math.min(15, matchedDomains.length * 4);
 
   const targetSeniority = inferSeniority(title, description);
   const seniority = seniorityScore(feature.seniority, targetSeniority);
@@ -175,16 +246,25 @@ function scoreCandidate(member: Member, feature: Features, role: Role | null, ti
 
   const reasons: string[] = [];
   if (roleScore === 30 && role) reasons.push(`Direct ${role.role_family} role-family match`);
+  else if (roleScore === 28 && role) reasons.push(`Target ${role.role_family} role supported by experience evidence`);
+  else if (roleScore === 24 && role) reasons.push(`Experience evidence supports ${role.role_family}`);
   else if (roleScore === 18 && role) reasons.push(`Related ${role.function_name} function`);
+  else if (roleScore === 12 && role) reasons.push(`Candidate is open to ${role.role_family}; qualification evidence is limited`);
   if (matchedSkills.length) reasons.push(`Skills named in role: ${matchedSkills.slice(0, 3).join(", ")}`);
+  if (matchedConcepts.length) reasons.push(`Transferable experience: ${matchedConcepts.slice(0, 4).join(", ")}`);
   if (matchedDomains.length) reasons.push(`Relevant domain evidence: ${matchedDomains.slice(0, 2).join(", ")}`);
   if (seniority.aligned) reasons.push("Seniority appears aligned");
   if (geography.aligned) reasons.push(geography.note);
 
   const gaps: string[] = [];
   if (!role) gaps.push("Role family could not be classified confidently");
+  else if (avoidedRole) gaps.push(`Candidate marked ${role.role_family} as a role to avoid`);
   else if (roleScore === 0) gaps.push(`No direct evidence for ${role.role_family}`);
-  if (!matchedSkills.length) gaps.push("No explicit candidate-skill overlap found in the job text");
+  else if (roleScore < 30) gaps.push(`Prior title is adjacent to, rather than directly within, ${role.role_family}`);
+  if (skillScore < 12) gaps.push("Limited responsibility and skill overlap found in the recorded evidence");
+  else if (skillScore < 18) gaps.push("Some job responsibilities are not demonstrated explicitly in the recorded evidence");
+  const missingConcepts = jobConcepts.filter((label) => !candidateConcepts.includes(label));
+  if (missingConcepts.length) gaps.push(`Validate: ${missingConcepts.slice(0, 3).join(", ")}`);
   if (targetSeniority && !seniority.aligned) gaps.push("Seniority alignment needs review");
   if (!geography.aligned) gaps.push(geography.note);
 
@@ -287,22 +367,30 @@ Deno.serve(async (req: Request) => {
     const remoteType = String(payload?.remoteType ?? "").trim().slice(0, 100);
     if (!description || description.length < 50) return json(req, { error: "Paste at least 50 characters of the job description" }, 400);
 
-    const [rolesResult, membersResult, featuresResult] = await Promise.all([
+    const [rolesResult, membersResult, featuresResult, preferencesResult] = await Promise.all([
       admin.from("role_taxonomy").select("slug,function_name,role_family,specialty,aliases").eq("active", true),
       admin.from("network_members").select("id,first_name,last_name,former_job_title,former_team,function_name,location_text,linkedin_url,public_description,public_skills").eq("matching_opt_in", true).eq("open_to_work", true),
-      admin.from("candidate_features").select("candidate_id,primary_role_slug,seniority,skills,domains"),
+      admin.from("candidate_features").select("candidate_id,primary_role_slug,seniority,skills,domains,evidence"),
+      admin.from("candidate_role_preferences").select("candidate_id,role_slug,preference,priority"),
     ]);
     if (rolesResult.error) throw rolesResult.error;
     if (membersResult.error) throw membersResult.error;
     if (featuresResult.error) throw featuresResult.error;
+    if (preferencesResult.error) throw preferencesResult.error;
 
     const roles = (rolesResult.data ?? []) as Role[];
     const role = classifyRole(title, description, roles);
     const featureMap = new Map((featuresResult.data ?? []).map((item: Features) => [item.candidate_id, item]));
+    const preferenceMap = new Map<string, RolePreference[]>();
+    for (const item of (preferencesResult.data ?? []) as RolePreference[]) {
+      const existing = preferenceMap.get(item.candidate_id) ?? [];
+      existing.push(item);
+      preferenceMap.set(item.candidate_id, existing);
+    }
     const matches = ((membersResult.data ?? []) as Member[])
       .map((member) => {
         const feature = featureMap.get(member.id);
-        return feature ? scoreCandidate(member, feature, role, title, description, location, remoteType) : null;
+        return feature ? scoreCandidate(member, feature, preferenceMap.get(member.id) ?? [], role, title, description, location, remoteType) : null;
       })
       .filter(Boolean)
       .sort((a, b) => (b?.score ?? 0) - (a?.score ?? 0));
@@ -316,7 +404,7 @@ Deno.serve(async (req: Request) => {
         remoteType: remoteType || null,
         candidateCount: matches.length,
         evaluatedAt: new Date().toISOString(),
-        methodology: "Deterministic evidence scoring; manual review required",
+        methodology: "Evidence-aware deterministic scoring v2; manual review required",
       },
       matches,
     });
