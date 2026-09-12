@@ -24,8 +24,8 @@ function parsePostDate(dateString) {
     return null;
   }
 
-  const timestamp = Date.parse(dateString);
-  return Number.isNaN(timestamp) ? null : timestamp;
+  const date = new Date(`${dateString}T00:00:00`);
+  return Number.isNaN(date.getTime()) ? null : date.getTime();
 }
 
 function comparePostsByDateDesc(a, b) {
@@ -48,9 +48,21 @@ function comparePostsByDateDesc(a, b) {
 }
 
 function getResourceLinkLabel(post) {
-  return post.format === "video"
-    ? "Watch on YouTube →"
-    : "Read on LinkedIn →";
+  const url = post.url || "";
+
+  if (
+    post.format === "video" ||
+    url.includes("youtu.be/") ||
+    url.includes("youtube.com/")
+  ) {
+    return "Watch on YouTube →";
+  }
+
+  if (url.includes("linkedin.com/")) {
+    return "Read on LinkedIn →";
+  }
+
+  return "Open resource →";
 }
 
 async function loadResources() {
