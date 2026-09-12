@@ -109,7 +109,7 @@ async function loadResources() {
 
     const sorted = [...filtered].sort(
       (a, b) =>
-        new Date(b.date) - new Date(a.date)
+        (Date.parse(b.date) || 0) - (Date.parse(a.date) || 0)
     );
 
     if (!sorted.length) {
@@ -181,7 +181,7 @@ async function loadResources() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Read on LinkedIn →
+                  ${post.format === "video" ? "Watch on YouTube →" : "Read on LinkedIn →"}
                 </a>
               `
               : `

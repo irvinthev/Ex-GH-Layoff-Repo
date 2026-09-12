@@ -11,7 +11,7 @@
     content="Search former Grubhub professionals by role, function, location, and skills."
   />
 
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=guide-nav-2" />
 </head>
 
 <body>
@@ -20,40 +20,16 @@
        NAVIGATION
   ====================== -->
 
-  <nav class="site-nav">
+  <nav class="site-nav" aria-label="Main navigation">
     <div class="site-nav-inner">
-
-      <div class="nav-brand">
-        <a href="index.html">
-          Ex-GH Talent Network
-        </a>
-      </div>
-
+      <div class="nav-brand"><a href="index.html">Ex-GH Talent Network</a></div>
       <div class="nav-links">
+        <a href="about.html">About</a>
+        <a href="index.html" aria-current="page">Directory</a>
         <a href="layoff-guide.html">Layoff Guide</a>
-
-        <a href="about.html">
-          About
-        </a>
-
-        <a href="index.html#directory-section">
-          Directory
-        </a>
-
-        <a
-          href="https://docs.google.com/forms/d/e/1FAIpQLSehawGkkedBDJJCGhzKEy33epkB2GeRQ7sB8x8fQ-Uz_kxgAQ/viewform"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Join
-        </a>
-
-        <a href="resources.html">
-          Resources
-        </a>
-
+        <a href="resources.html">Resources</a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSehawGkkedBDJJCGhzKEy33epkB2GeRQ7sB8x8fQ-Uz_kxgAQ/viewform" target="_blank" rel="noopener noreferrer">Join</a>
       </div>
-
     </div>
   </nav>
 
@@ -116,7 +92,6 @@
 
       <p>
         Profiles are opt-in, reviewed before publishing, and include only publicly shareable information.
-        <a href="layoff-guide.html">Just laid off? Start here.</a>
       </p>
 
     </div>
@@ -124,6 +99,14 @@
 
 
   <main class="page">
+
+  <section class="guide-callout" aria-labelledby="guide-callout-title">
+    <div>
+      <h2 id="guide-callout-title">Just laid off? Start here.</h2>
+      <p>A short guide to getting your footing, organizing your search, and finding your people.</p>
+    </div>
+    <a class="primary-btn" href="layoff-guide.html">Read the Layoff Guide →</a>
+  </section>
 
     <!-- =====================
          TALENT NETWORK IMPACT WIDGET

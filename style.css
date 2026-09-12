@@ -1731,3 +1731,17 @@ select:focus {
     font-size: 24px;
   }
 }
+
+/* Shared navigation and Layoff Guide entry point. */
+.site-nav .nav-links a[aria-current="page"] { color: var(--primary-hover); text-decoration: underline; text-underline-offset: 6px; }
+.guide-callout { max-width: 1060px; margin: 24px auto; padding: 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 16px; }
+.guide-callout h2 { margin: 0 0 8px; font-size: 24px; line-height: 1.2; }
+.guide-callout p { margin: 0; color: #334155; font-size: 16px; line-height: 1.6; }
+.guide-callout .primary-btn { flex-shrink: 0; }
+@media (max-width: 640px) {
+  .site-nav .site-nav-inner { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .site-nav .nav-links { max-width: 100%; flex-wrap: wrap; gap: 8px 14px; }
+  .site-nav .nav-links a { padding: 5px 0; }
+  .guide-callout { flex-direction: column; align-items: flex-start; margin: 20px 16px; padding: 20px; }
+  .content-page .guide-callout { margin: 20px 0; }
+}
