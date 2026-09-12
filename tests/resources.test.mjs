@@ -51,6 +51,6 @@ test("uses a YouTube label only for video resources", () => {
     getResourceLinkLabel({
       url: "https://youtu.be/example"
     }),
-    "Watch on YouTube →"
+    "Open resource →"
   );
 });

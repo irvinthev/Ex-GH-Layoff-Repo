@@ -48,17 +48,24 @@ function comparePostsByDateDesc(a, b) {
 }
 
 function getResourceLinkLabel(post) {
-  const url = post.url || "";
+  let hostname = "";
 
-  if (
-    post.format === "video" ||
-    url.includes("youtu.be/") ||
-    url.includes("youtube.com/")
-  ) {
+  try {
+    hostname = post.url
+      ? new URL(post.url).hostname.toLowerCase()
+      : "";
+  } catch {
+    hostname = "";
+  }
+
+  if (post.format === "video") {
     return "Watch on YouTube →";
   }
 
-  if (url.includes("linkedin.com/")) {
+  if (
+    hostname === "linkedin.com" ||
+    hostname === "www.linkedin.com"
+  ) {
     return "Read on LinkedIn →";
   }
 
