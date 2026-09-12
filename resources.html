@@ -10,7 +10,7 @@
     name="description"
     content="Career playbooks, layoff resources, networking strategies, and stories from the Ex-GH Talent Network."
   />
-  <link rel="stylesheet" href="style.css?v=2" />
+  <link rel="stylesheet" href="style.css?v=guide-nav-2" />
 <link rel="stylesheet" href="resources.css?v=1" />
 </head>
 
@@ -20,39 +20,16 @@
        NAVIGATION
   ====================== -->
 
-  <nav class="site-nav">
+  <nav class="site-nav" aria-label="Main navigation">
     <div class="site-nav-inner">
-
-      <div class="nav-brand">
-        <a href="index.html">
-          Ex-GH Talent Network
-        </a>
-      </div>
-
+      <div class="nav-brand"><a href="index.html">Ex-GH Talent Network</a></div>
       <div class="nav-links">
-
-        <a href="index.html">
-          Directory
-        </a>
-
-        <a href="resources.html">
-          Resources
-        </a>
-
-        <a href="about.html">
-          About
-        </a>
-
-        <a
-          href="https://docs.google.com/forms/d/e/1FAIpQLSehawGkkedBDJJCGhzKEy33epkB2GeRQ7sB8x8fQ-Uz_kxgAQ/viewform"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Join
-        </a>
-
+        <a href="about.html">About</a>
+        <a href="index.html">Directory</a>
+        <a href="layoff-guide.html">Layoff Guide</a>
+        <a href="resources.html" aria-current="page">Resources</a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSehawGkkedBDJJCGhzKEy33epkB2GeRQ7sB8x8fQ-Uz_kxgAQ/viewform" target="_blank" rel="noopener noreferrer">Join</a>
       </div>
-
     </div>
   </nav>
 
@@ -115,9 +92,14 @@
 
     </div>
 
-    <p class="about-section-intro">
-      Just laid off? <a href="layoff-guide.html"><strong>Start with the short Layoff Audit guide</strong></a>, then explore the stories and frameworks that shaped the network.
-    </p>
+    <section class="guide-callout" aria-labelledby="guide-callout-title">
+    <div>
+      <h2 id="guide-callout-title">Just laid off? Start here.</h2>
+      <p>A short guide to getting your footing, organizing your search, and finding your people.</p>
+    </div>
+    <a class="primary-btn" href="layoff-guide.html">Read the Layoff Guide →</a>
+  </section>
+    <p class="about-section-intro">Explore newsletters, episodes, and tools by topic. The guide gives you a starting point; these resources go deeper.</p>
 
 
     <div

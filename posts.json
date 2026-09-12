@@ -25,5 +25,41 @@
     "date": "2026-05-21",
     "url": "https://www.linkedin.com/pulse/job-tracker-template-free-download-irvin-thevaranjan-crisc-xwdre?utm_source=share&utm_medium=member_ios&utm_campaign=share_via",
     "featured": false
+  },
+  {
+    "title": "Is Your Résumé Working?",
+    "description": "A Layoff Audit episode to accompany the guide’s job-search diagnostic.",
+    "category": "Job Search",
+    "series": "The Layoff Audit",
+    "url": "https://youtu.be/Sc7VfaIftmA",
+    "format": "video",
+    "featured": false
+  },
+  {
+    "title": "The Empathy Window",
+    "description": "A Layoff Audit episode to accompany the guide’s section on asking for help.",
+    "category": "Networking",
+    "series": "The Layoff Audit",
+    "url": "https://youtu.be/S4029WM171E",
+    "format": "video",
+    "featured": false
+  },
+  {
+    "title": "Find Your People",
+    "description": "A Layoff Audit episode to accompany the guide’s section on finding community.",
+    "category": "Community",
+    "series": "The Layoff Audit",
+    "url": "https://youtu.be/sOFiwyi2Xy0",
+    "format": "video",
+    "featured": false
+  },
+  {
+    "title": "The Origin Story",
+    "description": "Start here for the story behind The Layoff Audit.",
+    "category": "Community",
+    "series": "The Layoff Audit",
+    "url": "https://youtu.be/ZhBev4IvK0k",
+    "format": "video",
+    "featured": false
   }
 ]
