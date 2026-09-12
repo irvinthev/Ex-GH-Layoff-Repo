@@ -28,8 +28,19 @@ test("sorts dated resources before undated or invalid entries", () => {
 
 test("uses a YouTube label only for video resources", () => {
   assert.equal(
-    getResourceLinkLabel({ format: "video" }),
+    getResourceLinkLabel({
+      format: "video",
+      url: "https://youtu.be/example"
+    }),
     "Watch on YouTube →"
+  );
+
+  assert.equal(
+    getResourceLinkLabel({
+      format: "video",
+      url: "https://vimeo.com/example"
+    }),
+    "Watch video →"
   );
 
   assert.equal(

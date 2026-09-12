@@ -59,7 +59,16 @@ function getResourceLinkLabel(post) {
   }
 
   if (post.format === "video") {
-    return "Watch on YouTube →";
+    if (
+      hostname === "youtube.com" ||
+      hostname === "www.youtube.com" ||
+      hostname === "m.youtube.com" ||
+      hostname === "youtu.be"
+    ) {
+      return "Watch on YouTube →";
+    }
+
+    return "Watch video →";
   }
 
   if (
