@@ -38,9 +38,33 @@ test("uses a YouTube label only for video resources", () => {
   assert.equal(
     getResourceLinkLabel({
       format: "video",
+      url: "https://youtube.com/watch?v=example"
+    }),
+    "Watch on YouTube →"
+  );
+
+  assert.equal(
+    getResourceLinkLabel({
+      format: "video",
+      url: "https://m.youtube.com/watch?v=example"
+    }),
+    "Watch on YouTube →"
+  );
+
+  assert.equal(
+    getResourceLinkLabel({
+      format: "video",
       url: "https://vimeo.com/example"
     }),
     "Watch video →"
+  );
+
+  assert.equal(
+    getResourceLinkLabel({
+      format: "article",
+      url: "https://linkedin.com/newsletters/example"
+    }),
+    "Read on LinkedIn →"
   );
 
   assert.equal(

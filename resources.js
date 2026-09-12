@@ -58,22 +58,22 @@ function getResourceLinkLabel(post) {
     hostname = "";
   }
 
+  const matchesHostname = (domain) =>
+  hostname === domain || hostname.endsWith(`.${domain}`);
+
   if (post.format === "video") {
-    if (
-      hostname === "youtube.com" ||
-      hostname === "www.youtube.com" ||
-      hostname === "m.youtube.com" ||
-      hostname === "youtu.be"
-    ) {
-      return "Watch on YouTube →";
-    }
+  if (
+    matchesHostname("youtube.com") ||
+    matchesHostname("youtu.be")
+  ) {
+    return "Watch on YouTube →";
+  }
 
     return "Watch video →";
   }
 
   if (
-    hostname === "linkedin.com" ||
-    hostname === "www.linkedin.com"
+    matchesHostname("linkedin.com")
   ) {
     return "Read on LinkedIn →";
   }
