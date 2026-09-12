@@ -1,0 +1,44 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const {
+  comparePostsByDateDesc,
+  getResourceLinkLabel,
+} = require("../resources.js");
+
+test("sorts dated resources before undated or invalid entries", () => {
+  const posts = [
+    { title: "Undated", date: "" },
+    { title: "Invalid", date: "not-a-date" },
+    { title: "Older", date: "2024-01-15" },
+    { title: "Newer", date: "2024-08-01" },
+  ];
+
+  const sortedTitles = [...posts]
+    .sort(comparePostsByDateDesc)
+    .map((post) => post.title);
+
+  assert.deepEqual(
+    sortedTitles,
+    ["Newer", "Older", "Undated", "Invalid"]
+  );
+});
+
+test("uses a YouTube label only for video resources", () => {
+  assert.equal(
+    getResourceLinkLabel({ format: "video" }),
+    "Watch on YouTube →"
+  );
+
+  assert.equal(
+    getResourceLinkLabel({ format: "article" }),
+    "Read on LinkedIn →"
+  );
+
+  assert.equal(
+    getResourceLinkLabel({}),
+    "Read on LinkedIn →"
+  );
+});

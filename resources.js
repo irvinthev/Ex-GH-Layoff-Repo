@@ -1,3 +1,58 @@
+function formatDate(dateString) {
+  if (!dateString) {
+    return "";
+  }
+
+  const date = new Date(`${dateString}T00:00:00`);
+
+  if (Number.isNaN(date.getTime())) {
+    return dateString;
+  }
+
+  return date.toLocaleDateString(
+    "en-US",
+    {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    }
+  );
+}
+
+function parsePostDate(dateString) {
+  if (!dateString) {
+    return null;
+  }
+
+  const timestamp = Date.parse(dateString);
+  return Number.isNaN(timestamp) ? null : timestamp;
+}
+
+function comparePostsByDateDesc(a, b) {
+  const aTimestamp = parsePostDate(a.date);
+  const bTimestamp = parsePostDate(b.date);
+
+  if (aTimestamp === null && bTimestamp === null) {
+    return 0;
+  }
+
+  if (aTimestamp === null) {
+    return 1;
+  }
+
+  if (bTimestamp === null) {
+    return -1;
+  }
+
+  return bTimestamp - aTimestamp;
+}
+
+function getResourceLinkLabel(post) {
+  return post.format === "video"
+    ? "Watch on YouTube →"
+    : "Read on LinkedIn →";
+}
+
 async function loadResources() {
   const response = await fetch("./posts.json");
 
@@ -13,32 +68,6 @@ async function loadResources() {
   const filters = document.getElementById("resourceFilters");
 
   let activeCategory = "All";
-
-
-  /* =====================
-     DATE
-  ===================== */
-
-  function formatDate(dateString) {
-    if (!dateString) {
-      return "";
-    }
-
-    const date = new Date(`${dateString}T00:00:00`);
-
-    if (Number.isNaN(date.getTime())) {
-      return dateString;
-    }
-
-    return date.toLocaleDateString(
-      "en-US",
-      {
-        year: "numeric",
-        month: "short",
-        day: "numeric"
-      }
-    );
-  }
 
 
   /* =====================
@@ -107,10 +136,7 @@ async function loadResources() {
               post.category === activeCategory
           );
 
-    const sorted = [...filtered].sort(
-      (a, b) =>
-        (Date.parse(b.date) || 0) - (Date.parse(a.date) || 0)
-    );
+    const sorted = [...filtered].sort(comparePostsByDateDesc);
 
     if (!sorted.length) {
       grid.innerHTML = `
@@ -181,7 +207,7 @@ async function loadResources() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  ${post.format === "video" ? "Watch on YouTube →" : "Read on LinkedIn →"}
+                  ${getResourceLinkLabel(post)}
                 </a>
               `
               : `
@@ -208,25 +234,36 @@ async function loadResources() {
 }
 
 
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    comparePostsByDateDesc,
+    formatDate,
+    getResourceLinkLabel,
+  };
+}
+
+
 /* =====================
    ERROR HANDLING
 ===================== */
 
-loadResources().catch(
-  (error) => {
-    console.error(
-      "Failed to load resources:",
-      error
-    );
+if (typeof document !== "undefined") {
+  loadResources().catch(
+    (error) => {
+      console.error(
+        "Failed to load resources:",
+        error
+      );
 
-    const grid = document.getElementById("resourceGrid");
+      const grid = document.getElementById("resourceGrid");
 
-    if (grid) {
-      grid.innerHTML = `
-        <div class="empty-state">
-          Resources could not be loaded.
-        </div>
-      `;
+      if (grid) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            Resources could not be loaded.
+          </div>
+        `;
+      }
     }
-  }
-);
+  );
+}
