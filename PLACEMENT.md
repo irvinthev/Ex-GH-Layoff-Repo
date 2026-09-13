@@ -9,6 +9,8 @@ This MVP provides a private, role-first matching workflow for the Ex-GH Talent N
 3. The `evaluate-job` Edge Function verifies the user JWT and checks the server-only admin allowlist.
 4. Only opted-in, open-to-work candidates are scored and returned.
 5. The page displays the score breakdown, supporting evidence, and gaps requiring review.
+   - Results can be sorted (highest score, lowest score, name A-Z) and filtered to strong fits (score ≥ 80).
+   - Summary pills include fit distribution, average score, and a CSV export action.
 
 No match is saved, published, or sent to a candidate in this version.
 
