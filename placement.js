@@ -105,7 +105,7 @@ function downloadCsv(data) {
   link.href = url;
   link.download = "placement-results.csv";
   link.click();
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
 function renderLoadingState() {
@@ -161,7 +161,7 @@ function renderMatches(data) {
     const fitTone = getFitTone(match);
     const breakdown = Object.entries(match.breakdown ?? {}).map(([key, value]) => `
       <div class="evidence-item ${value.score === 0 ? "is-zero" : ""}">
-        <span>${labels[key]} <em>${value.max}pts</em></span>
+        <span>${escapeHtml(labels[key] ?? key)} <em>${value.max}pts</em></span>
         <strong>${value.score}/${value.max}</strong>
         <div class="score-bar"><i style="width:${Math.max(0, Math.min(100, (value.score / (value.max || 1)) * 100))}%"></i></div>
       </div>

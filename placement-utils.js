@@ -1,8 +1,7 @@
 export function getFitTone(match) {
   const score = Number(match?.score ?? 0);
-  const fitBand = String(match?.fitBand ?? "").toLowerCase();
-  if (score >= 80 || fitBand.includes("strong")) return "strong";
-  if (score >= 60 || fitBand.includes("moderate")) return "moderate";
+  if (score >= 80) return "strong";
+  if (score >= 60) return "moderate";
   return "review";
 }
 

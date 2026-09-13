@@ -15,7 +15,12 @@ const matches = [
 
 test("filters to strong fits and sorts by score", () => {
   const visible = sortAndFilterMatches(matches, "score_desc", "strong");
-  assert.deepEqual(visible.map((match) => match.candidate.name), ["Taylor", "Casey"]);
+  assert.deepEqual(visible.map((match) => match.candidate.name), ["Taylor"]);
+});
+
+test("strong filter uses score threshold regardless of fit-band text", () => {
+  const belowThresholdStrongBand = sortAndFilterMatches([matches[3]], "score_desc", "strong");
+  assert.equal(belowThresholdStrongBand.length, 0);
 });
 
 test("sorts names alphabetically when requested", () => {
@@ -26,11 +31,11 @@ test("sorts names alphabetically when requested", () => {
 test("calculates fit-tone and summary distribution", () => {
   assert.equal(getFitTone(matches[0]), "strong");
   assert.equal(getFitTone(matches[1]), "review");
-  assert.equal(getFitTone(matches[3]), "strong");
+  assert.equal(getFitTone(matches[3]), "review");
 
   const summary = getSummaryStats(matches);
-  assert.equal(summary.strong, 2);
+  assert.equal(summary.strong, 1);
   assert.equal(summary.moderate, 1);
-  assert.equal(summary.review, 1);
+  assert.equal(summary.review, 2);
   assert.equal(summary.averageScore, 64);
 });
