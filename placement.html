@@ -87,6 +87,20 @@
       </section>
 
       <section id="resultsSection" hidden>
+        <nav class="results-toolbar" aria-label="Result controls">
+          <label class="sort-control" for="sortResults">
+            <span>Sort results</span>
+            <select id="sortResults" name="sortResults">
+              <option value="score_desc">Highest Score</option>
+              <option value="score_asc">Lowest Score</option>
+              <option value="name_asc">Name (A-Z)</option>
+            </select>
+          </label>
+          <div class="filter-group" role="group" aria-label="Filter matches">
+            <button id="filterAll" class="filter-btn is-active" type="button" aria-pressed="true">All Results</button>
+            <button id="filterStrong" class="filter-btn" type="button" aria-pressed="false">Strong Fits Only</button>
+          </div>
+        </nav>
         <div id="evaluationSummary" class="evaluation-summary"></div>
         <div id="results" class="match-list"></div>
       </section>
