@@ -118,19 +118,6 @@
   },
   {
     "Date Added": "",
-    "First Name": "Anjana",
-    "Last Name": "Thirumalai",
-    "Former Job Title": "Senior Product Designer",
-    "Former Team": "Product Design",
-    "Function": "Product Design",
-    "Location": "Chicago, IL, USA\n",
-    "LinkedIn URL": "https://www.linkedin.com/in/anjana-k-thirumalai-a3960511/",
-    "Description": "Senior Product Designer focused on intuitive and scalable user experiences",
-    "Top 3 Skills": "Product Design, UX/UI, User Experience Design",
-    "Open to Work": "Yes"
-  },
-  {
-    "Date Added": "",
     "First Name": "Carrin",
     "Last Name": "Strain",
     "Former Job Title": "Operations Manager - Business Insights",
@@ -880,7 +867,7 @@
     "Location": "Texas- remote ",
     "LinkedIn URL": "https://www.linkedin.com/in/roxanne-dean-856bb0216",
     "Description": "I’m an experienced Revenue Operations professional with a strong background in Salesforce, process optimization, data management, and leading cross-functional system implementations that improve efficiency and customer experience. I’m looking for a role where I can leverage my RevOps and project management experience, take greater ownership of strategic initiatives, and continue growing within a collaborative, technology-driven organization.",
-    "Top 3 Skills": "=AI(\"From the text below, extract exactly 3 professional skills. Return only comma-separated values, no explanation. Text: \" & D69 & \" \" & I69)",
+    "Top 3 Skills": "=AI(\"From the text below, extract exactly 3 professional skills. Return only comma-separated values, no explanation. Text: \" & D68 & \" \" & I68)",
     "Open to Work": "Yes"
   },
   {
@@ -893,7 +880,7 @@
     "Location": "Chicago",
     "LinkedIn URL": "www.linkedin.com/in/griffin-benko",
     "Description": "I’m looking for roles in customer success, solutions consulting, partnership management, account management, or onboarding/implementation. Ideally, the role would have less sales involved than my Success roles with Grubhub but still focus on problem solving and possibly upselling.",
-    "Top 3 Skills": "=AI(\"From the text below, extract exactly 3 professional skills. Return only comma-separated values, no explanation. Text: \" & D70 & \" \" & I70)",
+    "Top 3 Skills": "=AI(\"From the text below, extract exactly 3 professional skills. Return only comma-separated values, no explanation. Text: \" & D69 & \" \" & I69)",
     "Open to Work": "Yes"
   },
   {
@@ -906,7 +893,7 @@
     "Location": "New York - New Jersey",
     "LinkedIn URL": "www.linkedin.com/in/chirag-gandhi2047",
     "Description": "Over 13 years of experience in testing field. I have been managing Releases for Grubhub diner Apps. Designing QA strategies for projects of different scales using different Agentic Tools. API contract. Testing, doing GEO service overrides for corporate clients etc",
-    "Top 3 Skills": "=AI(\"From the text below, extract exactly 3 professional skills. Return only comma-separated values, no explanation. Text: \" & D71 & \" \" & I71)",
+    "Top 3 Skills": "=AI(\"From the text below, extract exactly 3 professional skills. Return only comma-separated values, no explanation. Text: \" & D70 & \" \" & I70)",
     "Open to Work": "Yes"
   },
   {
@@ -945,7 +932,7 @@
     "Location": "Boston",
     "LinkedIn URL": "https://www.linkedin.com/in/katie-logan-5b67b676",
     "Description": "Sr Manager / Director of finance systems or ERP transformation or Solutions Architect ",
-    "Top 3 Skills": "=AI(\"From the text below, extract exactly 3 professional skills. Return only comma-separated values, no explanation. Text: \" & D74 & \" \" & I74)",
+    "Top 3 Skills": "=AI(\"From the text below, extract exactly 3 professional skills. Return only comma-separated values, no explanation. Text: \" & D73 & \" \" & I73)",
     "Open to Work": "Yes"
   },
   {
