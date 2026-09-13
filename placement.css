@@ -99,6 +99,10 @@ button { border: 0; cursor: pointer; }
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+@media (prefers-reduced-motion: reduce) {
+  .match-card,
+  .skeleton-block { animation: none !important; }
+}
 
 @media (max-width: 960px) {
   .evidence-grid, .skeleton-grid { grid-template-columns: repeat(4, 1fr); }

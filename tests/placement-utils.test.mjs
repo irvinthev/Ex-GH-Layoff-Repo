@@ -28,6 +28,11 @@ test("sorts names alphabetically when requested", () => {
   assert.deepEqual(visible.map((match) => match.candidate.name), ["Alex", "Casey", "Jordan", "Taylor"]);
 });
 
+test("sorts scores ascending when requested", () => {
+  const visible = sortAndFilterMatches(matches, "score_asc", "all");
+  assert.deepEqual(visible.map((match) => match.score), [45, 58, 71, 82]);
+});
+
 test("calculates fit-tone and summary distribution", () => {
   assert.equal(getFitTone(matches[0]), "strong");
   assert.equal(getFitTone(matches[1]), "review");

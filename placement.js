@@ -82,7 +82,7 @@ function renderList(items, emptyState = "None identified") {
 }
 
 function toCsvValue(value) {
-  return `"${String(value ?? "").replace(/"/g, "\"\"")}"`;
+  return `"${String(value ?? "").replace(/[\r\n]+/g, " ").replace(/"/g, "\"\"")}"`;
 }
 
 function downloadCsv(data) {
@@ -110,6 +110,7 @@ function downloadCsv(data) {
 }
 
 function renderLoadingState() {
+  resultsSection.setAttribute("aria-busy", "true");
   evaluationSummary.innerHTML = `<span class="summary-pill"><strong>Evaluating candidates…</strong> Building ranked matches.</span>`;
   results.innerHTML = Array.from({ length: 3 }, () => `
     <article class="match-card skeleton-card" aria-hidden="true">
@@ -130,6 +131,7 @@ function renderLoadingState() {
 }
 
 function renderMatches(data, { scrollToResults = true } = {}) {
+  resultsSection.setAttribute("aria-busy", "false");
   const role = data.evaluation.role;
   const source = data.evaluation.sourceUrl
     ? `<a class="summary-pill summary-link" href="${escapeHtml(data.evaluation.sourceUrl)}" target="_blank" rel="noopener noreferrer">Open source job ↗</a>`
@@ -191,7 +193,10 @@ function renderMatches(data, { scrollToResults = true } = {}) {
 
   const exportButton = document.querySelector("#exportResults");
   if (exportButton) {
-    exportButton.addEventListener("click", () => downloadCsv(visibleMatches));
+    exportButton.addEventListener("click", () => {
+      const currentMatches = sortAndFilterMatches(data.matches ?? [], activeSort, activeFilter);
+      downloadCsv(currentMatches);
+    });
   }
   const evaluateAnotherButton = document.querySelector("#evaluateAnother");
   if (evaluateAnotherButton) {
@@ -249,6 +254,7 @@ evaluationForm.addEventListener("submit", async (event) => {
       if (body?.error) message = body.error;
     } catch (_) { /* Keep the SDK error message. */ }
     setStatus(evaluationStatus, message, "error");
+    resultsSection.setAttribute("aria-busy", "false");
     resultsSection.hidden = true;
     return;
   }
