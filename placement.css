@@ -79,7 +79,6 @@ button { border: 0; cursor: pointer; }
 .gap-panel li { border-left: 3px solid #f59e0b; padding-left: 10px; }
 .candidate-link { display: inline-block; margin-top: 14px; color: var(--primary); font-weight: 700; text-decoration: none; font-size: 14px; }
 .candidate-link,
-.summary-link,
 .text-button,
 .primary-btn { min-height: 44px; display: inline-flex; align-items: center; }
 

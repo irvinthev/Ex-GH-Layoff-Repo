@@ -128,7 +128,7 @@ function renderLoadingState() {
   resultsSection.hidden = false;
 }
 
-function renderMatches(data) {
+function renderMatches(data, { scrollToResults = true } = {}) {
   const role = data.evaluation.role;
   const source = data.evaluation.sourceUrl
     ? `<a class="summary-pill summary-link" href="${escapeHtml(data.evaluation.sourceUrl)}" target="_blank" rel="noopener noreferrer">Open source job ↗</a>`
@@ -209,22 +209,24 @@ function renderMatches(data) {
   filterAll.setAttribute("aria-pressed", String(activeFilter === "all"));
   filterStrong.setAttribute("aria-pressed", String(activeFilter === "strong"));
   resultsSection.hidden = false;
-  resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (scrollToResults) {
+    resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 }
 
 sortResults.addEventListener("change", () => {
   activeSort = sortResults.value;
-  if (latestPayload) renderMatches(latestPayload);
+  if (latestPayload) renderMatches(latestPayload, { scrollToResults: false });
 });
 
 filterAll.addEventListener("click", () => {
   activeFilter = "all";
-  if (latestPayload) renderMatches(latestPayload);
+  if (latestPayload) renderMatches(latestPayload, { scrollToResults: false });
 });
 
 filterStrong.addEventListener("click", () => {
   activeFilter = "strong";
-  if (latestPayload) renderMatches(latestPayload);
+  if (latestPayload) renderMatches(latestPayload, { scrollToResults: false });
 });
 
 evaluationForm.addEventListener("submit", async (event) => {
