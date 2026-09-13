@@ -7,7 +7,7 @@ export function getFitTone(match) {
 }
 
 export function sortAndFilterMatches(matches = [], sortMode = "score_desc", filterMode = "all") {
-  const filtered = matches.filter((match) => filterMode !== "strong" || Number(match?.score ?? 0) >= 80);
+  const filtered = matches.filter((match) => filterMode !== "strong" || getFitTone(match) === "strong");
   const sorted = [...filtered];
   if (sortMode === "score_asc") {
     sorted.sort((a, b) => Number(a?.score ?? 0) - Number(b?.score ?? 0));

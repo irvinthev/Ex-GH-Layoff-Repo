@@ -206,6 +206,8 @@ function renderMatches(data) {
 
   filterAll.classList.toggle("is-active", activeFilter === "all");
   filterStrong.classList.toggle("is-active", activeFilter === "strong");
+  filterAll.setAttribute("aria-pressed", String(activeFilter === "all"));
+  filterStrong.setAttribute("aria-pressed", String(activeFilter === "strong"));
   resultsSection.hidden = false;
   resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
 }
