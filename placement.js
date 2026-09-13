@@ -4,6 +4,7 @@ import {
   getSummaryStats,
   sortAndFilterMatches,
 } from "./placement-utils.js";
+import { applyFilterButtonState, wireResultControls } from "./placement-controls.js";
 
 const SUPABASE_URL = "https://ulzlkewtarzajseepbvj.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_hkRBpDIfH3_GFDUDJtygoQ_ItfkONsi";
@@ -166,8 +167,8 @@ function renderMatches(data, { scrollToResults = true } = {}) {
         <div class="score-bar"><i style="width:${Math.max(0, Math.min(100, (value.score / (value.max || 1)) * 100))}%"></i></div>
       </div>
     `).join("");
-    const linkedin = match.candidate.linkedinUrl
-      ? `<a class="candidate-link" href="${escapeHtml(match.candidate.linkedinUrl)}" target="_blank" rel="noopener noreferrer">Review LinkedIn →</a>`
+    const linkedin = match.candidate?.linkedinUrl
+      ? `<a class="candidate-link" href="${escapeHtml(match.candidate?.linkedinUrl)}" target="_blank" rel="noopener noreferrer">Review LinkedIn →</a>`
       : "";
     return `
       <article class="match-card fit-${fitTone}" style="--stagger-delay:${index * 60}ms">
@@ -176,8 +177,8 @@ function renderMatches(data, { scrollToResults = true } = {}) {
           <span class="fit-band fit-${fitTone}">${escapeHtml(match.fitBand)}</span>
         </div>
         <div class="match-main">
-          <h3>${escapeHtml(match.candidate.name)}</h3>
-          <p class="candidate-meta">${escapeHtml(match.candidate.formerJobTitle ?? "Role not recorded")} · ${escapeHtml(match.candidate.location ?? "Location not recorded")}</p>
+          <h3>${escapeHtml(match.candidate?.name ?? "Candidate name unavailable")}</h3>
+          <p class="candidate-meta">${escapeHtml(match.candidate?.formerJobTitle ?? "Role not recorded")} · ${escapeHtml(match.candidate?.location ?? "Location not recorded")}</p>
           <div class="evidence-grid">${breakdown}</div>
           <div class="reason-columns">
             <div class="reason-panel evidence-panel"><h4><span aria-hidden="true">✓</span> Evidence for match</h4>${renderList(match.reasons)}</div>
@@ -204,29 +205,22 @@ function renderMatches(data, { scrollToResults = true } = {}) {
     results.innerHTML = `<p class="summary-pill">No matches met the selected filter. Try viewing all results.</p>`;
   }
 
-  filterAll.classList.toggle("is-active", activeFilter === "all");
-  filterStrong.classList.toggle("is-active", activeFilter === "strong");
-  filterAll.setAttribute("aria-pressed", String(activeFilter === "all"));
-  filterStrong.setAttribute("aria-pressed", String(activeFilter === "strong"));
+  applyFilterButtonState(filterAll, filterStrong, activeFilter);
   resultsSection.hidden = false;
   if (scrollToResults) {
     resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 }
 
-sortResults.addEventListener("change", () => {
-  activeSort = sortResults.value;
-  if (latestPayload) renderMatches(latestPayload, { scrollToResults: false });
-});
-
-filterAll.addEventListener("click", () => {
-  activeFilter = "all";
-  if (latestPayload) renderMatches(latestPayload, { scrollToResults: false });
-});
-
-filterStrong.addEventListener("click", () => {
-  activeFilter = "strong";
-  if (latestPayload) renderMatches(latestPayload, { scrollToResults: false });
+wireResultControls({
+  sortSelect: sortResults,
+  filterAllButton: filterAll,
+  filterStrongButton: filterStrong,
+  onChange: ({ sort, filter }) => {
+    activeSort = sort;
+    activeFilter = filter;
+    if (latestPayload) renderMatches(latestPayload, { scrollToResults: false });
+  },
 });
 
 evaluationForm.addEventListener("submit", async (event) => {
