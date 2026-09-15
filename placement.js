@@ -46,7 +46,15 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
+let candidateProbe = null;
 function showSession(session) {
+  if (session?.user && candidateProbe !== session.user.id) {
+    candidateProbe = session.user.id;
+    setTimeout(async () => {
+      const {error} = await supabase.functions.invoke("candidate-portal", {body:{action:"list"}});
+      if (!error) window.location.replace(new URL("candidate.html",window.location.href).href);
+    },0);
+  }
   const signedIn = Boolean(session?.user);
   authPanel.hidden = signedIn;
   workspace.hidden = !signedIn;
@@ -267,3 +275,4 @@ evaluationForm.addEventListener("submit", async (event) => {
   latestPayload = data;
   renderMatches(data);
 });
+
