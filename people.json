@@ -867,7 +867,7 @@
     "Location": "Texas- remote ",
     "LinkedIn URL": "https://www.linkedin.com/in/roxanne-dean-856bb0216",
     "Description": "I’m an experienced Revenue Operations professional with a strong background in Salesforce, process optimization, data management, and leading cross-functional system implementations that improve efficiency and customer experience. I’m looking for a role where I can leverage my RevOps and project management experience, take greater ownership of strategic initiatives, and continue growing within a collaborative, technology-driven organization.",
-    "Top 3 Skills": "=AI(\"From the text below, extract exactly 3 professional skills. Return only comma-separated values, no explanation. Text: \" & D68 & \" \" & I68)",
+    "Top 3 Skills": "",
     "Open to Work": "Yes"
   },
   {
@@ -880,7 +880,7 @@
     "Location": "Chicago",
     "LinkedIn URL": "www.linkedin.com/in/griffin-benko",
     "Description": "I’m looking for roles in customer success, solutions consulting, partnership management, account management, or onboarding/implementation. Ideally, the role would have less sales involved than my Success roles with Grubhub but still focus on problem solving and possibly upselling.",
-    "Top 3 Skills": "=AI(\"From the text below, extract exactly 3 professional skills. Return only comma-separated values, no explanation. Text: \" & D69 & \" \" & I69)",
+    "Top 3 Skills": "",
     "Open to Work": "Yes"
   },
   {
@@ -893,7 +893,7 @@
     "Location": "New York - New Jersey",
     "LinkedIn URL": "www.linkedin.com/in/chirag-gandhi2047",
     "Description": "Over 13 years of experience in testing field. I have been managing Releases for Grubhub diner Apps. Designing QA strategies for projects of different scales using different Agentic Tools. API contract. Testing, doing GEO service overrides for corporate clients etc",
-    "Top 3 Skills": "=AI(\"From the text below, extract exactly 3 professional skills. Return only comma-separated values, no explanation. Text: \" & D70 & \" \" & I70)",
+    "Top 3 Skills": "",
     "Open to Work": "Yes"
   },
   {
@@ -932,7 +932,7 @@
     "Location": "Boston",
     "LinkedIn URL": "https://www.linkedin.com/in/katie-logan-5b67b676",
     "Description": "Sr Manager / Director of finance systems or ERP transformation or Solutions Architect ",
-    "Top 3 Skills": "=AI(\"From the text below, extract exactly 3 professional skills. Return only comma-separated values, no explanation. Text: \" & D73 & \" \" & I73)",
+    "Top 3 Skills": "",
     "Open to Work": "Yes"
   },
   {
@@ -1193,6 +1193,19 @@
     "LinkedIn URL": "https://www.linkedin.com/in/daniel-hara-0258234/",
     "Description": "As Engineering Manager and later Associate Director at Grubhub, I led cross-functional teams of Android, iOS, and web engineers, driving feature development and major product initiatives from roadmap through delivery. I owned architecture and system stability for my area, partnering closely with product and design to balance new development with technical investment. I also managed capacity planning, sprint execution, and cross-team coordination with peer engineering leaders.\n\nI'm looking for a similar role where I can lead a team of talented engineers and collaborate closely with product and design to iterate on and deliver key product initiatives.",
     "Top 3 Skills": "12+ years",
+    "Open to Work": "Yes"
+  },
+  {
+    "Date Added": "13/09/2026",
+    "First Name": "Jonathan",
+    "Last Name": "Spatz",
+    "Former Job Title": "Strategic Operations and Analytics Manager",
+    "Former Team": "Marketplace Operations/ Weather",
+    "Function": "Data & Analytics",
+    "Location": "San Diego",
+    "LinkedIn URL": "https://www.linkedin.com/in/jonathan-spatz?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
+    "Description": "Oversaw Indiana’s performance metrics and created a weather system for decision making and quantifying impact for all Grubhub metros (>300).",
+    "Top 3 Skills": "6-8 years",
     "Open to Work": "Yes"
   }
 ]
