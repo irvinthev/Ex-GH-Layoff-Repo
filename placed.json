@@ -77,13 +77,6 @@
     "Placement Flag": "Placed"
   },
   {
-    "First Name": "Alex ",
-    "Last Name": "Beckman",
-    "Company": "Double Good",
-    "Position": "Sr. Lifecycle and CRM Strategy Manager",
-    "Placement Flag": "Placed"
-  },
-  {
     "First Name": "Alexandra (Alex)",
     "Last Name": "Beckman",
     "Company": "Double Good",
@@ -137,13 +130,6 @@
     "Last Name": "Blum",
     "Company": "Mark43",
     "Position": "Lead DevOps Engineer",
-    "Placement Flag": "Placed"
-  },
-  {
-    "First Name": "Cassie",
-    "Last Name": "Boon",
-    "Company": "Aqua Finance",
-    "Position": "Dialer Operations ",
     "Placement Flag": "Placed"
   },
   {
@@ -448,13 +434,6 @@
     "Placement Flag": "Placed"
   },
   {
-    "First Name": "Chris",
-    "Last Name": "Discianno ",
-    "Company": "Grubhub",
-    "Position": "Contract - 6 months",
-    "Placement Flag": "Placed"
-  },
-  {
     "First Name": "Brendan",
     "Last Name": "Dite ",
     "Company": "Braze",
@@ -597,13 +576,6 @@
   {
     "First Name": "Lauren",
     "Last Name": "Hansen",
-    "Company": "House Witch",
-    "Position": "Part time",
-    "Placement Flag": "Placed"
-  },
-  {
-    "First Name": "Lauren",
-    "Last Name": "Hansen",
     "Company": "Resource Innovations",
     "Position": "",
     "Placement Flag": "Placed"
@@ -651,13 +623,6 @@
     "Placement Flag": "Placed"
   },
   {
-    "First Name": "Karla Ninneth",
-    "Last Name": "Hernandez",
-    "Company": "Yelp",
-    "Position": "",
-    "Placement Flag": "Placed"
-  },
-  {
     "First Name": "Ninneth Karla ",
     "Last Name": "Hernandez ",
     "Company": "Yelp",
@@ -674,13 +639,6 @@
   {
     "First Name": "Kimberly ",
     "Last Name": "Hirschey",
-    "Company": "Priceline ",
-    "Position": "Market Manager",
-    "Placement Flag": "Placed"
-  },
-  {
-    "First Name": "Kimberly",
-    "Last Name": "Hirschey ",
     "Company": "Priceline ",
     "Position": "Market Manager",
     "Placement Flag": "Placed"
@@ -924,13 +882,6 @@
     "Placement Flag": "Placed"
   },
   {
-    "First Name": "Alicia",
-    "Last Name": "Mack",
-    "Company": "",
-    "Position": "",
-    "Placement Flag": "Missing"
-  },
-  {
     "First Name": "Emmanuel",
     "Last Name": "Marcha",
     "Company": "Echo Global Logistics",
@@ -1102,13 +1053,6 @@
     "First Name": "Michael",
     "Last Name": "Pascutoi",
     "Company": "Liberty of Puerto Rico",
-    "Position": "",
-    "Placement Flag": "Placed"
-  },
-  {
-    "First Name": "Michael",
-    "Last Name": "Pascutoi",
-    "Company": "Liberty of Puerto Rico",
     "Position": "Customer Ops Analyst ",
     "Placement Flag": "Placed"
   },
@@ -1131,13 +1075,6 @@
     "Last Name": "Patra",
     "Company": "Daydream",
     "Position": "Staff data engineer",
-    "Placement Flag": "Placed"
-  },
-  {
-    "First Name": "Breana ",
-    "Last Name": "Pierik ",
-    "Company": "Activate",
-    "Position": "",
     "Placement Flag": "Placed"
   },
   {
@@ -1330,20 +1267,6 @@
     "Placement Flag": "Placed"
   },
   {
-    "First Name": "Keyana",
-    "Last Name": "Sanders",
-    "Company": "Uber",
-    "Position": "",
-    "Placement Flag": "Placed"
-  },
-  {
-    "First Name": "Gauri",
-    "Last Name": "Sarode",
-    "Company": "Doordash",
-    "Position": "Machine Learning Engineer",
-    "Placement Flag": "Placed"
-  },
-  {
     "First Name": "Gauri ",
     "Last Name": "Sarode ",
     "Company": "Doordash",
@@ -1411,13 +1334,6 @@
     "Last Name": "Smith",
     "Company": "Tulip Interfaces",
     "Position": "Product Support Engineer",
-    "Placement Flag": "Placed"
-  },
-  {
-    "First Name": "Tiernan",
-    "Last Name": "Smith",
-    "Company": "Tulip Interfaces",
-    "Position": "",
     "Placement Flag": "Placed"
   },
   {
@@ -1621,13 +1537,6 @@
     "Last Name": "Yoon",
     "Company": "Hungryroot",
     "Position": "Lead UX Researcher",
-    "Placement Flag": "Placed"
-  },
-  {
-    "First Name": "Richard",
-    "Last Name": "Zhang",
-    "Company": "Angi",
-    "Position": "Software Engineer",
     "Placement Flag": "Placed"
   },
   {
