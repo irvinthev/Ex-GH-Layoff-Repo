@@ -36,6 +36,7 @@ let activeSort = "score_desc";
 let activeFilter = "all";
 
 function setStatus(element, message, kind = "") {
+  if (!element) return;
   element.textContent = message;
   element.className = `status-message ${kind}`.trim();
 }
@@ -107,6 +108,7 @@ function renderHistory(runs) {
 }
 
 async function loadHistory() {
+  if (!historyList || !historyStatus) return;
   setStatus(historyStatus, "Loading recent evaluations…");
   const { data, error } = await supabase.functions.invoke("evaluate-job", {
     body: { action: "history" },
