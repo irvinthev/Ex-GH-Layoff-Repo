@@ -393,6 +393,31 @@ Deno.serve(async (req: Request) => {
     authorizedAdmin = true;
 
     const payload = await req.json().catch(() => null) as Record<string, unknown> | null;
+    const action = String(payload?.action ?? "evaluate");
+
+    if (action === "history") {
+      const { data: runs, error: historyError } = await admin
+        .from("job_evaluation_runs")
+        .select("id,title,source_url,location_text,remote_type,source_mode,methodology,role_snapshot,seniority,candidate_count,created_at")
+        .order("created_at", { ascending: false })
+        .limit(25);
+      if (historyError) throw historyError;
+      return json(req, { runs: runs ?? [] });
+    }
+
+    if (action === "history_detail") {
+      const runId = String(payload?.runId ?? "").trim();
+      if (!runId) return json(req, { error: "Run ID is required" }, 400);
+      const { data: run, error: runError } = await admin
+        .from("job_evaluation_runs")
+        .select("id,result_snapshot,created_at")
+        .eq("id", runId)
+        .maybeSingle();
+      if (runError) throw runError;
+      if (!run) return json(req, { error: "Evaluation run not found" }, 404);
+      return json(req, { runId: run.id, createdAt: run.created_at, ...run.result_snapshot });
+    }
+
     let title = String(payload?.title ?? "").trim().slice(0, 300);
     let description = String(payload?.description ?? "").trim().slice(0, 50000);
     let location = String(payload?.location ?? "").trim().slice(0, 300);
@@ -471,21 +496,44 @@ Deno.serve(async (req: Request) => {
       .filter(Boolean)
       .sort((a, b) => (b?.score ?? 0) - (a?.score ?? 0));
 
+    const evaluation = {
+      title: title || "Untitled role",
+      role: role ? { slug: role.slug, functionName: role.function_name, roleFamily: role.role_family, specialty: role.specialty } : null,
+      seniority: inferSeniority(title, description),
+      location: location || null,
+      remoteType: remoteType || null,
+      candidateCount: matches.length,
+      evaluatedAt: new Date().toISOString(),
+      methodology: "Evidence-aware deterministic scoring v3; target-title and taxonomy-adjacency aware; manual review required",
+      sourceUrl,
+      sourceMode,
+      importWarning,
+    };
+
+    const snapshot = { evaluation, matches };
+    const { data: savedRun, error: saveError } = await admin
+      .from("job_evaluation_runs")
+      .insert({
+        actor_user_id: authData.user.id,
+        title: evaluation.title,
+        source_url: sourceUrl,
+        location_text: evaluation.location,
+        remote_type: evaluation.remoteType,
+        source_mode: evaluation.sourceMode,
+        methodology: evaluation.methodology,
+        role_snapshot: evaluation.role,
+        seniority: evaluation.seniority,
+        candidate_count: evaluation.candidateCount,
+        result_snapshot: snapshot,
+      })
+      .select("id,created_at")
+      .single();
+    if (saveError) throw saveError;
+
     return json(req, {
-      evaluation: {
-        title: title || "Untitled role",
-        role: role ? { slug: role.slug, functionName: role.function_name, roleFamily: role.role_family, specialty: role.specialty } : null,
-        seniority: inferSeniority(title, description),
-        location: location || null,
-        remoteType: remoteType || null,
-        candidateCount: matches.length,
-        evaluatedAt: new Date().toISOString(),
-        methodology: "Evidence-aware deterministic scoring v3; target-title and taxonomy-adjacency aware; manual review required",
-        sourceUrl,
-        sourceMode,
-        importWarning,
-      },
-      matches,
+      runId: savedRun.id,
+      createdAt: savedRun.created_at,
+      ...snapshot,
     });
   } catch (error) {
     console.error("evaluate-job failed", error);
