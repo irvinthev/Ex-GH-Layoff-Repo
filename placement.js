@@ -27,6 +27,9 @@ const jobDescription = document.querySelector("#jobDescription");
 const sortResults = document.querySelector("#sortResults");
 const filterAll = document.querySelector("#filterAll");
 const filterStrong = document.querySelector("#filterStrong");
+const historyList = document.querySelector("#historyList");
+const historyStatus = document.querySelector("#historyStatus");
+const refreshHistoryButton = document.querySelector("#refreshHistory");
 
 let latestPayload = null;
 let activeSort = "score_desc";
@@ -46,12 +49,77 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
-function showSession(session) {
+async function showSession(session) {
   const signedIn = Boolean(session?.user);
   authPanel.hidden = signedIn;
   workspace.hidden = !signedIn;
   sessionEmail.textContent = session?.user?.email ?? "";
+  if (signedIn) await loadHistory();
 }
+
+function formatRunDate(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "" : date.toLocaleString();
+}
+
+function renderHistory(runs) {
+  if (!runs.length) {
+    historyList.innerHTML = '<p class="history-empty">No saved evaluations yet. Your next job run will appear here automatically.</p>';
+    return;
+  }
+  historyList.innerHTML = runs.map((run) => {
+    const role = run.role_snapshot?.roleFamily ?? "Unclassified";
+    const source = run.source_url
+      ? '<span class="history-source">URL</span>'
+      : '<span class="history-source">Pasted</span>';
+    return `
+      <button class="history-row" type="button" data-run-id="${escapeHtml(run.id)}">
+        <span class="history-main">
+          <strong>${escapeHtml(run.title)}</strong>
+          <small>${escapeHtml(role)} · ${escapeHtml(run.seniority ?? "Level not detected")} · ${escapeHtml(run.location_text ?? "Location not recorded")}</small>
+        </span>
+        <span class="history-meta">
+          ${source}
+          <small>${escapeHtml(formatRunDate(run.created_at))}</small>
+        </span>
+      </button>
+    `;
+  }).join("");
+
+  historyList.querySelectorAll("[data-run-id]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const runId = button.getAttribute("data-run-id");
+      if (!runId) return;
+      setStatus(historyStatus, "Loading saved evaluation…");
+      const { data, error } = await supabase.functions.invoke("evaluate-job", {
+        body: { action: "history_detail", runId },
+      });
+      if (error) {
+        setStatus(historyStatus, error.message, "error");
+        return;
+      }
+      latestPayload = data;
+      setStatus(historyStatus, `Loaded ${data.evaluation?.title ?? "saved evaluation"} from ${formatRunDate(data.createdAt)}.`, "success");
+      renderMatches(data);
+    });
+  });
+}
+
+async function loadHistory() {
+  setStatus(historyStatus, "Loading recent evaluations…");
+  const { data, error } = await supabase.functions.invoke("evaluate-job", {
+    body: { action: "history" },
+  });
+  if (error) {
+    setStatus(historyStatus, error.message, "error");
+    return;
+  }
+  renderHistory(data?.runs ?? []);
+  setStatus(historyStatus, "");
+}
+
+refreshHistoryButton?.addEventListener("click", loadHistory);
 
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -266,4 +334,5 @@ evaluationForm.addEventListener("submit", async (event) => {
   setStatus(evaluationStatus, completionMessage, data.evaluation.importWarning ? "warning" : "success");
   latestPayload = data;
   renderMatches(data);
+  await loadHistory();
 });
