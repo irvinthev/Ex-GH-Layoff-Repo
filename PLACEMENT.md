@@ -33,7 +33,10 @@ Scores are deterministic decision support. They are not hiring recommendations a
 
 - Static page: `placement.html`, `placement.css`, and `placement.js`
 - Function: `supabase/functions/evaluate-job/index.ts`
+- Cache helpers: `supabase/functions/evaluate-job/candidate-cache.ts` and `supabase/functions/evaluate-job/types.ts`
 - Function configuration: JWT verification must remain enabled.
+- Candidate data is loaded from the `placement_candidate_cache` materialized view and refreshed daily via `pg_cron`; in-memory function cache TTL is 1 hour per isolate.
+- Evaluation timing is persisted to `evaluation_metrics` for cache/query monitoring.
 - Browser key: the Supabase publishable key in `placement.js` is designed to be public. Never add a service-role key to browser code.
 - URL imports accept public HTTPS pages, follow only validated redirects, stop after 10 seconds, and limit downloaded HTML to 1 MB. Imported descriptions are not saved by this MVP.
 
