@@ -48,6 +48,8 @@ type RolePreference = {
 type CandidatePreference = {
   candidate_id: string;
   target_titles: string[];
+  preferred_locations: string[];
+  remote_preference: string | null;
 };
 
 const CONCEPT_GROUPS = [
@@ -59,6 +61,11 @@ const CONCEPT_GROUPS = [
   { label: "Cross-functional leadership", terms: ["cross functional", "stakeholder management", "multiple stakeholders", "partnering across", "executive update", "sales and engineering", "cross team collaboration"] },
   { label: "Automation", terms: ["automation", "automated", "scripting", "python"] },
   { label: "Change and enablement", terms: ["change management", "enablement", "training", "organizational change"] },
+  { label: "Strategic sourcing", terms: ["strategic sourcing", "sourcing strategy", "category sourcing", "supplier sourcing", "vendor sourcing", "rfp", "rfi", "rfq"] },
+  { label: "Vendor management", terms: ["vendor management", "supplier management", "vendor relationship", "supplier relationship", "vendor governance", "supplier governance"] },
+  { label: "Contracts and negotiation", terms: ["contract negotiation", "commercial negotiation", "msa", "master services agreement", "statement of work", "sow", "order form", "renewal negotiation"] },
+  { label: "Procurement operations", terms: ["procure to pay", "procurement operations", "purchase order", "requisition", "supplier onboarding", "coupa", "zip"] },
+  { label: "Technology spend optimization", terms: ["saas procurement", "software procurement", "license optimization", "software licensing", "spend analysis", "cost avoidance", "supplier consolidation", "vendor consolidation"] },
 ] as const;
 
 const STOP_WORDS = new Set([
@@ -177,13 +184,32 @@ function seniorityScore(candidate: string | null, target: string | null): { scor
   return { score: difference === 0 ? 10 : difference === 1 ? 7 : difference === 2 ? 3 : 0, aligned: difference <= 1 };
 }
 
-function locationScore(candidateLocation: string | null, jobLocation: string, remoteType: string): { score: number; aligned: boolean; note: string } {
+function locationScore(
+  candidateLocation: string | null,
+  preferredLocations: string[],
+  remotePreference: string | null,
+  jobLocation: string,
+  remoteType: string,
+): { score: number; aligned: boolean; note: string } {
   const remote = normalize(`${remoteType} ${jobLocation}`).includes("remote");
-  if (remote) return { score: 10, aligned: true, note: "Remote-compatible role" };
+  const remotePref = normalize(remotePreference);
+  if (remote) {
+    if (remotePref === "onsite") return { score: 6, aligned: false, note: "Remote role conflicts with recorded onsite preference" };
+    return { score: 10, aligned: true, note: "Remote-compatible role" };
+  }
+
   if (!jobLocation) return { score: 5, aligned: false, note: "Job location not supplied" };
-  if (!candidateLocation) return { score: 5, aligned: false, note: "Candidate location not recorded" };
-  const ratio = overlapRatio(tokens(candidateLocation), tokens(jobLocation));
-  return ratio > 0 ? { score: 10, aligned: true, note: "Location appears aligned" } : { score: 2, aligned: false, note: "Location needs review" };
+
+  const candidateLocations = [candidateLocation, ...(preferredLocations ?? [])].filter(Boolean) as string[];
+  if (!candidateLocations.length) return { score: 5, aligned: false, note: "Candidate location not recorded" };
+
+  const aligned = candidateLocations.some((candidatePlace) =>
+    overlapRatio(tokens(candidatePlace), tokens(jobLocation)) > 0
+  );
+  if (aligned) return { score: 10, aligned: true, note: "Location appears aligned" };
+
+  if (remotePref === "remote") return { score: 2, aligned: false, note: "Onsite/hybrid role conflicts with recorded remote preference" };
+  return { score: 2, aligned: false, note: "Location needs review" };
 }
 
 function scoreCandidate(member: Member, feature: Features, preferences: RolePreference[], candidatePreference: CandidatePreference | null, role: Role | null, title: string, description: string, location: string, remoteType: string) {
@@ -271,7 +297,13 @@ function scoreCandidate(member: Member, feature: Features, preferences: RolePref
 
   const targetSeniority = inferSeniority(title, description);
   const seniority = seniorityScore(feature.seniority, targetSeniority);
-  const geography = locationScore(member.location_text, location, remoteType);
+  const geography = locationScore(
+    member.location_text,
+    candidatePreference?.preferred_locations ?? [],
+    candidatePreference?.remote_preference ?? null,
+    location,
+    remoteType,
+  );
   const total = roleScore + titleScore + skillScore + domainScore + seniority.score + geography.score;
 
   const reasons: string[] = [];
@@ -399,6 +431,7 @@ Deno.serve(async (req: Request) => {
       const { data: runs, error: historyError } = await admin
         .from("job_evaluation_runs")
         .select("id,title,source_url,location_text,remote_type,source_mode,methodology,role_snapshot,seniority,candidate_count,created_at")
+        .eq("actor_user_id", authData.user.id)
         .order("created_at", { ascending: false })
         .limit(25);
       if (historyError) throw historyError;
@@ -412,6 +445,7 @@ Deno.serve(async (req: Request) => {
         .from("job_evaluation_runs")
         .select("id,result_snapshot,created_at")
         .eq("id", runId)
+        .eq("actor_user_id", authData.user.id)
         .maybeSingle();
       if (runError) throw runError;
       if (!run) return json(req, { error: "Evaluation run not found" }, 404);
@@ -457,7 +491,7 @@ Deno.serve(async (req: Request) => {
       admin.from("network_members").select("id,first_name,last_name,former_job_title,former_team,function_name,location_text,linkedin_url,public_description,public_skills").eq("matching_opt_in", true).eq("open_to_work", true),
       admin.from("candidate_features").select("candidate_id,primary_role_slug,seniority,skills,domains,evidence"),
       admin.from("candidate_role_preferences").select("candidate_id,role_slug,preference,priority"),
-      admin.from("candidate_preferences").select("candidate_id,target_titles"),
+      admin.from("candidate_preferences").select("candidate_id,target_titles,preferred_locations,remote_preference"),
     ]);
     if (rolesResult.error) throw rolesResult.error;
     if (membersResult.error) throw membersResult.error;
@@ -504,7 +538,7 @@ Deno.serve(async (req: Request) => {
       remoteType: remoteType || null,
       candidateCount: matches.length,
       evaluatedAt: new Date().toISOString(),
-      methodology: "Evidence-aware deterministic scoring v3; target-title and taxonomy-adjacency aware; manual review required",
+      methodology: "Evidence-aware deterministic scoring v4; target-title, procurement-concept, and preference aware; manual review required",
       sourceUrl,
       sourceMode,
       importWarning,
