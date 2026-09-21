@@ -58,6 +58,37 @@ function createAdminStub() {
               },
             };
           }
+
+          function createDelayedAdminStub() {
+            const calls = { roles: 0, candidates: 0 };
+            let release;
+            const waitForRelease = new Promise((resolve) => {
+              release = resolve;
+            });
+            return {
+              calls,
+              release,
+              from(table) {
+                return {
+                  select() {
+                    if (table === "role_taxonomy") {
+                      return {
+                        eq() {
+                          calls.roles += 1;
+                          return waitForRelease.then(() => ({ data: [roleRecord], error: null }));
+                        },
+                      };
+                    }
+                    if (table === "placement_candidate_cache") {
+                      calls.candidates += 1;
+                      return waitForRelease.then(() => ({ data: [candidateRow], error: null }));
+                    }
+                    throw new Error(`Unexpected table: ${table}`);
+                  },
+                };
+              },
+            };
+          }
           if (table === "placement_candidate_cache") {
             calls.candidates += 1;
             return Promise.resolve({ data: [candidateRow], error: null });
@@ -82,6 +113,22 @@ test("candidate cache reuses the in-memory snapshot inside the TTL window", asyn
   assert.equal(admin.calls.candidates, 1);
   assert.equal(first.cache.candidateCount, 1);
   assert.equal(second.cache.candidateCount, 1);
+});
+
+test("concurrent cache waiters do not report themselves as refresh owners", async () => {
+  resetCandidateCacheForTests();
+  const admin = createDelayedAdminStub();
+
+  const firstPromise = getCandidateCache(admin, 3_000);
+  const secondPromise = getCandidateCache(admin, 3_000);
+  admin.release();
+
+  const [first, second] = await Promise.all([firstPromise, secondPromise]);
+  assert.equal(first.metrics.cacheStatus, "refresh");
+  assert.equal(second.metrics.cacheStatus, "hit");
+  assert.equal(second.metrics.databaseQueryMs, 0);
+  assert.equal(admin.calls.roles, 1);
+  assert.equal(admin.calls.candidates, 1);
 });
 
 test("scoreCandidate uses precomputed candidate preferences and token maps", () => {

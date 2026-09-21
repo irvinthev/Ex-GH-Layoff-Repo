@@ -492,6 +492,7 @@ export async function getCandidateCache(
     };
   }
 
+  const initiatedRefresh = !cacheLoadPromise;
   if (!cacheLoadPromise) {
     cacheLoadPromise = refreshCandidateCache(admin, now)
       .then((result) => {
@@ -507,9 +508,9 @@ export async function getCandidateCache(
   return {
     cache,
     metrics: {
-      cacheStatus: "refresh",
+      cacheStatus: initiatedRefresh ? "refresh" : "hit",
       loadMs: roundMs(performance.now() - loadStartedAt),
-      databaseQueryMs,
+      databaseQueryMs: initiatedRefresh ? databaseQueryMs : 0,
       loadedAt: cache.loadedAt,
       candidateCount: cache.candidateCount,
     },

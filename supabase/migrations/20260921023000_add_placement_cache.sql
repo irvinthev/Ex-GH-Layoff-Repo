@@ -92,9 +92,19 @@ create unique index placement_candidate_cache_candidate_id_idx
 
 grant select on table public.placement_candidate_cache to service_role;
 
-select cron.unschedule(jobid)
-from cron.job
-where jobname = 'refresh-placement-candidate-cache';
+do $$
+declare
+  scheduled_job record;
+begin
+  for scheduled_job in
+    select jobid
+    from cron.job
+    where jobname = 'refresh-placement-candidate-cache'
+  loop
+    perform cron.unschedule(scheduled_job.jobid);
+  end loop;
+end;
+$$;
 
 select cron.schedule(
   'refresh-placement-candidate-cache',
