@@ -20,6 +20,7 @@ create table if not exists public.evaluation_metrics (
 
 revoke all on table public.evaluation_metrics from anon, authenticated;
 grant insert, select on table public.evaluation_metrics to service_role;
+grant usage, select on sequence public.evaluation_metrics_id_seq to service_role;
 
 create index if not exists evaluation_metrics_created_at_idx
   on public.evaluation_metrics (created_at desc);
