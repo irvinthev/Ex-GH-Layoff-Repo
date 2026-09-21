@@ -3,7 +3,7 @@ import {
   getFitTone,
   getSummaryStats,
   sortAndFilterMatches,
-} from "./placement-utils.js";
+} from "./placement-utils.js?v=scoring-4";
 import { applyFilterButtonState, wireResultControls } from "./placement-controls.js";
 
 const SUPABASE_URL = "https://ulzlkewtarzajseepbvj.supabase.co";
