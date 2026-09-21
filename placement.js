@@ -50,12 +50,16 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
-async function showSession(session) {
+function showSession(session) {
   const signedIn = Boolean(session?.user);
   authPanel.hidden = signedIn;
   workspace.hidden = !signedIn;
   sessionEmail.textContent = session?.user?.email ?? "";
-  if (signedIn) await loadHistory();
+  if (signedIn) {
+    loadHistory().catch(() => {
+      setStatus(historyStatus, "Recent evaluations could not be loaded.", "warning");
+    });
+  }
 }
 
 function formatRunDate(value) {
@@ -142,8 +146,7 @@ signOutButton.addEventListener("click", async () => {
 });
 
 supabase.auth.onAuthStateChange((_event, session) => showSession(session));
-const { data: { session } } = await supabase.auth.getSession();
-showSession(session);
+supabase.auth.getSession().then(({ data: { session } }) => showSession(session));
 
 function renderList(items, emptyState = "None identified") {
   return items.length
@@ -336,5 +339,7 @@ evaluationForm.addEventListener("submit", async (event) => {
   setStatus(evaluationStatus, completionMessage, data.evaluation.importWarning ? "warning" : "success");
   latestPayload = data;
   renderMatches(data);
-  await loadHistory();
+  loadHistory().catch(() => {
+    setStatus(historyStatus, "Evaluation saved, but recent history could not refresh.", "warning");
+  });
 });
