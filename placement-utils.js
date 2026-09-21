@@ -1,7 +1,7 @@
 export function getFitTone(match) {
   const score = Number(match?.score ?? 0);
-  if (score >= 80) return "strong";
-  if (score >= 60) return "moderate";
+  if (score >= 75) return "strong";
+  if (score >= 55) return "moderate";
   return "review";
 }
 
