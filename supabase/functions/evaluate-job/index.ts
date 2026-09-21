@@ -545,30 +545,31 @@ Deno.serve(async (req: Request) => {
     };
 
     const snapshot = { evaluation, matches };
-    const { data: savedRun, error: saveError } = await admin
-      .from("job_evaluation_runs")
-      .insert({
-        actor_user_id: authData.user.id,
-        title: evaluation.title,
-        source_url: sourceUrl,
-        location_text: evaluation.location,
-        remote_type: evaluation.remoteType,
-        source_mode: evaluation.sourceMode,
-        methodology: evaluation.methodology,
-        role_snapshot: evaluation.role,
-        seniority: evaluation.seniority,
-        candidate_count: evaluation.candidateCount,
-        result_snapshot: snapshot,
-      })
-      .select("id,created_at")
-      .single();
-    if (saveError) throw saveError;
 
-    return json(req, {
-      runId: savedRun.id,
-      createdAt: savedRun.created_at,
-      ...snapshot,
-    });
+    // Do not make the user wait for history persistence. Save the snapshot after
+    // the evaluation response is ready.
+    EdgeRuntime.waitUntil(
+      admin
+        .from("job_evaluation_runs")
+        .insert({
+          actor_user_id: authData.user.id,
+          title: evaluation.title,
+          source_url: sourceUrl,
+          location_text: evaluation.location,
+          remote_type: evaluation.remoteType,
+          source_mode: evaluation.sourceMode,
+          methodology: evaluation.methodology,
+          role_snapshot: evaluation.role,
+          seniority: evaluation.seniority,
+          candidate_count: evaluation.candidateCount,
+          result_snapshot: snapshot,
+        })
+        .then(({ error }) => {
+          if (error) console.error("Could not save evaluation history", error);
+        }),
+    );
+
+    return json(req, snapshot);
   } catch (error) {
     console.error("evaluate-job failed", error);
     const detail = error instanceof Error
