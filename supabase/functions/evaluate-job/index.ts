@@ -45,6 +45,11 @@ type RolePreference = {
   priority: number | null;
 };
 
+type CandidatePreference = {
+  candidate_id: string;
+  target_titles: string[];
+};
+
 const CONCEPT_GROUPS = [
   { label: "Implementation lifecycle", terms: ["implementation", "onboarding", "deployment", "rollout", "launch", "go live", "cutover", "adoption"] },
   { label: "Customer delivery", terms: ["customer delivery", "customer success", "client delivery", "client services", "customer implementation"] },
@@ -181,7 +186,7 @@ function locationScore(candidateLocation: string | null, jobLocation: string, re
   return ratio > 0 ? { score: 10, aligned: true, note: "Location appears aligned" } : { score: 2, aligned: false, note: "Location needs review" };
 }
 
-function scoreCandidate(member: Member, feature: Features, preferences: RolePreference[], role: Role | null, title: string, description: string, location: string, remoteType: string) {
+function scoreCandidate(member: Member, feature: Features, preferences: RolePreference[], candidatePreference: CandidatePreference | null, role: Role | null, title: string, description: string, location: string, remoteType: string) {
   const jobText = normalize(`${title} ${description}`);
   const candidateEvidence = normalize([
     member.former_job_title,
@@ -203,23 +208,47 @@ function scoreCandidate(member: Member, feature: Features, preferences: RolePref
     ? [role.role_family, role.specialty, ...role.aliases].filter(Boolean) as string[]
     : [];
   const evidenceRoleMatch = rolePhrases.some((phrase) => includesPhrase(candidateEvidence, phrase));
-  const roleScore = !role || avoidedRole
-    ? 0
-    : candidateRole === role.slug
-      ? 30
-      : targetPreference && evidenceRoleMatch
-        ? 28
-        : evidenceRoleMatch
-          ? 24
-          : normalize(member.function_name) === normalize(role.function_name)
-            ? 18
-            : targetPreference
-              ? 12
-              : 0;
 
-  const candidateTitleTokens = tokens(`${member.former_job_title} ${member.former_team}`);
-  const targetTitleTokens = tokens(`${title} ${role?.role_family ?? ""} ${role?.specialty ?? ""}`);
-  const titleScore = Math.round(overlapRatio(candidateTitleTokens, targetTitleTokens) * 15);
+  // Candidate-declared target titles are first-class evidence. This prevents a
+  // taxonomy classification miss from zeroing out an otherwise obvious adjacent role.
+  const candidateTitles = [
+    member.former_job_title,
+    ...(candidatePreference?.target_titles ?? []),
+  ].filter(Boolean) as string[];
+  const jobTitleTokens = tokens(title);
+  const bestTitleRatio = candidateTitles.reduce(
+    (best, candidateTitle) => Math.max(best, overlapRatio(tokens(candidateTitle), jobTitleTokens)),
+    0,
+  );
+  const preferredTitleMatch = bestTitleRatio >= 0.5;
+
+  const roleScore = avoidedRole
+    ? 0
+    : role && candidateRole === role.slug
+      ? 30
+      : preferredTitleMatch && bestTitleRatio >= 0.75
+        ? 27
+        : preferredTitleMatch
+          ? 24
+          : role && targetPreference && evidenceRoleMatch
+            ? 28
+            : role && evidenceRoleMatch
+              ? 24
+              : role && normalize(member.function_name) === normalize(role.function_name)
+                ? 18
+                : role && targetPreference
+                  ? 12
+                  : 0;
+
+  const titleScore = bestTitleRatio >= 0.95
+    ? 15
+    : bestTitleRatio >= 0.75
+      ? 13
+      : bestTitleRatio >= 0.5
+        ? 10
+        : bestTitleRatio >= 0.34
+          ? 6
+          : Math.round(bestTitleRatio * 15);
 
   const allSkills = [...new Set([...(feature.skills ?? []), ...(member.public_skills ?? [])])];
   const matchedSkills = allSkills.filter((skill) => {
@@ -248,6 +277,8 @@ function scoreCandidate(member: Member, feature: Features, preferences: RolePref
   const reasons: string[] = [];
   if (roleScore === 30 && role) reasons.push(`Direct ${role.role_family} role-family match`);
   else if (roleScore === 28 && role) reasons.push(`Target ${role.role_family} role supported by experience evidence`);
+  else if (roleScore === 27) reasons.push("Job title strongly aligns with a candidate target title");
+  else if (roleScore === 24 && preferredTitleMatch) reasons.push("Job title aligns with a candidate target title");
   else if (roleScore === 24 && role) reasons.push(`Experience evidence supports ${role.role_family}`);
   else if (roleScore === 18 && role) reasons.push(`Related ${role.function_name} function`);
   else if (roleScore === 12 && role) reasons.push(`Candidate is open to ${role.role_family}; qualification evidence is limited`);
@@ -258,10 +289,10 @@ function scoreCandidate(member: Member, feature: Features, preferences: RolePref
   if (geography.aligned) reasons.push(geography.note);
 
   const gaps: string[] = [];
-  if (!role) gaps.push("Role family could not be classified confidently");
-  else if (avoidedRole) gaps.push(`Candidate marked ${role.role_family} as a role to avoid`);
-  else if (roleScore === 0) gaps.push(`No direct evidence for ${role.role_family}`);
-  else if (roleScore < 30) gaps.push(`Prior title is adjacent to, rather than directly within, ${role.role_family}`);
+  if (!role && !preferredTitleMatch) gaps.push("Role family could not be classified confidently");
+  else if (avoidedRole && role) gaps.push(`Candidate marked ${role.role_family} as a role to avoid`);
+  else if (roleScore === 0 && role) gaps.push(`No direct evidence for ${role.role_family}`);
+  else if (roleScore < 24 && role) gaps.push(`Prior title is adjacent to, rather than directly within, ${role.role_family}`);
   if (skillScore < 12) gaps.push("Limited responsibility and skill overlap found in the recorded evidence");
   else if (skillScore < 18) gaps.push("Some job responsibilities are not demonstrated explicitly in the recorded evidence");
   const missingConcepts = jobConcepts.filter((label) => !candidateConcepts.includes(label));
@@ -396,21 +427,27 @@ Deno.serve(async (req: Request) => {
       return json(req, { error: "Add a public job URL or paste at least 50 characters of the job description" }, 400);
     }
 
-    const [rolesResult, membersResult, featuresResult, preferencesResult] = await Promise.all([
+    const [rolesResult, membersResult, featuresResult, preferencesResult, candidatePreferencesResult] = await Promise.all([
       admin.from("role_taxonomy").select("slug,function_name,role_family,specialty,aliases").eq("active", true),
       admin.from("network_members").select("id,first_name,last_name,former_job_title,former_team,function_name,location_text,linkedin_url,public_description,public_skills").eq("matching_opt_in", true).eq("open_to_work", true),
       admin.from("candidate_features").select("candidate_id,primary_role_slug,seniority,skills,domains,evidence"),
       admin.from("candidate_role_preferences").select("candidate_id,role_slug,preference,priority"),
+      admin.from("candidate_preferences").select("candidate_id,target_titles"),
     ]);
     if (rolesResult.error) throw rolesResult.error;
     if (membersResult.error) throw membersResult.error;
     if (featuresResult.error) throw featuresResult.error;
     if (preferencesResult.error) throw preferencesResult.error;
+    if (candidatePreferencesResult.error) throw candidatePreferencesResult.error;
 
     const roles = (rolesResult.data ?? []) as Role[];
     const role = classifyRole(title, description, roles);
     const featureMap = new Map((featuresResult.data ?? []).map((item: Features) => [item.candidate_id, item]));
     const preferenceMap = new Map<string, RolePreference[]>();
+    const candidatePreferenceMap = new Map(
+      ((candidatePreferencesResult.data ?? []) as CandidatePreference[])
+        .map((item) => [item.candidate_id, item]),
+    );
     for (const item of (preferencesResult.data ?? []) as RolePreference[]) {
       const existing = preferenceMap.get(item.candidate_id) ?? [];
       existing.push(item);
@@ -419,7 +456,17 @@ Deno.serve(async (req: Request) => {
     const matches = ((membersResult.data ?? []) as Member[])
       .map((member) => {
         const feature = featureMap.get(member.id);
-        return feature ? scoreCandidate(member, feature, preferenceMap.get(member.id) ?? [], role, title, description, location, remoteType) : null;
+        return feature ? scoreCandidate(
+          member,
+          feature,
+          preferenceMap.get(member.id) ?? [],
+          candidatePreferenceMap.get(member.id) ?? null,
+          role,
+          title,
+          description,
+          location,
+          remoteType,
+        ) : null;
       })
       .filter(Boolean)
       .sort((a, b) => (b?.score ?? 0) - (a?.score ?? 0));
@@ -433,7 +480,7 @@ Deno.serve(async (req: Request) => {
         remoteType: remoteType || null,
         candidateCount: matches.length,
         evaluatedAt: new Date().toISOString(),
-        methodology: "Evidence-aware deterministic scoring v2; manual review required",
+        methodology: "Evidence-aware deterministic scoring v3; target-title and taxonomy-adjacency aware; manual review required",
         sourceUrl,
         sourceMode,
         importWarning,
