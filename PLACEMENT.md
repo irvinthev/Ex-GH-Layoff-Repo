@@ -1,6 +1,6 @@
 # Placement Intelligence MVP
 
-This MVP provides a private, role-first matching workflow for the Ex-GH Talent Network.
+This MVP provides a private, role-first matching workflow for the TalentBot HQ.
 
 ## What it does
 
