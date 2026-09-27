@@ -245,7 +245,7 @@ function renderTalentImpactWidget(metrics) {
       </div>
 
       <p class="impact-footer">
-        Updated automatically from the Ex-Grubhub Talent Network tracker.
+        Updated automatically from the TalentBot HQ tracker.
       </p>
     </div>
   `;
