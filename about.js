@@ -71,7 +71,7 @@ async function loadAboutPage() {
   );
 
   const metrics = {
-    aboutPeopleTracked: supportedKeys.size,
+    aboutPeopleTracked: searchingKeys.size + placedKeys.size,
     aboutPeoplePlaced: placedKeys.size,
     aboutStillLooking: searchingKeys.size,
     aboutAddedLast7Days: recentKeys.size
