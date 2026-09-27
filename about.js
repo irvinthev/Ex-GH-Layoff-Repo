@@ -1,438 +1,175 @@
 async function loadAboutPage() {
-  /* =====================
-     LOAD DATA
-  ===================== */
-
   const [peopleRes, placedRes] = await Promise.all([
     fetch("./people.json"),
     fetch("./placed.json")
   ]);
 
-  if (!peopleRes.ok) {
-    throw new Error(
-      `Failed to load people.json: ${peopleRes.status}`
-    );
-  }
-
-  if (!placedRes.ok) {
-    throw new Error(
-      `Failed to load placed.json: ${placedRes.status}`
-    );
-  }
+  if (!peopleRes.ok) throw new Error(`Failed to load people.json: ${peopleRes.status}`);
+  if (!placedRes.ok) throw new Error(`Failed to load placed.json: ${placedRes.status}`);
 
   const people = await peopleRes.json();
   const placedPeople = await placedRes.json();
 
-
-  /* =====================
-     DOM ELEMENTS
-  ===================== */
-
-  const peopleTrackedEl =
-    document.getElementById("aboutPeopleTracked");
-
-  const stillLookingEl =
-    document.getElementById("aboutStillLooking");
-
-  const peoplePlacedEl =
-    document.getElementById("aboutPeoplePlaced");
-
-  const placementsEl =
-    document.getElementById("aboutPlacements");
-
-  const placementRateEl =
-    document.getElementById("aboutPlacementRate");
-
-  const destinationCompaniesEl =
-    document.getElementById("aboutDestinationCompanies");
-
-  const companyTable =
-    document.getElementById("destinationCompanyTable");
-
-
-  /* =====================
-     GENERIC HELPERS
-  ===================== */
-
-  function getValue(person, keys) {
+  const getValue = (record, keys) => {
     for (const key of keys) {
-      const value = person[key];
-
-      if (
-        value !== undefined &&
-        value !== null &&
-        String(value).trim() !== ""
-      ) {
+      const value = record?.[key];
+      if (value !== undefined && value !== null && String(value).trim() !== "") {
         return String(value).trim();
       }
     }
-
     return "";
-  }
+  };
 
+  const normalizePart = (value) =>
+    String(value || "").toLowerCase().replace(/\s+/g, " ").trim();
 
-  function normalizePersonPart(value) {
-    return String(value || "")
-      .toLowerCase()
-      .replace(/\s+/g, " ")
-      .trim();
-  }
+  const getPersonKey = (person) => {
+    const first = normalizePart(getValue(person, ["First Name", "firstName"]));
+    const last = normalizePart(getValue(person, ["Last Name", "lastName"]));
+    return first || last ? `${first}|${last}` : "";
+  };
 
+  const isPlaced = (person) =>
+    getValue(person, ["Placement Flag", "placementFlag", "Status"]).toLowerCase() === "placed";
 
-  function getPersonKey(person) {
-    const first =
-      normalizePersonPart(
-        getValue(person, [
-          "First Name",
-          "firstName"
-        ])
-      );
-
-    const last =
-      normalizePersonPart(
-        getValue(person, [
-          "Last Name",
-          "lastName"
-        ])
-      );
-
-    if (!first && !last) {
-      return "";
+  const parseDate = (value) => {
+    if (!value) return null;
+    const raw = String(value).trim();
+    const dmy = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (dmy) {
+      const date = new Date(Number(dmy[3]), Number(dmy[2]) - 1, Number(dmy[1]));
+      return Number.isNaN(date.getTime()) ? null : date;
     }
+    const parsed = new Date(raw);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  };
 
-    return `${first}|${last}`;
-  }
+  const isWithinLast7Days = (date) => {
+    if (!date) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const start = new Date(today);
+    start.setDate(start.getDate() - 6);
+    const candidate = new Date(date);
+    candidate.setHours(0, 0, 0, 0);
+    return candidate >= start && candidate <= today;
+  };
 
+  const confirmedPlacements = placedPeople.filter(isPlaced);
 
-  function isPlaced(person) {
-    const flag =
-      getValue(person, [
-        "Placement Flag",
-        "placementFlag",
-        "Status"
-      ]).toLowerCase();
+  const searchingKeys = new Set(people.map(getPersonKey).filter(Boolean));
+  const placedKeys = new Set(confirmedPlacements.map(getPersonKey).filter(Boolean));
+  const supportedKeys = new Set([...searchingKeys, ...placedKeys]);
 
-    return flag === "placed";
-  }
-
-
-  function getPlacedCompany(person) {
-    return getValue(person, [
-      "Company Clean",
-      "companyClean",
-      "Company",
-      "company"
-    ]);
-  }
-
-
-  function normalizeCompany(company) {
-    return String(company || "")
-      .toLowerCase()
-      .replace(/\s+/g, " ")
-      .trim();
-  }
-
-
-  function displayCompanyName(company) {
-    const normalized =
-      normalizeCompany(company);
-
-    /*
-      Known aliases we can safely normalize.
-      Add more here over time as needed.
-    */
-
-    const aliases = {
-      "doordash": "DoorDash",
-      "draftkings": "DraftKings",
-      "draft kings": "DraftKings",
-      "braze": "Braze",
-      "uber": "Uber",
-      "toast": "Toast",
-      "oura": "Oura",
-      "gusto": "Gusto",
-      "yelp": "Yelp",
-      "zillow": "Zillow",
-      "zendesk": "Zendesk",
-      "netflix": "Netflix",
-      "spotify": "Spotify",
-      "google": "Google",
-      "servicenow": "ServiceNow",
-      "paypal": "PayPal",
-      "capital one": "Capital One",
-      "bank of america": "Bank of America"
-    };
-
-    if (aliases[normalized]) {
-      return aliases[normalized];
-    }
-
-    /*
-      Otherwise preserve the original company name
-      from the source as much as possible.
-    */
-
-    return String(company || "").trim();
-  }
-
-
-  /* =====================
-     CONFIRMED PLACEMENTS
-  ===================== */
-
-  const confirmedPlacements =
-    placedPeople.filter(isPlaced);
-
-
-  /* =====================
-     UNIQUE PEOPLE SEARCHING
-  ===================== */
-
-  const searchingKeys = new Set(
+  const recentKeys = new Set(
     people
+      .filter((person) =>
+        isWithinLast7Days(parseDate(getValue(person, ["Date Added", "Timestamp", "dateAdded"])))
+      )
       .map(getPersonKey)
       .filter(Boolean)
   );
 
-  const stillLookingCount =
-    searchingKeys.size;
+  const metrics = {
+    aboutPeopleTracked: supportedKeys.size,
+    aboutPeoplePlaced: placedKeys.size,
+    aboutStillLooking: searchingKeys.size,
+    aboutAddedLast7Days: recentKeys.size
+  };
 
-
-  /* =====================
-     UNIQUE PEOPLE PLACED
-  ===================== */
-
-  const placedKeys = new Set(
-    confirmedPlacements
-      .map(getPersonKey)
-      .filter(Boolean)
-  );
-
-  const peoplePlacedCount =
-    placedKeys.size;
-
-
-  /* =====================
-     TOTAL PLACEMENT EVENTS
-  ===================== */
-
-  const placementCount =
-    confirmedPlacements.length;
-
-
-  /* =====================
-     UNIQUE PEOPLE TRACKED
-  ===================== */
-
-  const allTrackedKeys = new Set([
-    ...searchingKeys,
-    ...placedKeys
-  ]);
-
-  const peopleTrackedCount =
-    allTrackedKeys.size;
-
-
-  /* =====================
-     PLACEMENT RATE
-  ===================== */
-
-  const placementRate =
-    peopleTrackedCount > 0
-      ? Math.round(
-          (
-            peoplePlacedCount /
-            peopleTrackedCount
-          ) * 100
-        )
-      : 0;
-
-
-  /* =====================
-     COMPANY COUNTS
-  ===================== */
-
-  const companyCounts = {};
-
-  confirmedPlacements.forEach((person) => {
-    const rawCompany =
-      getPlacedCompany(person);
-
-    const normalizedCompany =
-      normalizeCompany(rawCompany);
-
-    /*
-      Ignore placeholder/non-company values.
-    */
-
-    if (
-      !normalizedCompany ||
-      normalizedCompany === "tbd" ||
-      normalizedCompany === "contractor" ||
-      normalizedCompany === "startup"
-    ) {
-      return;
-    }
-
-    /*
-      Normalize known naming variants.
-    */
-
-    let companyKey =
-      normalizedCompany;
-
-    if (
-      companyKey === "draft kings"
-    ) {
-      companyKey = "draftkings";
-    }
-
-    if (
-      companyKey === "doordash "
-    ) {
-      companyKey = "doordash";
-    }
-
-    if (!companyCounts[companyKey]) {
-      companyCounts[companyKey] = {
-        name: displayCompanyName(rawCompany),
-        count: 0
-      };
-    }
-
-    companyCounts[companyKey].count += 1;
-  });
-
-
-  const companyEntries =
-    Object.values(companyCounts)
-      .sort((a, b) => {
-        return (
-          b.count - a.count ||
-          a.name.localeCompare(b.name)
-        );
-      });
-
-
-  const destinationCompanyCount =
-    companyEntries.length;
-
-
-  /* =====================
-     RENDER METRICS
-  ===================== */
-
-  if (peopleTrackedEl) {
-    peopleTrackedEl.textContent =
-      peopleTrackedCount;
+  for (const [id, value] of Object.entries(metrics)) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value.toLocaleString();
   }
 
-  if (stillLookingEl) {
-    stillLookingEl.textContent =
-      stillLookingCount;
+  const normalizeCompany = (company) =>
+    String(company || "").toLowerCase().replace(/\s+/g, " ").trim();
+
+  const aliases = {
+    "doordash": "DoorDash",
+    "draftkings": "DraftKings",
+    "draft kings": "DraftKings",
+    "braze": "Braze",
+    "uber": "Uber",
+    "toast": "Toast",
+    "oura": "Oura",
+    "gusto": "Gusto",
+    "yelp": "Yelp",
+    "zillow": "Zillow",
+    "zendesk": "Zendesk",
+    "netflix": "Netflix",
+    "spotify": "Spotify",
+    "google": "Google",
+    "servicenow": "ServiceNow",
+    "paypal": "PayPal",
+    "capital one": "Capital One",
+    "bank of america": "Bank of America"
+  };
+
+  const companyCounts = new Map();
+
+  for (const person of confirmedPlacements) {
+    const raw = getValue(person, ["Company Clean", "companyClean", "Company", "company"]);
+    const normalized = normalizeCompany(raw);
+
+    if (!normalized || ["tbd", "contractor", "startup"].includes(normalized)) continue;
+
+    const key = normalized === "draft kings" ? "draftkings" : normalized;
+    const existing = companyCounts.get(key) || {
+      name: aliases[key] || String(raw).trim(),
+      count: 0
+    };
+    existing.count += 1;
+    companyCounts.set(key, existing);
   }
 
-  if (peoplePlacedEl) {
-    peoplePlacedEl.textContent =
-      peoplePlacedCount;
+  const topCompanies = [...companyCounts.values()]
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
+    .slice(0, 10);
+
+  const companyTable = document.getElementById("destinationCompanyTable");
+  if (!companyTable) return;
+
+  if (!topCompanies.length) {
+    companyTable.innerHTML = '<p class="about-data-error">No placement data available.</p>';
+    return;
   }
 
-  if (placementsEl) {
-    placementsEl.textContent =
-      placementCount;
-  }
+  const maxCount = Math.max(...topCompanies.map((company) => company.count));
+  companyTable.innerHTML = "";
 
-  if (placementRateEl) {
-    placementRateEl.textContent =
-      `${placementRate}%`;
-  }
+  for (const company of topCompanies) {
+    const row = document.createElement("div");
+    row.className = "about-company-row";
+    const width = (company.count / maxCount) * 100;
 
-  if (destinationCompaniesEl) {
-    destinationCompaniesEl.textContent =
-      destinationCompanyCount;
-  }
+    row.innerHTML = `
+      <span class="about-company-name">${company.name}</span>
+      <div class="about-company-bar-track" aria-hidden="true">
+        <div class="about-company-bar" style="width: ${width}%"></div>
+      </div>
+      <span class="about-company-count">${company.count}</span>
+    `;
 
-
-  /* =====================
-     RENDER COMPANY CHART
-  ===================== */
-
-  if (companyTable) {
-    companyTable.innerHTML = "";
-
-    /*
-      Show top 15 initially.
-    */
-
-    const topCompanies =
-      companyEntries.slice(0, 15);
-
-    if (!topCompanies.length) {
-      companyTable.innerHTML = `
-        <div class="company-bar-row">
-          <span class="company-name">No placement data available.</span>
-          <div class="bar-container"><div class="bar" style="width: 0%"></div></div>
-          <span class="company-count">0</span>
-        </div>
-      `;
-      return;
-    }
-
-    /* Find max count for bar scaling */
-    const maxCount = Math.max(
-      ...topCompanies.map(c => c.count)
-    );
-
-    topCompanies.forEach((company) => {
-      const row =
-        document.createElement("div");
-
-      row.className =
-        "company-bar-row";
-
-      /* Calculate bar width percentage */
-      const barWidthPercent =
-        (company.count / maxCount) * 100;
-
-      row.innerHTML = `
-        <span class="company-name">${company.name}</span>
-        <div class="bar-container">
-          <div class="bar" style="width: ${barWidthPercent}%"></div>
-        </div>
-        <span class="company-count">${company.count}</span>
-      `;
-
-      companyTable.appendChild(row);
-    });
+    companyTable.appendChild(row);
   }
 }
 
-
-/* =====================
-   ERROR HANDLING
-===================== */
-
 loadAboutPage().catch((error) => {
-  console.error(
-    "Failed to load About page data:",
-    error
-  );
+  console.error("Failed to load About page data:", error);
 
-  const companyTable =
-    document.getElementById(
-      "destinationCompanyTable"
-    );
+  for (const id of [
+    "aboutPeopleTracked",
+    "aboutPeoplePlaced",
+    "aboutStillLooking",
+    "aboutAddedLast7Days"
+  ]) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = "—";
+  }
 
+  const companyTable = document.getElementById("destinationCompanyTable");
   if (companyTable) {
-    companyTable.innerHTML = `
-      <div class="company-bar-row">
-        <span class="company-name">
-          Placement data could not be loaded.
-        </span>
-        <div class="bar-container"><div class="bar" style="width: 0%"></div></div>
-        <span class="company-count">0</span>
-      </div>
-    `;
+    companyTable.innerHTML = '<p class="about-data-error">Placement data could not be loaded.</p>';
   }
 });
