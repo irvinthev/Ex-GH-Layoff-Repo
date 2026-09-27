@@ -1789,3 +1789,19 @@ select:focus {
   .site-footer-inner { padding: 20px 20px 28px; }
   .site-footer-note { font-size: 13px; }
 }
+
+
+.nav-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.nav-brand-subtext {
+  margin-top: 2px;
+  font-size: 10px;
+  line-height: 1.2;
+  font-weight: 500;
+  color: #94a3b8;
+  white-space: nowrap;
+}
