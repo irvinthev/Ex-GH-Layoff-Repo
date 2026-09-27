@@ -1781,9 +1781,24 @@ select:focus {
 .guide-callout p { margin: 0; color: #334155; font-size: 16px; line-height: 1.6; }
 .guide-callout .primary-btn { flex-shrink: 0; }
 @media (max-width: 640px) {
-  .site-nav .site-nav-inner { flex-direction: column; align-items: flex-start; gap: 10px; }
-  .site-nav .nav-links { max-width: 100%; flex-wrap: wrap; gap: 8px 14px; }
-  .site-nav .nav-links a { padding: 5px 0; }
+  .site-nav .site-nav-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .site-nav .nav-links {
+    max-width: 100%;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+  }
+
+  .site-nav .nav-links a {
+    padding: 3px 0;
+  }
+
   .guide-callout { flex-direction: column; align-items: flex-start; margin: 20px 16px; padding: 20px; }
   .content-page .guide-callout { margin: 20px 0; }
   .site-footer-inner { padding: 20px 20px 28px; }
