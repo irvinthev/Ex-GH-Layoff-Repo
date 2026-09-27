@@ -606,7 +606,7 @@ async function loadDirectory() {
 
     if (heroTalentCount) {
       heroTalentCount.textContent =
-        `${people.length} former Grubhub professionals`;
+        `${people.length} former Ex-GH professionals`;
     }
 
     if (functionCount) {
