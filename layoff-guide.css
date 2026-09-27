@@ -37,3 +37,16 @@
   .guide-grid { display: block; }
   .guide-card, .guide-help { break-inside: avoid; margin-top: 12px; }
 }
+
+
+.guide-disclaimer {
+  max-width: 900px;
+  margin: 0 auto 32px;
+  padding: 20px 24px;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.6;
+}
