@@ -11,7 +11,7 @@ const pages = [
 ];
 
 const independenceStatement =
-  "Ex-GH Talent Network is an independent, alumni-led community for former Grubhub employees. It is not affiliated with, sponsored by, endorsed by, or operated by Grubhub.";
+  "TalentBot HQ is an independent, alumni-led community for former Grubhub employees. It is not affiliated with, sponsored by, endorsed by, or operated by Grubhub.";
 
 test("site footer includes the independence statement on every html page", () => {
   for (const page of pages) {
