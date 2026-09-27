@@ -5,24 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>About | TalentBot HQ</title>
-
   <meta
     name="description"
-    content="Learn why the TalentBot HQ exists, how it works, and what outcomes the network has produced."
+    content="Learn how TalentBot HQ's community-built talent directory works and what outcomes the current Ex-GH cohort has produced."
   />
 
-  <link rel="stylesheet" href="style.css?v=guide-nav-2" />
+  <link rel="stylesheet" href="style.css?v=about-redesign-1" />
 </head>
 
-<body>
-
-  <!-- =====================
-       NAVIGATION
-  ====================== -->
+<body class="about-page">
 
   <nav class="site-nav" aria-label="Main navigation">
     <div class="site-nav-inner">
-      <div class="nav-brand"><a href="index.html">TalentBot HQ</a><span class="nav-brand-subtext">Currently supporting Ex-GH talent</span></div>
+      <div class="nav-brand">
+        <a href="index.html">TalentBot HQ</a>
+        <span class="nav-brand-subtext">Currently supporting Ex-GH talent</span>
+      </div>
       <div class="nav-links">
         <a href="about.html" aria-current="page">About</a>
         <a href="index.html">Directory</a>
@@ -33,193 +31,137 @@
     </div>
   </nav>
 
-  <!-- =====================
-       SITE NOTE
-  ====================== -->
+  <main class="about-shell">
 
-  <section class="site-note">
-    <div class="site-note-inner">
-
-      <p>
-        Profiles are opt-in, reviewed before publishing, and include only publicly shareable information.
+    <section class="about-hero-card">
+      <p class="about-kicker">About the network</p>
+      <h1>What This Is</h1>
+      <p class="about-lead">
+        TalentBot HQ operates a community-built talent directory designed to help experienced professionals become easier to discover.
+        The current cohort consists of Ex-GH talent who have opted in to participate.
       </p>
+    </section>
 
+    <div class="about-overview-grid">
+      <section class="about-panel">
+        <p class="about-section-kicker">Origin</p>
+        <h2>Why This Exists</h2>
+        <p>
+          The directory started as an opt-in spreadsheet created after the Grubhub layoffs to help impacted employees stay visible to recruiters and hiring teams.
+          As participation grew, the spreadsheet evolved into a searchable talent directory.
+        </p>
+        <p class="about-emphasis">Reduce noise. Increase signal.</p>
+      </section>
+
+      <section class="about-panel">
+        <p class="about-section-kicker">Process</p>
+        <h2>How It Works</h2>
+        <ul class="about-check-list">
+          <li>Profiles are submitted voluntarily</li>
+          <li>Each submission is reviewed before publishing</li>
+          <li>Only publicly shareable profile information is included</li>
+          <li>Profiles can be updated or removed upon request</li>
+          <li>Placement history is used to understand network outcomes</li>
+        </ul>
+      </section>
     </div>
-  </section>
 
+    <section class="about-impact-panel" aria-labelledby="impact-title">
+      <div class="about-section-heading">
+        <div>
+          <p class="about-section-kicker">Live network data</p>
+          <h2 id="impact-title">Talent Network Impact</h2>
+        </div>
+        <p>Deduplicated people counts from the current directory and confirmed placement history.</p>
+      </div>
 
-  <main class="content-page">
-
-    <!-- =====================
-         WHAT THIS IS
-    ====================== -->
-
-    <h1>What This Is</h1>
-
-    <p>
-      TalentBot HQ operates a community-built talent directory designed to help experienced professionals become easier to discover.
-      The current cohort consists of Ex-GH talent who have opted in to participate.
-    </p>
-
-    <hr />
-
-
-    <!-- =====================
-         WHY THIS EXISTS
-    ====================== -->
-
-    <h2>Why This Exists</h2>
-
-    <p>
-      The directory started as an opt-in spreadsheet created after the Grubhub layoffs to help impacted employees stay visible to recruiters and hiring teams.
-      As participation grew, the spreadsheet evolved into a searchable talent directory.
-    </p>
-
-    <p>
-      The goal is simple: reduce noise, increase signal, and make it easier for relevant people to find one another.
-    </p>
-
-    <hr />
-
-
-    <!-- =====================
-         HOW IT WORKS
-    ====================== -->
-
-    <h2>How It Works</h2>
-
-    <ul>
-      <li>Profiles are submitted voluntarily</li>
-      <li>Each submission is reviewed before publishing</li>
-      <li>Only publicly shareable profile information is included</li>
-      <li>Profiles can be updated or removed at any time</li>
-      <li>Placement history is used to understand network outcomes and destination trends</li>
-    </ul>
-
-    <p><em>Simple by design. Intentional by default.</em></p>
-
-    <hr />
-
-
-    <!-- =====================
-         TALENT NETWORK IMPACT
-    ====================== -->
-
-    <section
-      id="talent-impact-widget"
-      class="talent-impact-widget"
-      aria-live="polite"
-      aria-busy="true"
-    >
-      <div class="talent-impact-container">
-        <p class="impact-loading">Loading Talent Network Impact...</p>
+      <div class="about-impact-grid" aria-live="polite">
+        <article class="about-impact-card">
+          <span class="about-impact-number" id="aboutPeopleTracked">—</span>
+          <span class="about-impact-label">People Supported</span>
+        </article>
+        <article class="about-impact-card">
+          <span class="about-impact-number" id="aboutPeoplePlaced">—</span>
+          <span class="about-impact-label">Placed</span>
+        </article>
+        <article class="about-impact-card">
+          <span class="about-impact-number" id="aboutStillLooking">—</span>
+          <span class="about-impact-label">Open to Work</span>
+        </article>
+        <article class="about-impact-card">
+          <span class="about-impact-number" id="aboutAddedLast7Days">—</span>
+          <span class="about-impact-label">Added Last 7 Days</span>
+        </article>
       </div>
     </section>
 
-    <hr />
-
-
-    <!-- =====================
-         DESTINATION COMPANIES
-    ====================== -->
-
-    <section class="about-company-section">
-      <div class="section-header">
-        <h2>Where Ex-GH Talent Landed</h2>
+    <section class="about-company-panel">
+      <div class="about-section-heading">
+        <div>
+          <p class="about-section-kicker">Placement history</p>
+          <h2>Where Ex-GH Talent Landed</h2>
+        </div>
+        <p>Top destination companies by confirmed placement events. Historical activity only; not current hiring activity.</p>
       </div>
 
-      <p class="about-section-intro">
-        A snapshot of the companies represented across placement history.
-      </p>
-
-      <p class="about-data-note">
-        Showing the top 15 destination companies by placement count.
-        Company counts reflect historical placement activity, not current hiring activity.
-      </p>
-
-      <div id="destinationCompanyTable" class="company-chart">
-        <div class="company-bar-row">
-          <span class="company-name">Loading placement data...</span>
-          <div class="bar-container"><div class="bar"></div></div>
-          <span class="company-count">0</span>
+      <div id="destinationCompanyTable" class="about-company-chart" aria-live="polite">
+        <div class="about-company-row">
+          <span class="about-company-name">Loading placement data...</span>
+          <div class="about-company-bar-track"><div class="about-company-bar"></div></div>
+          <span class="about-company-count">0</span>
         </div>
       </div>
     </section>
 
-    <hr />
-
-
-    <!-- =====================
-         IF YOU'RE HERE
-    ====================== -->
-
-    <h2>If You're Here</h2>
-
-    <div class="split">
-      <div class="card">
-        <h3>You're Hiring</h3>
-
-        <p>You don't need more applicants. You need signal.</p>
-
-        <p>
-          Browse a curated set of former Grubhub professionals who are actively exploring new opportunities.
-        </p>
-
-        <a class="primary-btn" href="index.html">Browse Talent</a>
-
-        <br /><br />
-
-        <a
-          class="secondary-btn"
-          href="https://docs.google.com/forms/d/e/1FAIpQLSe-eIZp1WChWPYzT8cNPWULgSP6v_pSVkYao0XEzlPqFyXDtA/viewform?usp=header"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Share an Open Role
-        </a>
-
-        <br /><br />
-
-        <p class="meta">Found someone interesting? Reach out directly through their LinkedIn profile.</p>
+    <section class="about-audience-section" aria-labelledby="audience-title">
+      <div class="about-section-heading">
+        <div>
+          <p class="about-section-kicker">Use the network</p>
+          <h2 id="audience-title">If You're Here</h2>
+        </div>
       </div>
 
-      <div class="card">
-        <h3>You're Looking</h3>
+      <div class="about-audience-grid">
+        <article class="about-action-card">
+          <h3>You're Hiring</h3>
+          <p>You don't need more applicants. You need signal.</p>
+          <p>Browse Ex-GH professionals who are actively exploring new opportunities.</p>
+          <div class="about-action-buttons">
+            <a class="primary-btn" href="index.html">Browse Talent</a>
+            <a
+              class="secondary-btn"
+              href="https://docs.google.com/forms/d/e/1FAIpQLSe-eIZp1WChWPYzT8cNPWULgSP6v_pSVkYao0XEzlPqFyXDtA/viewform?usp=header"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Share an Open Role</a>
+          </div>
+        </article>
 
-        <p>
-          Getting lost in applications isn't a reflection of your ability.
-          It's a reflection of the system.
-        </p>
-
-        <p>
-          This network is designed to help you get seen without competing only through application volume.
-        </p>
-
-        <a
-          class="primary-btn"
-          href="https://docs.google.com/forms/d/e/1FAIpQLSehawGkkedBDJJCGhzKEy33epkB2GeRQ7sB8x8fQ-Uz_kxgAQ/viewform"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Join the Directory
-        </a>
+        <article class="about-action-card">
+          <h3>You're Looking</h3>
+          <p>Getting lost in applications isn't a reflection of your ability. It's a reflection of the system.</p>
+          <p>This directory is designed to help you get seen without competing only through application volume.</p>
+          <div class="about-action-buttons">
+            <a
+              class="primary-btn"
+              href="https://docs.google.com/forms/d/e/1FAIpQLSehawGkkedBDJJCGhzKEy33epkB2GeRQ7sB8x8fQ-Uz_kxgAQ/viewform"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Join the Directory</a>
+          </div>
+        </article>
       </div>
-    </div>
+    </section>
 
-    <hr />
-
-
-    <!-- =====================
-         INDEPENDENCE & PRIVACY
-    ====================== -->
-
-    <h2>Independence & Privacy</h2>
-
-    <p>
-      TalentBot HQ is independently operated and is not affiliated with any employer.
-      The current Ex-GH cohort is not affiliated with, sponsored by, or endorsed by Grubhub.
-      Participation is voluntary, and profiles can be updated or removed upon request.
-    </p>
+    <section class="about-independence-panel">
+      <p class="about-section-kicker">Governance</p>
+      <h2>Independence &amp; Privacy</h2>
+      <p>
+        TalentBot HQ is independently operated and is not affiliated with any employer.
+        The current Ex-GH cohort is not affiliated with, sponsored by, or endorsed by Grubhub.
+        Participation is voluntary, and profiles can be updated or removed upon request.
+      </p>
+    </section>
 
   </main>
 
@@ -232,17 +174,10 @@
         <a href="layoff-guide.html">Layoff Guide</a>
         <a href="https://docs.google.com/forms/d/e/1FAIpQLSehawGkkedBDJJCGhzKEy33epkB2GeRQ7sB8x8fQ-Uz_kxgAQ/viewform" target="_blank" rel="noopener noreferrer">Join</a>
       </nav>
-      <p class="site-footer-note">TalentBot HQ is independent and community-built. The Grubhub Alumni Directory is not affiliated with or operated by Grubhub.</p>
+      <p class="site-footer-note">TalentBot HQ is independently operated. The current Ex-GH cohort is not affiliated with, sponsored by, or endorsed by Grubhub.</p>
     </div>
   </footer>
 
-
-  <!-- =====================
-       ABOUT PAGE DATA
-  ====================== -->
-
-  <script src="talent-impact.js"></script>
-  <script src="about.js"></script>
-
+  <script src="about.js?v=about-redesign-1"></script>
 </body>
 </html>
