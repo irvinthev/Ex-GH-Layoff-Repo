@@ -230,7 +230,7 @@ export async function importJobFromUrl(value: string): Promise<ImportedJob> {
         signal: controller.signal,
         headers: {
           "Accept": "text/html,application/xhtml+xml;q=0.9",
-          "User-Agent": "Ex-GH-Talent-Network-Job-Importer/1.0",
+          "User-Agent": "TalentBot-HQ-Job-Importer/1.0",
         },
       });
 
