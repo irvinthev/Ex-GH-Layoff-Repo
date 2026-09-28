@@ -46,115 +46,116 @@ function getYouTubeThumbnail(url) {
     : "";
 }
 
-function renderPeopleStories(stories) {
-  const grid = document.getElementById("peopleStoriesGrid");
-  if (!grid) return;
+function storyCardMarkup(story) {
+  const tags = Array.isArray(story.tags) ? story.tags : [];
+  const thumbnailUrl = getYouTubeThumbnail(story.short_video_url || story.full_video_url);
 
-  grid.innerHTML = "";
+  const thumbnail = thumbnailUrl
+    ? `
+      <a
+        class="people-story-media"
+        href="${escapeHtml(story.short_video_url || story.full_video_url)}"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Watch ${escapeHtml(story.name)} on YouTube"
+      >
+        <img
+          src="${escapeHtml(thumbnailUrl)}"
+          alt="YouTube thumbnail for ${escapeHtml(story.name)}"
+          loading="lazy"
+        />
+        <span class="people-story-play" aria-hidden="true">▶</span>
+      </a>
+    `
+    : "";
 
-  const published = stories.filter((story) => story.published !== false);
-
-  if (!published.length) {
-    grid.innerHTML = '<div class="empty-state">More stories coming soon.</div>';
-    return;
+  let actions = "";
+  if (story.short_video_url) {
+    actions += `<a class="resource-link story-primary-link" href="${escapeHtml(story.short_video_url)}" target="_blank" rel="noopener noreferrer">Watch the story →</a>`;
+  } else if (story.linkedin_url) {
+    actions += `<a class="resource-link story-primary-link" href="${escapeHtml(story.linkedin_url)}" target="_blank" rel="noopener noreferrer">View on LinkedIn →</a>`;
   }
 
-  published.forEach((story) => {
-    const card = document.createElement("article");
-    card.className = "people-story-card";
+  if (story.directory_url) {
+    actions += `<a class="resource-link" href="${escapeHtml(story.directory_url)}">View in Talent Directory →</a>`;
+  }
 
-    const tags = Array.isArray(story.tags) ? story.tags : [];
-    const linkedin = story.linkedin_url
-      ? `<a class="resource-link" href="${escapeHtml(story.linkedin_url)}" target="_blank" rel="noopener noreferrer">View on LinkedIn →</a>`
-      : "";
+  return `
+    ${thumbnail}
+    <div class="people-story-card-top">
+      <span class="resource-series">${escapeHtml(story.series || "People Behind the Network")}</span>
+      <h3>${escapeHtml(story.name)}</h3>
+      <p class="people-story-role">${escapeHtml(story.headline || "")}</p>
+    </div>
 
-    const shortVideo = story.short_video_url
-      ? `<a class="resource-link" href="${escapeHtml(story.short_video_url)}" target="_blank" rel="noopener noreferrer">Watch 5 min story →</a>`
-      : "";
+    <p class="people-story-hook">${escapeHtml(story.hook || "")}</p>
 
-    const fullVideo = story.full_video_url
-      ? `<a class="resource-link" href="${escapeHtml(story.full_video_url)}" target="_blank" rel="noopener noreferrer">Watch full episode →</a>`
-      : "";
-
-    const directoryLink = story.directory_url
-      ? `<a class="resource-link" href="${escapeHtml(story.directory_url)}">View in Talent Directory →</a>`
-      : "";
-
-    const thumbnailUrl = getYouTubeThumbnail(story.short_video_url || story.full_video_url);
-    const thumbnail = thumbnailUrl
-      ? `
-        <a
-          class="people-story-media"
-          href="${escapeHtml(story.short_video_url || story.full_video_url)}"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Watch ${escapeHtml(story.name)} on YouTube"
-        >
-          <img
-            src="${escapeHtml(thumbnailUrl)}"
-            alt="YouTube thumbnail for ${escapeHtml(story.name)}"
-            loading="lazy"
-          />
-          <span class="people-story-play" aria-hidden="true">▶</span>
-        </a>
-      `
-      : "";
-
-    card.innerHTML = `
-      ${thumbnail}
-      <div class="people-story-card-top">
-        <span class="resource-series">${escapeHtml(story.series || "People Behind the Network")}</span>
-        <h3>${escapeHtml(story.name)}</h3>
-        <p class="people-story-role">${escapeHtml(story.headline || "")}</p>
+    ${tags.length ? `
+      <div class="people-story-tags">
+        ${tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}
       </div>
+    ` : ""}
 
-      <p class="people-story-hook">${escapeHtml(story.hook || "")}</p>
-      <p class="people-story-summary">${escapeHtml(story.summary || "")}</p>
+    <div class="people-story-actions">
+      ${actions}
+    </div>
+  `;
+}
 
-      ${tags.length ? `
-        <div class="people-story-tags">
-          ${tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}
-        </div>
-      ` : ""}
+function renderPeopleStories(stories) {
+  const talentGrid = document.getElementById("peopleStoriesGrid");
+  const builderGrid = document.getElementById("networkBuilderGrid");
 
-      <div class="people-story-actions">
-        ${shortVideo}
-        ${fullVideo}
-        ${directoryLink}
-        ${linkedin}
-      </div>
-    `;
+  const published = stories.filter((story) => story.published !== false);
+  const talentStories = published.filter((story) => story.kind !== "network_builder");
+  const builderStories = published.filter((story) => story.kind === "network_builder");
 
-    grid.appendChild(card);
-  });
+  if (talentGrid) {
+    talentGrid.innerHTML = "";
+
+    if (!talentStories.length) {
+      talentGrid.innerHTML = '<div class="empty-state">More stories coming soon.</div>';
+    } else {
+      talentStories.forEach((story) => {
+        const card = document.createElement("article");
+        card.className = "people-story-card";
+        card.innerHTML = storyCardMarkup(story);
+        talentGrid.appendChild(card);
+      });
+    }
+  }
+
+  if (builderGrid) {
+    builderGrid.innerHTML = "";
+
+    if (!builderStories.length) {
+      builderGrid.closest(".network-builder-section")?.setAttribute("hidden", "");
+    } else {
+      builderStories.forEach((story) => {
+        const card = document.createElement("article");
+        card.className = "people-story-card network-builder-card";
+        card.innerHTML = storyCardMarkup(story);
+        builderGrid.appendChild(card);
+      });
+    }
+  }
 }
 
 function formatDate(dateString) {
-  if (!dateString) {
-    return "";
-  }
+  if (!dateString) return "";
 
   const date = new Date(`${dateString}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return dateString;
 
-  if (Number.isNaN(date.getTime())) {
-    return dateString;
-  }
-
-  return date.toLocaleDateString(
-    "en-US",
-    {
-      year: "numeric",
-      month: "short",
-      day: "numeric"
-    }
-  );
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  });
 }
 
 function parsePostDate(dateString) {
-  if (!dateString) {
-    return null;
-  }
-
+  if (!dateString) return null;
   const date = new Date(`${dateString}T00:00:00`);
   return Number.isNaN(date.getTime()) ? null : date.getTime();
 }
@@ -163,17 +164,9 @@ function comparePostsByDateDesc(a, b) {
   const aTimestamp = parsePostDate(a.date);
   const bTimestamp = parsePostDate(b.date);
 
-  if (aTimestamp === null && bTimestamp === null) {
-    return 0;
-  }
-
-  if (aTimestamp === null) {
-    return 1;
-  }
-
-  if (bTimestamp === null) {
-    return -1;
-  }
+  if (aTimestamp === null && bTimestamp === null) return 0;
+  if (aTimestamp === null) return 1;
+  if (bTimestamp === null) return -1;
 
   return bTimestamp - aTimestamp;
 }
@@ -182,263 +175,168 @@ function getResourceLinkLabel(post) {
   let hostname = "";
 
   try {
-    hostname = post.url
-      ? new URL(post.url).hostname.toLowerCase()
-      : "";
+    hostname = post.url ? new URL(post.url).hostname.toLowerCase() : "";
   } catch {
     hostname = "";
   }
 
   const matchesHostname = (domain) =>
-  hostname === domain || hostname.endsWith(`.${domain}`);
+    hostname === domain || hostname.endsWith(`.${domain}`);
 
   if (post.format === "video") {
-  if (
-    matchesHostname("youtube.com") ||
-    matchesHostname("youtu.be")
-  ) {
-    return "Watch on YouTube →";
-  }
-
+    if (matchesHostname("youtube.com") || matchesHostname("youtu.be")) {
+      return "Watch on YouTube →";
+    }
     return "Watch video →";
   }
 
-  if (
-    matchesHostname("linkedin.com")
-  ) {
+  if (matchesHostname("linkedin.com")) {
     return "Read on LinkedIn →";
   }
 
   return "Open resource →";
 }
 
-async function loadResources() {
-  const [postsResponse, storiesResponse] = await Promise.all([
-    fetch("./posts.json"),
-    fetch("./people-stories.json")
-  ]);
-
-  if (!postsResponse.ok) {
-    throw new Error(
-      `Failed to load posts.json: ${postsResponse.status}`
-    );
-  }
-
-  if (!storiesResponse.ok) {
-    throw new Error(
-      `Failed to load people-stories.json: ${storiesResponse.status}`
-    );
-  }
-
-  const posts = await postsResponse.json();
-  const stories = await storiesResponse.json();
-
-  renderPeopleStories(stories);
-
+function renderResourceLibrary(posts) {
   const grid = document.getElementById("resourceGrid");
   const filters = document.getElementById("resourceFilters");
+  if (!grid || !filters) return;
 
-  if (!grid || !filters) {
-    return;
-  }
+  const pageSection = document.body.classList.contains("layoff-guide")
+    ? "playbook"
+    : "spotlight";
+
+  const scopedPosts = posts.filter((post) =>
+    !post.section || post.section === pageSection
+  );
 
   let activeCategory = "All";
-
-
-  /* =====================
-     CATEGORIES
-  ===================== */
 
   function getCategories() {
     return [
       "All",
-      ...new Set(
-        posts
-          .map((post) => post.category)
-          .filter(Boolean)
-      )
+      ...new Set(scopedPosts.map((post) => post.category).filter(Boolean))
     ];
   }
-
-
-  /* =====================
-     FILTER BUTTONS
-  ===================== */
 
   function renderFilters() {
     filters.innerHTML = "";
 
-    getCategories().forEach(
-      (category) => {
-        const button = document.createElement("button");
+    getCategories().forEach((category) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `resource-filter-btn ${activeCategory === category ? "active" : ""}`;
+      button.textContent = category;
 
-        button.type = "button";
+      button.onclick = () => {
+        activeCategory = category;
+        renderFilters();
+        renderPosts();
+      };
 
-        button.className =
-          `resource-filter-btn ${
-            activeCategory === category
-              ? "active"
-              : ""
-          }`;
-
-        button.textContent = category;
-
-        button.onclick = () => {
-          activeCategory = category;
-
-          renderFilters();
-          renderPosts();
-        };
-
-        filters.appendChild(button);
-      }
-    );
+      filters.appendChild(button);
+    });
   }
-
-
-  /* =====================
-     RESOURCE CARDS
-  ===================== */
 
   function renderPosts() {
     grid.innerHTML = "";
 
-    const filtered =
-      activeCategory === "All"
-        ? posts
-        : posts.filter(
-            (post) =>
-              post.category === activeCategory
-          );
+    const filtered = activeCategory === "All"
+      ? scopedPosts
+      : scopedPosts.filter((post) => post.category === activeCategory);
 
     const sorted = [...filtered].sort(comparePostsByDateDesc);
 
     if (!sorted.length) {
-      grid.innerHTML = `
-        <div class="empty-state">
-          No resources found.
-        </div>
-      `;
-
+      grid.innerHTML = '<div class="empty-state">No resources found.</div>';
       return;
     }
 
-    sorted.forEach(
-      (post) => {
-        const card = document.createElement("article");
+    sorted.forEach((post) => {
+      const card = document.createElement("article");
+      card.className = post.featured ? "resource-card featured" : "resource-card";
 
-        card.className =
-          post.featured
-            ? "resource-card featured"
-            : "resource-card";
+      const validUrl = post.url && !post.url.includes("PASTE_");
 
-        const validUrl =
-          post.url &&
-          !post.url.includes("PASTE_");
+      card.innerHTML = `
+        <div class="resource-card-top">
+          <span class="resource-series">${escapeHtml(post.series || "Resource")}</span>
+          ${post.category ? `<span class="resource-category">${escapeHtml(post.category)}</span>` : ""}
+        </div>
 
-        card.innerHTML = `
-          <div class="resource-card-top">
+        <h3>${escapeHtml(post.title)}</h3>
+        <p class="resource-description">${escapeHtml(post.description || "")}</p>
 
-            <span class="resource-series">
-              ${post.series || "Resource"}
-            </span>
+        ${post.date ? `<p class="resource-date">${formatDate(post.date)}</p>` : ""}
 
-            ${
-              post.category
-                ? `
-                  <span class="resource-category">
-                    ${post.category}
-                  </span>
-                `
-                : ""
-            }
+        ${validUrl
+          ? `<a class="resource-link" href="${escapeHtml(post.url)}" target="_blank" rel="noopener noreferrer">${getResourceLinkLabel(post)}</a>`
+          : '<span class="resource-link resource-link-pending">Coming soon</span>'
+        }
+      `;
 
-          </div>
-
-          <h3>
-            ${post.title}
-          </h3>
-
-          <p class="resource-description">
-            ${post.description || ""}
-          </p>
-
-          ${
-            post.date
-              ? `
-                <p class="resource-date">
-                  ${formatDate(post.date)}
-                </p>
-              `
-              : ""
-          }
-
-          ${
-            validUrl
-              ? `
-                <a
-                  class="resource-link"
-                  href="${post.url}"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  ${getResourceLinkLabel(post)}
-                </a>
-              `
-              : `
-                <span class="resource-link resource-link-pending">
-                  Coming soon
-                </span>
-              `
-          }
-
-        `;
-
-        grid.appendChild(card);
-      }
-    );
+      grid.appendChild(card);
+    });
   }
-
-
-  /* =====================
-     INITIAL LOAD
-  ===================== */
 
   renderFilters();
   renderPosts();
 }
 
+async function loadResources() {
+  const peopleGrid = document.getElementById("peopleStoriesGrid");
+  const builderGrid = document.getElementById("networkBuilderGrid");
+  const resourceGrid = document.getElementById("resourceGrid");
+
+  const jobs = [];
+
+  if (peopleGrid || builderGrid) {
+    jobs.push(
+      fetch("./people-stories.json")
+        .then((response) => {
+          if (!response.ok) throw new Error(`Failed to load people-stories.json: ${response.status}`);
+          return response.json();
+        })
+        .then(renderPeopleStories)
+    );
+  }
+
+  if (resourceGrid) {
+    jobs.push(
+      fetch("./posts.json")
+        .then((response) => {
+          if (!response.ok) throw new Error(`Failed to load posts.json: ${response.status}`);
+          return response.json();
+        })
+        .then(renderResourceLibrary)
+    );
+  }
+
+  await Promise.all(jobs);
+}
 
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
     comparePostsByDateDesc,
     formatDate,
     getResourceLinkLabel,
+    getYouTubeVideoId
   };
 }
 
-
-/* =====================
-   ERROR HANDLING
-===================== */
-
 if (typeof document !== "undefined") {
-  loadResources().catch(
-    (error) => {
-      console.error(
-        "Failed to load resources:",
-        error
-      );
+  loadResources().catch((error) => {
+    console.error("Failed to load page resources:", error);
 
-      const grid = document.getElementById("resourceGrid");
+    const peopleGrid = document.getElementById("peopleStoriesGrid");
+    const resourceGrid = document.getElementById("resourceGrid");
 
-      if (grid) {
-        grid.innerHTML = `
-          <div class="empty-state">
-            Resources could not be loaded.
-          </div>
-        `;
-      }
+    if (peopleGrid && !peopleGrid.children.length) {
+      peopleGrid.innerHTML = '<div class="empty-state">Stories could not be loaded.</div>';
     }
-  );
+
+    if (resourceGrid && !resourceGrid.children.length) {
+      resourceGrid.innerHTML = '<div class="empty-state">Resources could not be loaded.</div>';
+    }
+  });
 }
