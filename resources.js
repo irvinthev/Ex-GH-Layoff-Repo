@@ -48,47 +48,24 @@ function getYouTubeThumbnail(url) {
 
 function storyCardMarkup(story) {
   const tags = Array.isArray(story.tags) ? story.tags : [];
-  const thumbnailUrl = getYouTubeThumbnail(story.short_video_url || story.full_video_url);
-
-  const thumbnail = thumbnailUrl
-    ? `
-      <a
-        class="people-story-media"
-        href="${escapeHtml(story.short_video_url || story.full_video_url)}"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Watch ${escapeHtml(story.name)} on YouTube"
-      >
-        <img
-          src="${escapeHtml(thumbnailUrl)}"
-          alt="YouTube thumbnail for ${escapeHtml(story.name)}"
-          loading="lazy"
-        />
-        <span class="people-story-play" aria-hidden="true">▶</span>
-      </a>
-    `
-    : "";
 
   let actions = "";
-  if (story.short_video_url) {
-    actions += `<a class="resource-link story-primary-link" href="${escapeHtml(story.short_video_url)}" target="_blank" rel="noopener noreferrer">Watch the story →</a>`;
+
+  if (story.directory_url) {
+    actions += `<a class="resource-link story-primary-link" href="${escapeHtml(story.directory_url)}">View in Talent Directory →</a>`;
   } else if (story.linkedin_url) {
     actions += `<a class="resource-link story-primary-link" href="${escapeHtml(story.linkedin_url)}" target="_blank" rel="noopener noreferrer">View on LinkedIn →</a>`;
   }
 
-  if (story.directory_url) {
-    actions += `<a class="resource-link" href="${escapeHtml(story.directory_url)}">View in Talent Directory →</a>`;
-  }
-
   return `
-    ${thumbnail}
     <div class="people-story-card-top">
-      <span class="resource-series">${escapeHtml(story.series || "People Behind the Network")}</span>
+      <span class="resource-series">${escapeHtml(story.series || "People Behind the Spreadsheet")}</span>
       <h3>${escapeHtml(story.name)}</h3>
       <p class="people-story-role">${escapeHtml(story.headline || "")}</p>
     </div>
 
     <p class="people-story-hook">${escapeHtml(story.hook || "")}</p>
+    <p class="people-story-summary">${escapeHtml(story.summary || "")}</p>
 
     ${tags.length ? `
       <div class="people-story-tags">
@@ -96,49 +73,33 @@ function storyCardMarkup(story) {
       </div>
     ` : ""}
 
-    <div class="people-story-actions">
-      ${actions}
-    </div>
+    ${actions ? `
+      <div class="people-story-actions">
+        ${actions}
+      </div>
+    ` : ""}
   `;
 }
 
 function renderPeopleStories(stories) {
-  const talentGrid = document.getElementById("peopleStoriesGrid");
-  const builderGrid = document.getElementById("networkBuilderGrid");
+  const grid = document.getElementById("peopleStoriesGrid");
+  if (!grid) return;
 
   const published = stories.filter((story) => story.published !== false);
-  const talentStories = published.filter((story) => story.kind !== "network_builder");
-  const builderStories = published.filter((story) => story.kind === "network_builder");
 
-  if (talentGrid) {
-    talentGrid.innerHTML = "";
+  grid.innerHTML = "";
 
-    if (!talentStories.length) {
-      talentGrid.innerHTML = '<div class="empty-state">More stories coming soon.</div>';
-    } else {
-      talentStories.forEach((story) => {
-        const card = document.createElement("article");
-        card.className = "people-story-card";
-        card.innerHTML = storyCardMarkup(story);
-        talentGrid.appendChild(card);
-      });
-    }
+  if (!published.length) {
+    grid.innerHTML = '<div class="empty-state">More stories coming soon.</div>';
+    return;
   }
 
-  if (builderGrid) {
-    builderGrid.innerHTML = "";
-
-    if (!builderStories.length) {
-      builderGrid.closest(".network-builder-section")?.setAttribute("hidden", "");
-    } else {
-      builderStories.forEach((story) => {
-        const card = document.createElement("article");
-        card.className = "people-story-card network-builder-card";
-        card.innerHTML = storyCardMarkup(story);
-        builderGrid.appendChild(card);
-      });
-    }
-  }
+  published.forEach((story) => {
+    const card = document.createElement("article");
+    card.className = "people-story-card";
+    card.innerHTML = storyCardMarkup(story);
+    grid.appendChild(card);
+  });
 }
 
 function formatDate(dateString) {
@@ -285,12 +246,11 @@ function renderResourceLibrary(posts) {
 
 async function loadResources() {
   const peopleGrid = document.getElementById("peopleStoriesGrid");
-  const builderGrid = document.getElementById("networkBuilderGrid");
   const resourceGrid = document.getElementById("resourceGrid");
 
   const jobs = [];
 
-  if (peopleGrid || builderGrid) {
+  if (peopleGrid) {
     jobs.push(
       fetch("./people-stories.json")
         .then((response) => {
