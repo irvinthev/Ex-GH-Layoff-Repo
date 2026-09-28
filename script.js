@@ -238,16 +238,7 @@ async function loadDirectory() {
 
 
   function getDisplayTags(person) {
-    const descriptionLines = getDescription(person)
-      .split(/\r?\n/)
-      .map((part) => part.trim())
-      .filter(Boolean);
-
-    const tagSource = descriptionLines.length > 1
-      ? descriptionLines[descriptionLines.length - 1]
-      : getSkills(person);
-
-    return tagSource
+    return getSkills(person)
       .split(",")
       .map((tag) => tag.trim())
       .filter(Boolean)
@@ -1047,7 +1038,14 @@ async function loadDirectory() {
               : ""
           }
 
-          ${summary ? `<p class="description">${escapeHtml(shortDescription(summary))}</p>` : ""}
+          ${summary ? `
+            <div class="description-wrap">
+              <p class="description">${escapeHtml(summary)}</p>
+              <button class="description-toggle" type="button" aria-expanded="false">
+                Read more ↓
+              </button>
+            </div>
+          ` : ""}
 
           <div class="card-footer">
             <span class="availability ${activelySearching ? "active" : "unverified"}">
@@ -1062,6 +1060,63 @@ async function loadDirectory() {
 
         container
           .appendChild(card);
+
+        const description =
+          card.querySelector(".description");
+
+        const toggle =
+          card.querySelector(".description-toggle");
+
+        if (description && toggle) {
+          const params =
+            new URLSearchParams(window.location.search);
+
+          const directSearch =
+            (params.get("search") || "")
+              .toLowerCase()
+              .trim();
+
+          const shouldAutoExpand =
+            params.get("expand") === "1" &&
+            directSearch ===
+              name.toLowerCase().trim();
+
+          const updateToggleVisibility = () => {
+            if (card.classList.contains("expanded")) {
+              toggle.hidden = false;
+              return;
+            }
+
+            toggle.hidden =
+              description.scrollHeight <=
+              description.clientHeight + 2;
+          };
+
+          if (shouldAutoExpand) {
+            card.classList.add("expanded");
+            toggle.setAttribute("aria-expanded", "true");
+            toggle.textContent = "Show less ↑";
+          }
+
+          toggle.onclick = () => {
+            const expanded =
+              card.classList.toggle("expanded");
+
+            toggle.setAttribute(
+              "aria-expanded",
+              expanded ? "true" : "false"
+            );
+
+            toggle.textContent =
+              expanded
+                ? "Show less ↑"
+                : "Read more ↓";
+          };
+
+          requestAnimationFrame(
+            updateToggleVisibility
+          );
+        }
       }
     );
   }
