@@ -46,8 +46,47 @@ function getYouTubeThumbnail(url) {
     : "";
 }
 
-function storyCardMarkup(story) {
+function formatStoryDate(dateString) {
+  if (!dateString) return "";
+
+  const date = new Date(`${dateString}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return dateString;
+
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  });
+}
+
+function getWeekStart(dateString) {
+  const date = new Date(`${dateString}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return "";
+
+  const day = date.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  date.setDate(date.getDate() + diff);
+
+  return date.toISOString().slice(0, 10);
+}
+
+function formatWeekLabel(weekStart) {
+  if (!weekStart) return "Undated";
+
+  const date = new Date(`${weekStart}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return weekStart;
+
+  return `Week of ${date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  })}`;
+}
+
+function storyCardMarkup(story, expanded = false) {
   const tags = Array.isArray(story.tags) ? story.tags : [];
+  const firstName = String(story.name || "").trim().split(/\s+/)[0] || "them";
+  const hasSections = Array.isArray(story.story_sections) && story.story_sections.length;
 
   let actions = "";
 
@@ -56,32 +95,33 @@ function storyCardMarkup(story) {
   }
 
   if (story.linkedin_url) {
-    const firstName = String(story.name || "").trim().split(/\s+/)[0] || "them";
     actions += `<a class="resource-link" href="${escapeHtml(story.linkedin_url)}" target="_blank" rel="noopener noreferrer">Connect with ${escapeHtml(firstName)} on LinkedIn →</a>`;
   }
 
+  const body = hasSections
+    ? `
+      <div class="people-story-sections">
+        ${story.story_sections.map((section) => `
+          <section class="people-story-section">
+            <h4>${escapeHtml(section.label || "")}</h4>
+            <p>${escapeHtml(section.text || "")}</p>
+          </section>
+        `).join("")}
+      </div>
+    `
+    : `<p class="people-story-summary">${escapeHtml(story.summary || "")}</p>`;
+
   return `
     <div class="people-story-card-top">
-      <span class="resource-series">${escapeHtml(story.series || "People Behind the Spreadsheet")}</span>
-      <h3>${escapeHtml(story.name)}</h3>
-      <p class="people-story-role">${escapeHtml(story.headline || "")}</p>
+      <div>
+        <span class="resource-series">${escapeHtml(story.series || "People Behind the Spreadsheet")}</span>
+        <h3>${escapeHtml(story.name)}</h3>
+        <p class="people-story-role">${escapeHtml(story.headline || "")}</p>
+      </div>
+      ${story.published_date ? `<time class="people-story-date" datetime="${escapeHtml(story.published_date)}">${escapeHtml(formatStoryDate(story.published_date))}</time>` : ""}
     </div>
 
     <p class="people-story-hook">${escapeHtml(story.hook || "")}</p>
-
-    ${Array.isArray(story.story_sections) && story.story_sections.length
-      ? `
-        <div class="people-story-sections">
-          ${story.story_sections.map((section) => `
-            <section class="people-story-section">
-              <h4>${escapeHtml(section.label || "")}</h4>
-              <p>${escapeHtml(section.text || "")}</p>
-            </section>
-          `).join("")}
-        </div>
-      `
-      : `<p class="people-story-summary">${escapeHtml(story.summary || "")}</p>`
-    }
 
     ${tags.length ? `
       <div class="people-story-tags">
@@ -89,33 +129,156 @@ function storyCardMarkup(story) {
       </div>
     ` : ""}
 
-    ${actions ? `
-      <div class="people-story-actions">
-        ${actions}
-      </div>
-    ` : ""}
+    <div class="people-story-preview">
+      ${hasSections
+        ? `<p>${escapeHtml(story.story_sections[0]?.text || story.summary || "")}</p>`
+        : `<p>${escapeHtml(story.summary || "")}</p>`
+      }
+    </div>
+
+    <button
+      class="people-story-toggle"
+      type="button"
+      aria-expanded="${expanded ? "true" : "false"}"
+    >
+      ${expanded ? "Show less ↑" : "Read full story ↓"}
+    </button>
+
+    <div class="people-story-expanded"${expanded ? "" : " hidden"}>
+      ${body}
+
+      ${actions ? `
+        <div class="people-story-actions">
+          ${actions}
+        </div>
+      ` : ""}
+    </div>
   `;
 }
 
 function renderPeopleStories(stories) {
   const grid = document.getElementById("peopleStoriesGrid");
+  const selector = document.getElementById("spotlightWeekSelector");
+  const heading = document.getElementById("spotlightWeekHeading");
+  const count = document.getElementById("spotlightWeekCount");
+
   if (!grid) return;
 
-  const published = stories.filter((story) => story.published !== false);
-
-  grid.innerHTML = "";
+  const published = stories
+    .filter((story) => story.published !== false)
+    .filter((story) => story.published_date)
+    .sort((a, b) => String(b.published_date).localeCompare(String(a.published_date)));
 
   if (!published.length) {
     grid.innerHTML = '<div class="empty-state">More stories coming soon.</div>';
     return;
   }
 
+  const params = new URLSearchParams(window.location.search);
+  const requestedStory = (params.get("story") || "").trim();
+  const requestedWeek = (params.get("week") || "").trim();
+
+  const weekMap = new Map();
+
   published.forEach((story) => {
-    const card = document.createElement("article");
-    card.className = "people-story-card";
-    card.innerHTML = storyCardMarkup(story);
-    grid.appendChild(card);
+    const week = getWeekStart(story.published_date);
+    if (!weekMap.has(week)) weekMap.set(week, []);
+    weekMap.get(week).push(story);
   });
+
+  const weeks = [...weekMap.keys()].sort((a, b) => b.localeCompare(a));
+  const latestWeek = weeks[0];
+  let activeWeek = weeks.includes(requestedWeek) ? requestedWeek : latestWeek;
+
+  if (requestedStory) {
+    const story = published.find((item) => item.slug === requestedStory);
+    if (story) activeWeek = getWeekStart(story.published_date);
+  }
+
+  function setUrl(activeWeekValue, storySlug = "") {
+    const url = new URL(window.location.href);
+    url.searchParams.set("week", activeWeekValue);
+
+    if (storySlug) {
+      url.searchParams.set("story", storySlug);
+    } else {
+      url.searchParams.delete("story");
+    }
+
+    window.history.replaceState({}, "", url);
+  }
+
+  function renderWeekSelector() {
+    if (!selector) return;
+
+    selector.innerHTML = "";
+
+    weeks.forEach((week, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `spotlight-week-btn ${activeWeek === week ? "active" : ""}`;
+      button.textContent = index === 0 ? "Latest" : formatWeekLabel(week).replace("Week of ", "");
+      button.setAttribute("aria-pressed", activeWeek === week ? "true" : "false");
+
+      button.onclick = () => {
+        activeWeek = week;
+        setUrl(activeWeek);
+        renderWeekSelector();
+        renderWeek();
+      };
+
+      selector.appendChild(button);
+    });
+  }
+
+  function renderWeek() {
+    const weekStories = weekMap.get(activeWeek) || [];
+
+    if (heading) heading.textContent = formatWeekLabel(activeWeek);
+    if (count) {
+      count.textContent = `${weekStories.length} stor${weekStories.length === 1 ? "y" : "ies"} this week`;
+    }
+
+    grid.innerHTML = "";
+
+    weekStories.forEach((story) => {
+      const autoExpanded = requestedStory && story.slug === requestedStory;
+      const card = document.createElement("article");
+      card.className = "people-story-card";
+      card.dataset.storySlug = story.slug || "";
+      card.innerHTML = storyCardMarkup(story, autoExpanded);
+
+      const toggle = card.querySelector(".people-story-toggle");
+      const expanded = card.querySelector(".people-story-expanded");
+      const preview = card.querySelector(".people-story-preview");
+
+      if (autoExpanded) {
+        card.classList.add("expanded");
+        preview.hidden = true;
+      }
+
+      toggle.onclick = () => {
+        const isExpanded = card.classList.toggle("expanded");
+        toggle.setAttribute("aria-expanded", isExpanded ? "true" : "false");
+        toggle.textContent = isExpanded ? "Show less ↑" : "Read full story ↓";
+        expanded.hidden = !isExpanded;
+        preview.hidden = isExpanded;
+
+        setUrl(activeWeek, isExpanded ? story.slug || "" : "");
+      };
+
+      grid.appendChild(card);
+
+      if (autoExpanded) {
+        requestAnimationFrame(() => {
+          card.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
+    });
+  }
+
+  renderWeekSelector();
+  renderWeek();
 }
 
 function formatDate(dateString) {
@@ -268,7 +431,7 @@ async function loadResources() {
 
   if (peopleGrid) {
     jobs.push(
-      fetch("./people-stories.json?v=2")
+      fetch("./people-stories.json?v=3")
         .then((response) => {
           if (!response.ok) throw new Error(`Failed to load people-stories.json: ${response.status}`);
           return response.json();
