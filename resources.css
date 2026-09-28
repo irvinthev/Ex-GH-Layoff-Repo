@@ -283,7 +283,6 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  min-height: 360px;
   padding: 26px;
   border: 1px solid #dbe5f3;
   border-radius: 20px;
@@ -569,7 +568,6 @@
    STORY MEDIA
 ===================== */
 
-.people-story-media,
 .featured-media-thumbnail {
   position: relative;
   display: block;
@@ -578,15 +576,10 @@
   background: #0f172a;
 }
 
-.people-story-media {
-  margin: -6px -6px 18px;
-}
-
 .featured-media-thumbnail {
   margin: -6px -6px 18px;
 }
 
-.people-story-media img,
 .featured-media-thumbnail img {
   display: block;
   width: 100%;
@@ -594,7 +587,6 @@
   object-fit: cover;
 }
 
-.people-story-play,
 .featured-media-play {
   position: absolute;
   left: 50%;
@@ -611,33 +603,22 @@
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.24);
 }
 
-.people-story-media:hover .people-story-play,
 .featured-media-thumbnail:hover .featured-media-play {
   transform: translate(-50%, -50%) scale(1.06);
 }
 
 
 /* =====================
-   SPOTLIGHT STORY GROUPS
+   TEXT STORY CARDS
 ===================== */
 
-.network-builder-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 620px);
-}
-
-.network-builder-card {
-  min-height: 0;
-  background: #f8fafc;
-  box-shadow: none;
+.people-story-summary {
+  margin: 0;
+  color: #475569;
+  font-size: 15px;
+  line-height: 1.7;
 }
 
 .story-primary-link {
   font-weight: 900;
-}
-
-@media (max-width: 700px) {
-  .network-builder-grid {
-    grid-template-columns: 1fr;
-  }
 }
