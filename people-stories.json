@@ -40,7 +40,9 @@
         "label": "Definitely not on the résumé",
         "text": "An unreasonable amount of brainpower goes into my workout schedule. I’ve also been told I could talk to a wall. They’re not wrong."
       }
-    ]
+    ],
+    "published_date": "2026-09-28",
+    "slug": "jill-weinstein"
   },
   {
     "name": "Paul de Lucena",
@@ -59,6 +61,8 @@
     "published": true,
     "directory_url": "index.html?search=Paul%20de%20Lucena&expand=1#directory-section",
     "kind": "talent",
-    "story_type": "written"
+    "story_type": "written",
+    "published_date": "2026-09-28",
+    "slug": "paul-de-lucena"
   }
 ]
