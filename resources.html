@@ -11,7 +11,7 @@
   />
 
   <link rel="stylesheet" href="style.css?v=guide-nav-2" />
-  <link rel="stylesheet" href="resources.css?v=4" />
+  <link rel="stylesheet" href="resources.css?v=5" />
 </head>
 
 <body class="resources-page">
@@ -35,10 +35,10 @@
   <header class="resources-hero">
     <div class="resources-shell resources-hero-inner">
       <p class="resources-kicker">Spotlight</p>
-      <h1>The people and stories behind the network.</h1>
+      <h1>Spotlight Weekly</h1>
       <p class="resources-lead">
-        Meet the people behind the spreadsheet, watch their stories, and see the coverage
-        shaping the conversation around layoffs, hiring, and what comes next.
+        Real stories from the Ex-GH community — one week at a time.
+        Different backgrounds. Different paths. Same question: what comes next?
       </p>
 
       <div class="resources-hero-actions">
@@ -51,7 +51,7 @@
   <main class="resources-shell">
 
     <section id="people-behind-network" class="resources-section people-stories-section" aria-labelledby="people-stories-title">
-      <div class="resources-section-header">
+      <div class="resources-section-header spotlight-weekly-header">
         <div>
           <p class="resources-section-kicker">People Behind the Spreadsheet</p>
           <h2 id="people-stories-title">There are people behind every row.</h2>
@@ -60,6 +60,15 @@
           Written stories about the people, experiences, and careers behind the spreadsheet.
           Stories are published only with permission.
         </p>
+      </div>
+
+      <div class="spotlight-week-controls" aria-label="Spotlight week navigation">
+        <div id="spotlightWeekSelector" class="spotlight-week-selector"></div>
+      </div>
+
+      <div class="spotlight-week-heading">
+        <h3 id="spotlightWeekHeading">Latest Spotlight</h3>
+        <p id="spotlightWeekCount"></p>
       </div>
 
       <div id="peopleStoriesGrid" class="people-stories-grid"></div>
@@ -143,6 +152,6 @@
     </div>
   </footer>
 
-  <script src="resources.js?v=5"></script>
+  <script src="resources.js?v=6"></script>
 </body>
 </html>
