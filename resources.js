@@ -238,6 +238,10 @@ async function loadResources() {
   const grid = document.getElementById("resourceGrid");
   const filters = document.getElementById("resourceFilters");
 
+  if (!grid || !filters) {
+    return;
+  }
+
   let activeCategory = "All";
 
 
