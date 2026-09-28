@@ -1,3 +1,59 @@
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function renderPeopleStories(stories) {
+  const grid = document.getElementById("peopleStoriesGrid");
+  if (!grid) return;
+
+  grid.innerHTML = "";
+
+  const published = stories.filter((story) => story.published !== false);
+
+  if (!published.length) {
+    grid.innerHTML = '<div class="empty-state">More stories coming soon.</div>';
+    return;
+  }
+
+  published.forEach((story) => {
+    const card = document.createElement("article");
+    card.className = "people-story-card";
+
+    const tags = Array.isArray(story.tags) ? story.tags : [];
+    const linkedin = story.linkedin_url
+      ? `<a class="resource-link" href="${escapeHtml(story.linkedin_url)}" target="_blank" rel="noopener noreferrer">View on LinkedIn →</a>`
+      : "";
+
+    card.innerHTML = `
+      <div class="people-story-card-top">
+        <span class="resource-series">${escapeHtml(story.series || "People Behind the Network")}</span>
+        <h3>${escapeHtml(story.name)}</h3>
+        <p class="people-story-role">${escapeHtml(story.headline || "")}</p>
+      </div>
+
+      <p class="people-story-hook">${escapeHtml(story.hook || "")}</p>
+      <p class="people-story-summary">${escapeHtml(story.summary || "")}</p>
+
+      ${tags.length ? `
+        <div class="people-story-tags">
+          ${tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}
+        </div>
+      ` : ""}
+
+      <div class="people-story-actions">
+        ${linkedin}
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+}
+
 function formatDate(dateString) {
   if (!dateString) {
     return "";
@@ -82,15 +138,27 @@ function getResourceLinkLabel(post) {
 }
 
 async function loadResources() {
-  const response = await fetch("./posts.json");
+  const [postsResponse, storiesResponse] = await Promise.all([
+    fetch("./posts.json"),
+    fetch("./people-stories.json")
+  ]);
 
-  if (!response.ok) {
+  if (!postsResponse.ok) {
     throw new Error(
-      `Failed to load posts.json: ${response.status}`
+      `Failed to load posts.json: ${postsResponse.status}`
     );
   }
 
-  const posts = await response.json();
+  if (!storiesResponse.ok) {
+    throw new Error(
+      `Failed to load people-stories.json: ${storiesResponse.status}`
+    );
+  }
+
+  const posts = await postsResponse.json();
+  const stories = await storiesResponse.json();
+
+  renderPeopleStories(stories);
 
   const grid = document.getElementById("resourceGrid");
   const filters = document.getElementById("resourceFilters");
