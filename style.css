@@ -2177,3 +2177,78 @@ select:focus {
     text-align: center;
   }
 }
+
+
+/* =====================
+   DIRECTORY CARD READABILITY
+===================== */
+
+.description-wrap {
+  min-width: 0;
+}
+
+.directory-grid .description {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
+.directory-grid .card.expanded .description {
+  display: block;
+  overflow: visible;
+  -webkit-line-clamp: unset;
+}
+
+.description-toggle {
+  appearance: none;
+  margin: 8px 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--primary);
+  font: inherit;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.description-toggle:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.description-toggle:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.22);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (max-width: 640px) {
+  .directory-grid .role {
+    font-size: 15px;
+    line-height: 1.4;
+  }
+
+  .directory-grid .candidate-context {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .directory-grid .skill-tags {
+    gap: 6px;
+    padding-top: 10px;
+  }
+
+  .directory-grid .skill-tags span {
+    padding: 4px 8px;
+    font-size: 11px;
+    line-height: 1.25;
+    white-space: normal;
+  }
+
+  .directory-grid .description {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+}
