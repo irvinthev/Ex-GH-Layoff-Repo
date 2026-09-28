@@ -50,3 +50,35 @@
   font-size: 15px;
   line-height: 1.6;
 }
+
+
+/* Integrated job-search resource library */
+.guide-library {
+  margin-top: 40px;
+  padding: 30px;
+  border: 1px solid #dbe5f3;
+  border-radius: 18px;
+  background: #f8fbff;
+}
+.guide-library h2 {
+  margin: 10px 0 8px;
+  font-size: 28px;
+  letter-spacing: -.03em;
+}
+.guide-library-intro {
+  max-width: 760px;
+  margin: 0 0 22px;
+  color: #475569;
+  line-height: 1.7;
+}
+.guide-library .resource-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 700px) {
+  .guide-library {
+    padding: 22px;
+  }
+  .guide-library .resource-grid {
+    grid-template-columns: 1fr;
+  }
+}
