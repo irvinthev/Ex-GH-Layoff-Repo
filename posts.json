@@ -6,7 +6,8 @@
     "series": "Risky Business",
     "date": "2026-03-14",
     "url": "https://www.linkedin.com/pulse/layoffs-create-short-window-where-everyone-wants-help-irvin-r58oe",
-    "featured": true
+    "featured": true,
+    "section": "playbook"
   },
   {
     "title": "It Started as a Spreadsheet",
@@ -15,7 +16,8 @@
     "series": "Origin Story",
     "date": "2026-07-31",
     "url": "https://www.linkedin.com/pulse/never-blueberries-irvin-thevaranjan-crisc-ugo7c?utm_source=share&utm_medium=member_ios&utm_campaign=share_via",
-    "featured": true
+    "featured": true,
+    "section": "spotlight"
   },
   {
     "title": "Job Tracker Template — Free Download",
@@ -24,7 +26,8 @@
     "series": "Toolkit",
     "date": "2026-05-21",
     "url": "https://www.linkedin.com/pulse/job-tracker-template-free-download-irvin-thevaranjan-crisc-xwdre?utm_source=share&utm_medium=member_ios&utm_campaign=share_via",
-    "featured": false
+    "featured": false,
+    "section": "playbook"
   },
   {
     "title": "Is Your Résumé Working?",
@@ -33,7 +36,8 @@
     "series": "The Layoff Audit",
     "url": "https://youtu.be/Sc7VfaIftmA",
     "format": "video",
-    "featured": false
+    "featured": false,
+    "section": "playbook"
   },
   {
     "title": "The Empathy Window",
@@ -42,7 +46,8 @@
     "series": "The Layoff Audit",
     "url": "https://youtu.be/S4029WM171E",
     "format": "video",
-    "featured": false
+    "featured": false,
+    "section": "playbook"
   },
   {
     "title": "Find Your People",
@@ -51,7 +56,8 @@
     "series": "The Layoff Audit",
     "url": "https://youtu.be/sOFiwyi2Xy0",
     "format": "video",
-    "featured": false
+    "featured": false,
+    "section": "playbook"
   },
   {
     "title": "The Origin Story",
@@ -60,6 +66,7 @@
     "series": "The Layoff Audit",
     "url": "https://youtu.be/ZhBev4IvK0k",
     "format": "video",
-    "featured": false
+    "featured": false,
+    "section": "spotlight"
   }
 ]
