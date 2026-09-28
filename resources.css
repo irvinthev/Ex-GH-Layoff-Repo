@@ -615,3 +615,29 @@
 .featured-media-thumbnail:hover .featured-media-play {
   transform: translate(-50%, -50%) scale(1.06);
 }
+
+
+/* =====================
+   SPOTLIGHT STORY GROUPS
+===================== */
+
+.network-builder-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 620px);
+}
+
+.network-builder-card {
+  min-height: 0;
+  background: #f8fafc;
+  box-shadow: none;
+}
+
+.story-primary-link {
+  font-weight: 900;
+}
+
+@media (max-width: 700px) {
+  .network-builder-grid {
+    grid-template-columns: 1fr;
+  }
+}
