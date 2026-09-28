@@ -622,3 +622,176 @@
 .story-primary-link {
   font-weight: 900;
 }
+
+
+/* =====================
+   SPOTLIGHT WEEKLY
+===================== */
+
+.spotlight-week-controls {
+  margin: 4px 0 26px;
+}
+
+.spotlight-week-selector {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 0 8px;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.spotlight-week-btn {
+  flex: 0 0 auto;
+  appearance: none;
+  border: 1px solid #dbe5f3;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #475569;
+  padding: 9px 14px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.spotlight-week-btn.active {
+  border-color: #2563eb;
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.spotlight-week-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 16px;
+}
+
+.spotlight-week-heading h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 24px;
+  letter-spacing: -0.025em;
+}
+
+.spotlight-week-heading p {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.people-story-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.people-story-date {
+  flex: 0 0 auto;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.people-story-preview {
+  margin-top: 18px;
+}
+
+.people-story-preview p {
+  margin: 0;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.65;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.people-story-toggle {
+  appearance: none;
+  margin: 14px 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #2563eb;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.people-story-toggle:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.people-story-expanded {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.people-story-sections {
+  display: grid;
+  gap: 18px;
+}
+
+.people-story-section h4 {
+  margin: 0 0 6px;
+  color: #111827;
+  font-size: 14px;
+}
+
+.people-story-section p {
+  margin: 0;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.people-story-card.expanded {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 700px) {
+  .spotlight-weekly-header {
+    margin-bottom: 14px;
+  }
+
+  .spotlight-week-selector {
+    margin-right: -16px;
+    padding-right: 16px;
+  }
+
+  .spotlight-week-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .spotlight-week-heading h3 {
+    font-size: 22px;
+  }
+
+  .people-story-card-top {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .people-story-date {
+    order: -1;
+  }
+
+  .people-story-hook {
+    font-size: 17px;
+  }
+
+  .people-story-card.expanded {
+    grid-column: auto;
+  }
+}
