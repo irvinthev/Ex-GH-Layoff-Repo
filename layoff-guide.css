@@ -82,3 +82,33 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Personal background / press */
+.guide-background {
+  margin-top: 40px;
+  padding: 30px;
+  border: 1px solid #dbe5f3;
+  border-radius: 18px;
+  background: #ffffff;
+}
+.guide-background h2 {
+  margin: 10px 0 8px;
+  font-size: 28px;
+  letter-spacing: -.03em;
+}
+.guide-background-intro {
+  max-width: 760px;
+  margin: 0 0 22px;
+  color: #475569;
+  line-height: 1.7;
+}
+.guide-press-card {
+  max-width: 760px;
+  min-height: 0;
+}
+@media (max-width: 700px) {
+  .guide-background {
+    padding: 22px;
+  }
+}
