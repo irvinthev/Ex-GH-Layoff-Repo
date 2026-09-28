@@ -1249,8 +1249,14 @@ async function loadDirectory() {
 
   renderDashboard();
 
-  render(people);
-  updateFilterBreadcrumb();
+  const urlSearch = new URLSearchParams(window.location.search).get("search");
+  if (urlSearch) {
+    searchBox.value = urlSearch;
+    applyFilters();
+  } else {
+    render(people);
+    updateFilterBreadcrumb();
+  }
 }
 
 
