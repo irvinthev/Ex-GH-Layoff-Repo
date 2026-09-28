@@ -7,6 +7,45 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
+function getYouTubeVideoId(url) {
+  if (!url) return "";
+
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.toLowerCase();
+
+    if (host === "youtu.be" || host.endsWith(".youtu.be")) {
+      return parsed.pathname.split("/").filter(Boolean)[0] || "";
+    }
+
+    if (host === "youtube.com" || host.endsWith(".youtube.com")) {
+      if (parsed.pathname === "/watch") {
+        return parsed.searchParams.get("v") || "";
+      }
+
+      const parts = parsed.pathname.split("/").filter(Boolean);
+      const markerIndex = parts.findIndex((part) =>
+        ["embed", "shorts", "live"].includes(part)
+      );
+
+      if (markerIndex >= 0 && parts[markerIndex + 1]) {
+        return parts[markerIndex + 1];
+      }
+    }
+  } catch {
+    return "";
+  }
+
+  return "";
+}
+
+function getYouTubeThumbnail(url) {
+  const videoId = getYouTubeVideoId(url);
+  return videoId
+    ? `https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/hqdefault.jpg`
+    : "";
+}
+
 function renderPeopleStories(stories) {
   const grid = document.getElementById("peopleStoriesGrid");
   if (!grid) return;
@@ -37,7 +76,32 @@ function renderPeopleStories(stories) {
       ? `<a class="resource-link" href="${escapeHtml(story.full_video_url)}" target="_blank" rel="noopener noreferrer">Watch full episode →</a>`
       : "";
 
+    const directoryLink = story.directory_url
+      ? `<a class="resource-link" href="${escapeHtml(story.directory_url)}">View in Talent Directory →</a>`
+      : "";
+
+    const thumbnailUrl = getYouTubeThumbnail(story.short_video_url || story.full_video_url);
+    const thumbnail = thumbnailUrl
+      ? `
+        <a
+          class="people-story-media"
+          href="${escapeHtml(story.short_video_url || story.full_video_url)}"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Watch ${escapeHtml(story.name)} on YouTube"
+        >
+          <img
+            src="${escapeHtml(thumbnailUrl)}"
+            alt="YouTube thumbnail for ${escapeHtml(story.name)}"
+            loading="lazy"
+          />
+          <span class="people-story-play" aria-hidden="true">▶</span>
+        </a>
+      `
+      : "";
+
     card.innerHTML = `
+      ${thumbnail}
       <div class="people-story-card-top">
         <span class="resource-series">${escapeHtml(story.series || "People Behind the Network")}</span>
         <h3>${escapeHtml(story.name)}</h3>
@@ -56,6 +120,7 @@ function renderPeopleStories(stories) {
       <div class="people-story-actions">
         ${shortVideo}
         ${fullVideo}
+        ${directoryLink}
         ${linkedin}
       </div>
     `;
