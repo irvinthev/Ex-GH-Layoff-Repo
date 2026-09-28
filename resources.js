@@ -53,8 +53,11 @@ function storyCardMarkup(story) {
 
   if (story.directory_url) {
     actions += `<a class="resource-link story-primary-link" href="${escapeHtml(story.directory_url)}">View in Talent Directory →</a>`;
-  } else if (story.linkedin_url) {
-    actions += `<a class="resource-link story-primary-link" href="${escapeHtml(story.linkedin_url)}" target="_blank" rel="noopener noreferrer">View on LinkedIn →</a>`;
+  }
+
+  if (story.linkedin_url) {
+    const firstName = String(story.name || "").trim().split(/\s+/)[0] || "them";
+    actions += `<a class="resource-link" href="${escapeHtml(story.linkedin_url)}" target="_blank" rel="noopener noreferrer">Connect with ${escapeHtml(firstName)} on LinkedIn →</a>`;
   }
 
   return `
