@@ -29,6 +29,14 @@ function renderPeopleStories(stories) {
       ? `<a class="resource-link" href="${escapeHtml(story.linkedin_url)}" target="_blank" rel="noopener noreferrer">View on LinkedIn →</a>`
       : "";
 
+    const shortVideo = story.short_video_url
+      ? `<a class="resource-link" href="${escapeHtml(story.short_video_url)}" target="_blank" rel="noopener noreferrer">Watch 5 min story →</a>`
+      : "";
+
+    const fullVideo = story.full_video_url
+      ? `<a class="resource-link" href="${escapeHtml(story.full_video_url)}" target="_blank" rel="noopener noreferrer">Watch full episode →</a>`
+      : "";
+
     card.innerHTML = `
       <div class="people-story-card-top">
         <span class="resource-series">${escapeHtml(story.series || "People Behind the Network")}</span>
@@ -46,6 +54,8 @@ function renderPeopleStories(stories) {
       ` : ""}
 
       <div class="people-story-actions">
+        ${shortVideo}
+        ${fullVideo}
         ${linkedin}
       </div>
     `;
