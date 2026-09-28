@@ -65,7 +65,20 @@ function storyCardMarkup(story) {
     </div>
 
     <p class="people-story-hook">${escapeHtml(story.hook || "")}</p>
-    <p class="people-story-summary">${escapeHtml(story.summary || "")}</p>
+
+    ${Array.isArray(story.story_sections) && story.story_sections.length
+      ? `
+        <div class="people-story-sections">
+          ${story.story_sections.map((section) => `
+            <section class="people-story-section">
+              <h4>${escapeHtml(section.label || "")}</h4>
+              <p>${escapeHtml(section.text || "")}</p>
+            </section>
+          `).join("")}
+        </div>
+      `
+      : `<p class="people-story-summary">${escapeHtml(story.summary || "")}</p>`
+    }
 
     ${tags.length ? `
       <div class="people-story-tags">
