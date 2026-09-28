@@ -11,7 +11,9 @@
       "Community Building"
     ],
     "linkedin_url": "https://www.linkedin.com/in/irvinthevaranjan",
-    "published": true
+    "published": true,
+    "kind": "network_builder",
+    "story_type": "written"
   },
   {
     "name": "Paul de Lucena",
@@ -28,6 +30,8 @@
     "short_video_url": "https://youtu.be/mkb8nDd0El8",
     "full_video_url": "https://youtu.be/UklMQS1J95s",
     "published": true,
-    "directory_url": "index.html?search=Paul%20de%20Lucena#directory-section"
+    "directory_url": "index.html?search=Paul%20de%20Lucena#directory-section",
+    "kind": "talent",
+    "story_type": "video"
   }
 ]
