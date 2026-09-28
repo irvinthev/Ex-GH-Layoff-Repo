@@ -1,23 +1,22 @@
 [
   {
-    "name": "Irvin Thevaranjan",
-    "series": "People Behind the Network",
-    "headline": "Technology Risk Leader | Internal Audit | Community Builder",
-    "hook": "Technology risk leader, auditor, accidental community builder, and the person whose layoff spreadsheet got seriously out of hand.",
-    "summary": "Professionally, Irvin works across technology risk, internal audit, SOX, governance, and controls. After the Grubhub layoffs, a spreadsheet of people looking for work became a larger experiment in visibility, introductions, job-search tools, and community-driven hiring. The through-line: reduce noise, increase signal, and make it easier for the right people to find one another.",
+    "name": "Jordan Example",
+    "series": "People Behind the Spreadsheet",
+    "headline": "Fictitious UAT Profile | Operations | Community",
+    "hook": "A fictional placeholder used to test how a written People Behind the Spreadsheet story looks before more real profiles are added.",
+    "summary": "Jordan is not a real directory member. This temporary UAT story exists only to test layout, copy length, tags, and the text-first story format. It will be removed once enough consented stories are available.",
     "tags": [
-      "Technology Risk",
-      "Internal Audit",
-      "Community Building"
+      "UAT Placeholder",
+      "Written Story",
+      "Not a Real Candidate"
     ],
-    "linkedin_url": "https://www.linkedin.com/in/irvinthevaranjan",
     "published": true,
-    "kind": "network_builder",
+    "kind": "placeholder",
     "story_type": "written"
   },
   {
     "name": "Paul de Lucena",
-    "series": "People Behind the Network",
+    "series": "People Behind the Spreadsheet",
     "headline": "Decision Scientist | Systems Thinker | Artist",
     "hook": "Mother Teresa. Art. Brazil. 23 years in tech. And he is still looking for work.",
     "summary": "Paul's career spans decision science, enterprise architecture, education technology, startup leadership, prison education, and art. His story is a reminder that a résumé rarely captures the full person behind it.",
@@ -32,6 +31,6 @@
     "published": true,
     "directory_url": "index.html?search=Paul%20de%20Lucena#directory-section",
     "kind": "talent",
-    "story_type": "video"
+    "story_type": "written"
   }
 ]
