@@ -252,7 +252,7 @@ async function loadResources() {
 
   if (peopleGrid) {
     jobs.push(
-      fetch("./people-stories.json")
+      fetch("./people-stories.json?v=2")
         .then((response) => {
           if (!response.ok) throw new Error(`Failed to load people-stories.json: ${response.status}`);
           return response.json();
