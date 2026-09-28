@@ -563,3 +563,55 @@
     text-align: center;
   }
 }
+
+
+/* =====================
+   STORY MEDIA
+===================== */
+
+.people-story-media,
+.featured-media-thumbnail {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #0f172a;
+}
+
+.people-story-media {
+  margin: -6px -6px 18px;
+}
+
+.featured-media-thumbnail {
+  margin: -6px -6px 18px;
+}
+
+.people-story-media img,
+.featured-media-thumbnail img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.people-story-play,
+.featured-media-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.82);
+  color: #ffffff;
+  font-size: 19px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.24);
+}
+
+.people-story-media:hover .people-story-play,
+.featured-media-thumbnail:hover .featured-media-play {
+  transform: translate(-50%, -50%) scale(1.06);
+}
