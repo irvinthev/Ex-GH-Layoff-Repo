@@ -1,17 +1,19 @@
 [
   {
-    "name": "Jordan Example",
+    "name": "Jill Weinstein",
     "series": "People Behind the Spreadsheet",
-    "headline": "Fictitious UAT Profile | Operations | Community",
-    "hook": "A fictional placeholder used to test how a written People Behind the Spreadsheet story looks before more real profiles are added.",
-    "summary": "Jordan is not a real directory member. This temporary UAT story exists only to test layout, copy length, tags, and the text-first story format. It will be removed once enough consented stories are available.",
+    "headline": "B2B Marketing | Product Marketing | Fintech / Financial Services",
+    "hook": "B2B marketer, New Yorker, dog greeter, puzzle person, and someone who still believes the best way through this job market is helping each other.",
+    "summary": "I was born and raised in Indianapolis, went south to Atlanta for school, and have now been in New York for nearly 20 years.\n\nProfessionally, I’m a B2B marketer. I’ve spent my career focusing on a deep understanding of the customer, whether that be a small micro business or a large enterprise, and how to communicate an often complex product or message clearly through email, web, paid media, events, or whatever channel gets the right message in front of the right audience at the right time.\n\nI credit my strong foundational marketing expertise to my time at American Express, and I believe those marketing principles continue to translate across industries and roles.\n\nFor my next role, I’d love to get back to my roots in fintech and financial services, ideally at a mid-sized or large company with an international footprint. I’m targeting marketing or product marketing roles, but I’m open to adjacent opportunities where the experience transfers.\n\nI’m NYC-based, prefer hybrid, but am open to remote.\n\nI think our best shot at navigating this job market is helping each other: referrals, leveraging our network, and sharing tips and tricks that work with each other.\n\nOutside of work, you'll likely find me saying hi to every dog I pass, midway through a jigsaw puzzle, or hunting down a baked good (donuts are #1).\n\nAnd one thing that definitely does not belong on my résumé: the unreasonable amount of brainpower spent on my workout schedule. I have also been told I could talk to a wall. They’re not wrong.",
     "tags": [
-      "UAT Placeholder",
-      "Written Story",
-      "Not a Real Candidate"
+      "B2B Marketing",
+      "Product Marketing",
+      "Fintech"
     ],
+    "linkedin_url": "https://www.linkedin.com/in/jill-weinstein-0192b4a/",
+    "directory_url": "index.html?search=Jill%20Weinstein#directory-section",
     "published": true,
-    "kind": "placeholder",
+    "kind": "talent",
     "story_type": "written"
   },
   {
