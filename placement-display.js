@@ -1,6 +1,6 @@
 // Presentation layer for Placement Intelligence.
-// Numeric scoring remains internal for ranking; the UI presents qualitative,
-// evidence-based signals and an expandable analysis for human review.
+// Keep one overall numeric match score for comparison, while presenting
+// category-level evidence as qualitative signals rather than pseudo-precise points.
 
 const SIGNAL_LABELS = {
   Role: "Role",
@@ -45,10 +45,10 @@ function transformScoreColumn(column) {
   const ring = column.querySelector(".score-ring");
   const band = column.querySelector(".fit-band");
   if (!ring || !band) return;
-  const internalScore = ring.querySelector("strong")?.textContent?.trim() || "";
-  ring.classList.add("internal-score");
-  ring.setAttribute("aria-hidden", "true");
-  ring.dataset.internalScore = internalScore;
+  // Preserve the single overall score as a comparative data point.
+  // Category-level point allocations are converted to qualitative signals.
+  ring.classList.add("overall-match-score");
+  ring.removeAttribute("aria-hidden");
   band.classList.add("primary-fit-band");
   column.dataset.qualitative = "true";
 }
@@ -56,7 +56,7 @@ function transformScoreColumn(column) {
 function cleanSummary(summary) {
   summary.querySelectorAll(".summary-pill").forEach((pill) => {
     const text = pill.textContent.trim().toLowerCase();
-    if (text.includes("average score") || text.includes("category weights:")) pill.remove();
+    if (text.includes("category weights:")) pill.remove();
   });
 }
 
@@ -66,7 +66,7 @@ function addExplanation(card) {
   if (!grid) return;
   const explainer = document.createElement("p");
   explainer.className = "score-explainer";
-  explainer.textContent = "Signals summarize the strength of recorded evidence. Missing evidence is not treated as proof that a candidate lacks the experience.";
+  explainer.textContent = "Overall score is a comparative match signal, not a qualification percentage. Category signals summarize the strength of recorded evidence; missing evidence is not proof that a candidate lacks the experience.";
   grid.insertAdjacentElement("afterend", explainer);
 }
 
@@ -147,7 +147,7 @@ function addDetailedAnalysis(card, index) {
       <h4>How to use this result</h4>
       <p><strong>Position around:</strong> ${strongest.length ? strongest.join(", ") : "the candidate's directly demonstrated experience"}.</p>
       <p><strong>Validate before treating as a strong match:</strong> ${weakest.length ? weakest.join(", ") : "no major category-level issue identified"}.</p>
-      <p class="analysis-note">This analysis distinguishes recorded evidence from unknowns. “Needs validation” means the current candidate record does not prove the requirement either way.</p>
+      <p class="analysis-note">The overall score is a comparative ranking signal, not the percentage of job requirements met. “Needs validation” means the current candidate record does not prove the requirement either way.</p>
     </div>`;
 
   reasonColumns.insertAdjacentElement("afterend", toggle);
