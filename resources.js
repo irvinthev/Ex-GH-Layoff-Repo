@@ -164,23 +164,45 @@ function renderPeopleStories(stories) {
 
   if (!grid) return;
 
+  const params = new URLSearchParams(window.location.search);
+  const requestedStory = (params.get("story") || "").trim();
+  const requestedPreview = (params.get("preview") || "").trim();
+  const requestedWeek = (params.get("week") || "").trim();
+
+  const previewStory = requestedPreview
+    ? stories.find((story) =>
+        story.slug === requestedPreview &&
+        story.preview === true &&
+        story.published === false
+      )
+    : null;
+
+  if (previewStory) {
+    let robots = document.querySelector('meta[name="robots"]');
+    if (!robots) {
+      robots = document.createElement("meta");
+      robots.setAttribute("name", "robots");
+      document.head.appendChild(robots);
+    }
+    robots.setAttribute("content", "noindex, nofollow, noarchive");
+    document.title = `Preview: ${previewStory.name} | TalentBot HQ`;
+  }
+
   const published = stories
     .filter((story) => story.published !== false)
     .filter((story) => story.published_date)
     .sort((a, b) => String(b.published_date).localeCompare(String(a.published_date)));
 
-  if (!published.length) {
+  const visibleStories = previewStory ? [previewStory] : published;
+
+  if (!visibleStories.length) {
     grid.innerHTML = '<div class="empty-state">More stories coming soon.</div>';
     return;
   }
 
-  const params = new URLSearchParams(window.location.search);
-  const requestedStory = (params.get("story") || "").trim();
-  const requestedWeek = (params.get("week") || "").trim();
-
   const weekMap = new Map();
 
-  published.forEach((story) => {
+  visibleStories.forEach((story) => {
     const week = getWeekStart(story.published_date);
     if (!weekMap.has(week)) weekMap.set(week, []);
     weekMap.get(week).push(story);
@@ -190,9 +212,13 @@ function renderPeopleStories(stories) {
   const latestWeek = weeks[0];
   let activeWeek = weeks.includes(requestedWeek) ? requestedWeek : latestWeek;
 
-  if (requestedStory) {
+  if (requestedStory && !previewStory) {
     const story = published.find((item) => item.slug === requestedStory);
     if (story) activeWeek = getWeekStart(story.published_date);
+  }
+
+  if (previewStory) {
+    activeWeek = getWeekStart(previewStory.published_date);
   }
 
   function setUrl(activeWeekValue, storySlug = "") {
@@ -242,11 +268,21 @@ function renderPeopleStories(stories) {
     grid.innerHTML = "";
 
     weekStories.forEach((story) => {
-      const autoExpanded = requestedStory && story.slug === requestedStory;
+      const autoExpanded = previewStory
+        ? story.slug === previewStory.slug
+        : requestedStory && story.slug === requestedStory;
       const card = document.createElement("article");
       card.className = "people-story-card";
       card.dataset.storySlug = story.slug || "";
-      card.innerHTML = storyCardMarkup(story, autoExpanded);
+      card.innerHTML = `
+        ${previewStory && story.slug === previewStory.slug ? `
+          <div class="people-story-preview-notice" role="note">
+            <strong>PREVIEW — NOT YET PUBLISHED</strong>
+            <span>This story is in review and is not part of the public Spotlight series yet.</span>
+          </div>
+        ` : ""}
+        ${storyCardMarkup(story, autoExpanded)}
+      `;
 
       const toggle = card.querySelector(".people-story-toggle");
       const expanded = card.querySelector(".people-story-expanded");
@@ -264,7 +300,9 @@ function renderPeopleStories(stories) {
         expanded.hidden = !isExpanded;
         preview.hidden = isExpanded;
 
-        setUrl(activeWeek, isExpanded ? story.slug || "" : "");
+        if (!previewStory) {
+          setUrl(activeWeek, isExpanded ? story.slug || "" : "");
+        }
       };
 
       grid.appendChild(card);
