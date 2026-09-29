@@ -795,3 +795,26 @@
     grid-column: auto;
   }
 }
+
+
+/* =====================
+   STORY PREVIEW STATUS
+===================== */
+
+.people-story-preview-notice {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0 0 20px;
+  padding: 12px 14px;
+  border: 1px solid #f59e0b;
+  border-radius: 12px;
+  background: #fffbeb;
+  color: #92400e;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.people-story-preview-notice strong {
+  letter-spacing: 0.05em;
+}
