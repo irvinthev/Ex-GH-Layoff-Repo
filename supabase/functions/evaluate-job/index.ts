@@ -7,6 +7,7 @@ import {
   prepareJobProfile,
   scoreCandidate,
 } from "./candidate-cache.ts";
+import { attachEvidenceLayers } from "./evidence-layers.ts";
 import { importJobFromUrl } from "./job-import.ts";
 
 const ALLOWED_ORIGINS = new Set([
@@ -153,10 +154,24 @@ Deno.serve(async (req: Request) => {
     const job = prepareJobProfile({ title, description, location, remoteType });
     const role = classifyRole(job, cache.roles);
     const scoringStartedAt = performance.now();
-    const matches = cache.candidates
-      .map((candidate) => scoreCandidate(candidate, role, job))
+    const scoredMatches = cache.candidates
+      .map((candidate) => scoreCandidate(candidate, role, job));
+
+    // Evidence depth is intentionally separate from fit. Missing L3 must not
+    // penalize a candidate; it only lowers confidence in the assessment.
+    const { data: evidenceRows, error: evidenceError } = await admin
+      .from("placement_candidate_cache")
+      .select("candidate_id,former_job_title,former_team,function_name,location_text,public_description,public_skills,primary_role_slug,seniority,skills,domains,evidence,candidate_preferences");
+    if (evidenceError) throw evidenceError;
+
+    const matches = attachEvidenceLayers(scoredMatches, evidenceRows ?? [])
       .sort((a, b) => b.score - a.score);
     const scoringMs = roundMs(performance.now() - scoringStartedAt);
+
+    const evidenceSummary = matches.reduce((summary, match) => {
+      summary[match.evidenceConfidence.confidence.toLowerCase() as "high" | "medium" | "low"] += 1;
+      return summary;
+    }, { high: 0, medium: 0, low: 0 });
 
     const evaluation = {
       title: title || "Untitled role",
@@ -165,8 +180,9 @@ Deno.serve(async (req: Request) => {
       location: location || null,
       remoteType: remoteType || null,
       candidateCount: matches.length,
+      evidenceSummary,
       evaluatedAt: new Date().toISOString(),
-      methodology: "Evidence-aware deterministic scoring v5; cached candidate profiles, pre-tokenized preferences, and manual review required",
+      methodology: "Evidence-aware deterministic scoring v6; L1 structured profile + L2 candidate narrative + optional L3 enriched evidence; fit and evidence confidence are separate; missing L3 does not reduce fit; manual review required",
       sourceUrl,
       sourceMode,
       importWarning,
