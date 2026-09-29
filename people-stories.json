@@ -12,7 +12,8 @@
     ],
     "linkedin_url": "https://www.linkedin.com/in/jill-weinstein-0192b4a",
     "directory_url": "index.html?search=Jill%20Weinstein&expand=1#directory-section",
-    "published": true,
+    "published": false,
+    "preview": true,
     "kind": "talent",
     "story_type": "written",
     "story_sections": [
