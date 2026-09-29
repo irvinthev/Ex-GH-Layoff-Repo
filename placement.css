@@ -82,6 +82,23 @@ button { border: 0; cursor: pointer; }
 .text-button,
 .primary-btn { min-height: 44px; display: inline-flex; align-items: center; }
 
+/* Qualitative placement display: numeric scores remain internal for ranking. */
+.score-ring.internal-score { display: none; }
+.score-column:has(.internal-score) { min-width: 108px; align-content: start; padding-top: 3px; }
+.primary-fit-band { font-size: 12px; padding: 7px 11px; text-align: center; }
+.evidence-item.qualitative-signal { min-height: 58px; align-content: center; gap: 7px; border-width: 1px; }
+.evidence-item.qualitative-signal .signal-label { display: block; color: var(--text-muted); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.evidence-item.qualitative-signal .signal-value { font-size: 14px; line-height: 1.15; }
+.evidence-item.signal-strong { background: #f0fdf4; border-color: #bbf7d0; }
+.evidence-item.signal-strong .signal-value { color: #166534; }
+.evidence-item.signal-moderate { background: #fffbeb; border-color: #fde68a; }
+.evidence-item.signal-moderate .signal-value { color: #92400e; }
+.evidence-item.signal-limited { background: #fff7ed; border-color: #fed7aa; }
+.evidence-item.signal-limited .signal-value { color: #9a3412; }
+.evidence-item.signal-unknown { background: #f8fafc; border-color: #e2e8f0; }
+.evidence-item.signal-unknown .signal-value { color: #475569; }
+.score-explainer { margin: -4px 0 14px !important; font-size: 12px; line-height: 1.45; color: var(--text-muted); }
+
 .skeleton-card { border-left-color: #e5e7eb !important; opacity: 1; animation: none; }
 .skeleton-block { border-radius: 10px; background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 37%, #f1f5f9 63%); background-size: 400% 100%; animation: shimmer 1.3s ease infinite; }
 .skeleton-ring { width: 94px; height: 94px; border-radius: 50%; }
@@ -122,7 +139,6 @@ button { border: 0; cursor: pointer; }
   .score-ring, .skeleton-ring { width: 72px; height: 72px; }
   .score-ring strong { font-size: 24px; }
 }
-
 
 .history-panel { display: grid; gap: 12px; }
 .history-panel .panel-heading { margin-bottom: 0; align-items: center; }
