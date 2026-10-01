@@ -23,6 +23,16 @@ const CONCEPT_GROUPS = [
   { label: "Cross-functional leadership", terms: ["cross functional", "stakeholder management", "multiple stakeholders", "partnering across", "executive update", "sales and engineering", "cross team collaboration"] },
   { label: "Automation", terms: ["automation", "automated", "scripting", "python"] },
   { label: "Change and enablement", terms: ["change management", "enablement", "training", "organizational change"] },
+  // Calibrated semantic groups. These intentionally map adjacent vocabulary to the
+  // same underlying career evidence without changing the scoring weights.
+  { label: "Product marketing and GTM", terms: ["product marketing", "go to market", "gtm", "positioning", "customer messaging", "sales enablement", "launch strategy", "market strategy"] },
+  { label: "Education technology", terms: ["education technology", "edtech", "higher education", "learning technology", "learning platform", "learning management system", "lms", "university", "universities", "academic technology", "student experience"] },
+  { label: "Operations execution", terms: ["operations management", "site operations", "service operations", "field operations", "frontline operations", "fulfillment", "warehouse operations", "logistics", "logistics operations", "operational performance", "operational excellence", "capacity planning", "labor allocation", "labor planning", "workforce planning", "service level", "sla", "lean", "kaizen"] },
+  { label: "Technical program delivery", terms: ["technical program manager", "technical program management", "technical program", "program management", "engineering program", "cross functional delivery", "technical delivery", "delivery management", "roadmap execution", "operating cadence"] },
+  { label: "Product strategy", terms: ["product strategy", "product roadmap", "roadmap", "product discovery", "product development", "product lifecycle", "user research"] },
+  { label: "Platform and integrations", terms: ["platform strategy", "platform product", "systems integration", "api integration", "api strategy", "interoperability", "developer platform", "connectors"] },
+  { label: "Fintech and payments", terms: ["fintech", "payments", "payment platform", "financial services", "lending", "invoicing", "digital wallet", "merchant payments"] },
+  { label: "Finance systems", terms: ["finance systems", "financial systems", "erp transformation", "workday financials", "netsuite", "record to report", "procure to pay", "financial transformation"] },
   { label: "Strategic sourcing", terms: ["strategic sourcing", "sourcing strategy", "category sourcing", "supplier sourcing", "vendor sourcing", "rfp", "rfi", "rfq"] },
   { label: "Vendor management", terms: ["vendor management", "supplier management", "vendor relationship", "supplier relationship", "vendor governance", "supplier governance"] },
   { label: "Contracts and negotiation", terms: ["contract negotiation", "commercial negotiation", "msa", "master services agreement", "statement of work", "sow", "order form", "renewal negotiation"] },
