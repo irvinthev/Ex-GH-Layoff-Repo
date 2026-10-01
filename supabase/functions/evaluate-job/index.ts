@@ -116,6 +116,110 @@ Deno.serve(async (req: Request) => {
       return json(req, { runId: run.id, createdAt: run.created_at, ...run.result_snapshot });
     }
 
+    if (action === "calibration_history") {
+      const { data: rows, error: calibrationError } = await admin
+        .from("placement_calibration_feedback")
+        .select("id,candidate_id,company,job_title,job_url,engine_version,predicted_score,fit_band,score_breakdown,recommendation_status,outcome_strength,candidate_feedback,calibration_label,observed_at,metadata,created_at,updated_at")
+        .order("created_at", { ascending: false })
+        .limit(100);
+      if (calibrationError) throw calibrationError;
+      return json(req, { rows: rows ?? [] });
+    }
+
+    if (action === "record_feedback") {
+      const candidateId = String(payload?.candidateId ?? "").trim();
+      const company = String(payload?.company ?? "").trim().slice(0, 300);
+      const jobTitle = String(payload?.jobTitle ?? "").trim().slice(0, 300);
+      const outcome = String(payload?.outcome ?? "").trim();
+      const feedback = String(payload?.candidateFeedback ?? "").trim().slice(0, 4000);
+      const observedAt = String(payload?.observedAt ?? "").trim() || new Date().toISOString();
+      const allowedOutcomes = new Set([
+        "recommended", "viewed", "interested", "applied", "recruiter_screen",
+        "hiring_manager_interview", "final_round", "offer", "accepted", "pass",
+        "rejected", "already_applied", "already_seen", "location_mismatch",
+        "wrong_level", "wrong_role", "not_interested", "pending_feedback",
+      ]);
+      if (!candidateId || !company || !jobTitle || !allowedOutcomes.has(outcome)) {
+        return json(req, { error: "candidateId, company, jobTitle, and a valid outcome are required" }, 400);
+      }
+      const outcomeStrength: Record<string, number | null> = {
+        recommended: null,
+        pending_feedback: null,
+        viewed: 20,
+        interested: 40,
+        applied: 60,
+        recruiter_screen: 65,
+        hiring_manager_interview: 70,
+        final_round: 80,
+        offer: 90,
+        accepted: 100,
+        already_applied: 55,
+        already_seen: 20,
+        pass: 0,
+        rejected: 0,
+        location_mismatch: 0,
+        wrong_level: 0,
+        wrong_role: 0,
+        not_interested: 0,
+      };
+      const label = ["applied","recruiter_screen","hiring_manager_interview","final_round","offer","accepted"].includes(outcome)
+        ? "strong_positive"
+        : outcome === "interested" || outcome === "already_applied"
+          ? "positive"
+          : ["pass","rejected","location_mismatch","wrong_level","wrong_role","not_interested"].includes(outcome)
+            ? "negative"
+            : outcome === "pending_feedback"
+              ? "pending"
+              : "neutral";
+
+      const { data: existing, error: existingError } = await admin
+        .from("placement_calibration_feedback")
+        .select("id")
+        .eq("candidate_id", candidateId)
+        .ilike("company", company)
+        .ilike("job_title", jobTitle)
+        .maybeSingle();
+      if (existingError) throw existingError;
+
+      const updatePayload = {
+        recommendation_status: outcome,
+        outcome_strength: outcomeStrength[outcome],
+        candidate_feedback: feedback || null,
+        calibration_label: label,
+        observed_at: observedAt,
+        updated_at: new Date().toISOString(),
+      };
+
+      if (existing?.id) {
+        const { data: updated, error: updateError } = await admin
+          .from("placement_calibration_feedback")
+          .update(updatePayload)
+          .eq("id", existing.id)
+          .select("*")
+          .single();
+        if (updateError) throw updateError;
+        return json(req, { row: updated });
+      }
+
+      const { data: inserted, error: insertError } = await admin
+        .from("placement_calibration_feedback")
+        .insert({
+          candidate_id: candidateId,
+          company,
+          job_title: jobTitle,
+          recommendation_status: outcome,
+          outcome_strength: outcomeStrength[outcome],
+          candidate_feedback: feedback || null,
+          calibration_label: label,
+          observed_at: observedAt,
+          metadata: { source: "admin_recorded_feedback" },
+        })
+        .select("*")
+        .single();
+      if (insertError) throw insertError;
+      return json(req, { row: inserted });
+    }
+
     let title = String(payload?.title ?? "").trim().slice(0, 300);
     let description = String(payload?.description ?? "").trim().slice(0, 50000);
     let location = String(payload?.location ?? "").trim().slice(0, 300);
@@ -182,7 +286,7 @@ Deno.serve(async (req: Request) => {
       candidateCount: matches.length,
       evidenceSummary,
       evaluatedAt: new Date().toISOString(),
-      methodology: "Evidence-aware deterministic scoring v6; L1 structured profile + L2 candidate narrative + optional L3 enriched evidence; fit and evidence confidence are separate; missing L3 does not reduce fit; manual review required",
+      methodology: "Evidence-aware deterministic scoring v7; L1 structured profile + L2 candidate narrative + optional L3 enriched evidence; fit and evidence confidence are separate; missing L3 does not reduce fit; manual review required",
       sourceUrl,
       sourceMode,
       importWarning,
