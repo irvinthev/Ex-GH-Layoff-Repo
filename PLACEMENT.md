@@ -12,7 +12,7 @@ This MVP provides a private, role-first matching workflow for the TalentBot HQ.
    - Results can be sorted (highest score, lowest score, name A-Z) and filtered to strong fits (score ≥ 80).
    - Summary pills include fit distribution, average score, and a CSV export action.
 
-No match is saved, published, or sent to a candidate in this version.
+Evaluation history is saved privately for administrators. Candidate recommendations and observed outcomes can also be recorded in `placement_calibration_feedback` for calibration. Calibration outcomes are analytics labels only: they never add candidate-specific bonuses to the fit score.
 
 ## Scoring model
 
@@ -25,7 +25,9 @@ No match is saved, published, or sent to a candidate in this version.
 | Seniority | 10 |
 | Location / work model | 10 |
 
-The matcher uses both literal signals and a controlled set of adjacent concepts, such as implementation/onboarding and workflow/process design. Verified resume evidence can support a secondary role family even when a candidate's former title differs. A stated target role alone is not treated as proof of qualification.
+The matcher uses both literal signals and controlled semantic concept groups. V7 expands equivalencies for product marketing/GTM, education technology/higher education, operations execution, technical program delivery, product strategy, platform/integrations, fintech/payments, finance systems, and the existing implementation/procurement concepts. Verified resume evidence can support a secondary role family even when a candidate's former title differs. A stated target role alone is not treated as proof of qualification.
+
+The weights and fit thresholds are unchanged. Semantic expansion improves evidence recognition rather than inflating scores.
 
 Scores are deterministic decision support. They are not hiring recommendations and always require human review. There are no candidate-specific score bonuses.
 
@@ -47,3 +49,31 @@ Add the deployed placement page to **Authentication → URL Configuration → Re
 `https://irvinthev.github.io/Ex-GH-Layoff-Repo/placement.html`
 
 For local testing, also add `http://localhost:8000/placement.html` and serve the repository with a static HTTP server.
+
+
+## Calibration feedback
+
+Observed recommendation outcomes are stored separately from candidate evidence in `placement_calibration_feedback`.
+
+Supported lifecycle states include:
+
+`recommended → viewed → interested → applied → recruiter_screen → hiring_manager_interview → final_round → offer → accepted`
+
+Negative calibration states include `pass`, `rejected`, `location_mismatch`, `wrong_level`, `wrong_role`, and `not_interested`.
+
+Outcome strength is an analysis field, not a scoring input:
+
+| Outcome | Strength |
+| --- | ---: |
+| Viewed | 20 |
+| Interested | 40 |
+| Applied | 60 |
+| Recruiter screen | 65 |
+| Hiring manager interview | 70 |
+| Final round | 80 |
+| Offer | 90 |
+| Accepted | 100 |
+
+The initial calibration dataset contains validated feedback from Jill Weinstein, Kelsey Peretti, and Elena Moilan. Paul de Lucena's two recommendations are retained as pending feedback and must not be counted as validated outcomes.
+
+Regression tests cover the semantic failure modes exposed by the first validation set, including higher-education/EdTech equivalence and transferable logistics/operations evidence.
