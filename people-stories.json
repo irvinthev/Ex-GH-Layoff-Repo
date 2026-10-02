@@ -64,22 +64,28 @@
   {
     "name": "Paul de Lucena",
     "series": "People Behind the Spreadsheet",
-    "headline": "Decision Scientist | Systems Thinker | Artist",
-    "hook": "Mother Teresa. Art. Brazil. 23 years in tech. And he is still looking for work.",
-    "summary": "Paul's career spans decision science, enterprise architecture, education technology, startup leadership, prison education, and art. His story is a reminder that a résumé rarely captures the full person behind it.",
+    "headline": "Product Strategy | Architecture | Solution Design",
+    "hook": "Why should someone hire Paul? Because Paul is hard to fit into one box on a résumé.",
+    "summary": "Paul can identify a market need, understand the end user, translate that into product and technical requirements—and then help build the thing.",
     "tags": [
-      "Decision Science",
-      "Systems Design",
-      "Technology Leadership"
+      "Product Strategy",
+      "Solutions Architecture",
+      "Technical Leadership"
     ],
     "linkedin_url": "https://www.linkedin.com/in/pdelucena",
     "short_video_url": "https://youtu.be/mkb8nDd0El8",
-    "full_video_url": "https://youtu.be/UklMQS1J95s",
+    "full_video_url": "https://youtu.be/ekFv-oJNGJA?is=HPViY9JbT3-MLBEL",
     "published": true,
     "directory_url": "index.html?search=Paul%20de%20Lucena&expand=1#directory-section",
     "kind": "talent",
     "story_type": "written",
     "published_date": "2026-09-28",
-    "slug": "paul-de-lucena"
+    "slug": "paul-de-lucena",
+    "story_sections": [
+      {
+        "label": "Why Hire Paul?",
+        "text": "Because Paul is hard to fit into one box on a résumé.\n\nHis portfolio makes that pretty clear. He’s worked across product definition, architecture, solution design, and technically complex systems, from Contactless Delivery and Owning ETAs to some of the earliest commercial implementations of Learning Tools Interoperability (LTI) at Blackboard.\n\nHe can identify a market need, understand the end user, translate that into product and technical requirements… and then actually help build the thing.\n\nPaul moves comfortably between strategy and technical implementation. But what stands out most to me is that he genuinely cares about who the technology is supposed to help.\n\nIdeally, Paul wants to work on technology with social impact. That doesn’t necessarily mean a nonprofit. Plenty of companies are building products that meaningfully improve people’s lives.\n\nAlso, somehow, while doing all of this, he still has time for art, photography, ceramics, pasta… I genuinely do not understand his resource allocation.\n\nPlenty of people can say they want to make an impact. Not many can casually say: “Here’s a childhood picture of me with Mother Teresa.” 😂\n\nIf you’re hiring a Product Manager, Technical Product Manager, Solutions Architect, or technical product leader who can bridge the gap between high-level strategy and technical implementation, you should meet Paul."
+      }
+    ]
   }
 ]
