@@ -111,6 +111,27 @@ function storyCardMarkup(story, expanded = false) {
     `
     : `<p class="people-story-summary">${escapeHtml(story.summary || "")}</p>`;
 
+  const fullVideoId = getYouTubeVideoId(story.full_video_url);
+  const episode = fullVideoId
+    ? `
+      <section class="people-story-episode" aria-label="15-minute episode">
+        <p class="people-story-episode-kicker">15-minute episode</p>
+        <h4>Meet ${escapeHtml(story.name)}</h4>
+        <div class="people-story-video">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(fullVideoId)}"
+            title="Why hire ${escapeHtml(story.name)}? — 15-minute episode"
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <a class="resource-link" href="${escapeHtml(story.full_video_url)}" target="_blank" rel="noopener noreferrer">Watch the 15-minute episode on YouTube →</a>
+      </section>
+    `
+    : "";
+
   return `
     <div class="people-story-card-top">
       <div>
@@ -152,6 +173,8 @@ function storyCardMarkup(story, expanded = false) {
           ${actions}
         </div>
       ` : ""}
+
+      ${episode}
     </div>
   `;
 }
