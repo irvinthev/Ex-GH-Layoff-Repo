@@ -95,10 +95,18 @@ function directoryToCandidateRow(person: DirectoryPerson): PlacementCandidateCac
   };
 }
 
-export function mergeDirectoryCandidates(
+export type NetworkReviewIssue = {
+  severity: "high" | "medium" | "low";
+  type: "identity_conflict" | "placement_only" | "name_fallback" | "invalid_linkedin" | "directory_duplicate";
+  candidateName: string;
+  message: string;
+  suggestedAction: string;
+};
+
+function resolveDirectoryCandidates(
   directoryPeople: DirectoryPerson[],
   enrichedRows: PlacementCandidateCacheRow[],
-): PlacementCandidateCacheRow[] {
+): { rows: PlacementCandidateCacheRow[]; review: NetworkReviewIssue[] } {
   const enrichedByLinkedIn = new Map<string, PlacementCandidateCacheRow[]>();
   const enrichedByName = new Map<string, PlacementCandidateCacheRow[]>();
 
@@ -120,34 +128,89 @@ export function mergeDirectoryCandidates(
   const usedEnrichedIds = new Set<string>();
   const seenDirectoryKeys = new Set<string>();
   const merged: PlacementCandidateCacheRow[] = [];
+  const review: NetworkReviewIssue[] = [];
 
   for (const person of directoryPeople) {
     const base = directoryToCandidateRow(person);
-    const linkedIn = normalizeLinkedInIdentity(person["LinkedIn URL"]);
+    const rawLinkedIn = clean(person["LinkedIn URL"]);
+    const linkedIn = normalizeLinkedInIdentity(rawLinkedIn);
     const name = normalizeCandidateName(person["First Name"], person["Last Name"]);
+    const displayName = `${clean(person["First Name"])} ${clean(person["Last Name"])}`.trim();
     const directoryKey = linkedIn ? `li:${linkedIn}` : `name:${name}`;
-    if (!name || seenDirectoryKeys.has(directoryKey)) continue;
+
+    if (!name) continue;
+    if (seenDirectoryKeys.has(directoryKey)) {
+      review.push({
+        severity: "high",
+        type: "directory_duplicate",
+        candidateName: displayName,
+        message: "The public directory contains more than one record resolving to the same identity key.",
+        suggestedAction: "Review the duplicate directory entries before relying on placement results.",
+      });
+      continue;
+    }
     seenDirectoryKeys.add(directoryKey);
 
     const linkedInMatches = linkedIn
       ? (enrichedByLinkedIn.get(linkedIn) ?? []).filter((row) => !usedEnrichedIds.has(row.candidate_id))
       : [];
     const nameMatches = (enrichedByName.get(name) ?? []).filter((row) => !usedEnrichedIds.has(row.candidate_id));
-    const enriched = linkedInMatches.length === 1
-      ? linkedInMatches[0]
-      : linkedInMatches.length === 0 && nameMatches.length === 1
-        ? nameMatches[0]
-        : null;
+
+    let enriched: PlacementCandidateCacheRow | null = null;
+    let usedNameFallback = false;
+
+    if (linkedInMatches.length === 1) {
+      enriched = linkedInMatches[0];
+    } else if (linkedInMatches.length > 1) {
+      review.push({
+        severity: "high",
+        type: "identity_conflict",
+        candidateName: displayName,
+        message: "Multiple enriched profiles share this LinkedIn identity.",
+        suggestedAction: "Resolve the duplicate enriched profiles before merging.",
+      });
+    } else if (nameMatches.length === 1) {
+      const candidateLinkedIn = normalizeLinkedInIdentity(nameMatches[0].linkedin_url);
+      const conflictingValidLinkedIns = Boolean(linkedIn && candidateLinkedIn && linkedIn !== candidateLinkedIn);
+      if (conflictingValidLinkedIns) {
+        review.push({
+          severity: "high",
+          type: "identity_conflict",
+          candidateName: displayName,
+          message: "First and last name match, but the directory and enriched profiles have different valid LinkedIn URLs.",
+          suggestedAction: "Confirm the correct LinkedIn identity before merging these records.",
+        });
+      } else {
+        enriched = nameMatches[0];
+        usedNameFallback = true;
+      }
+    } else if (nameMatches.length > 1) {
+      review.push({
+        severity: "high",
+        type: "identity_conflict",
+        candidateName: displayName,
+        message: "The name fallback matches more than one enriched profile.",
+        suggestedAction: "Confirm the correct person and LinkedIn URL before merging.",
+      });
+    }
 
     if (!enriched) {
       merged.push(base);
+      if (rawLinkedIn && !linkedIn) {
+        review.push({
+          severity: "low",
+          type: "invalid_linkedin",
+          candidateName: displayName,
+          message: "The directory LinkedIn value is not a stable personal /in/ URL.",
+          suggestedAction: "Replace it with the candidate's canonical LinkedIn profile URL.",
+        });
+      }
       continue;
     }
 
     usedEnrichedIds.add(enriched.candidate_id);
     merged.push({
       ...enriched,
-      // Public directory fields remain the baseline source of truth.
       first_name: base.first_name || enriched.first_name,
       last_name: base.last_name || enriched.last_name,
       former_job_title: base.former_job_title || enriched.former_job_title,
@@ -157,7 +220,6 @@ export function mergeDirectoryCandidates(
       linkedin_url: linkedIn ? base.linkedin_url : enriched.linkedin_url,
       public_description: base.public_description || enriched.public_description,
       public_skills: base.public_skills?.length ? base.public_skills : enriched.public_skills,
-      // Enrichment-only fields remain overlays; they do not create a second candidate.
       primary_role_slug: enriched.primary_role_slug,
       seniority: enriched.seniority || base.seniority,
       skills: enriched.skills,
@@ -166,15 +228,62 @@ export function mergeDirectoryCandidates(
       role_preferences: enriched.role_preferences,
       candidate_preferences: enriched.candidate_preferences,
     });
+
+    if (usedNameFallback) {
+      review.push({
+        severity: "low",
+        type: rawLinkedIn && !linkedIn ? "invalid_linkedin" : "name_fallback",
+        candidateName: displayName,
+        message: rawLinkedIn && !linkedIn
+          ? "The directory LinkedIn value is invalid, so the profile was safely matched by unique first and last name."
+          : "The directory and enriched profile were matched by unique first and last name because a LinkedIn identity was missing on one side.",
+        suggestedAction: rawLinkedIn && !linkedIn
+          ? "Replace the directory LinkedIn value with the canonical profile URL."
+          : "Add the missing canonical LinkedIn URL when convenient.",
+      });
+    }
   }
 
-  // Preserve Placement-only records until an admin resolves why they are absent
-  // from the public directory (for example, newly enriched or intentionally removed).
   for (const row of enrichedRows) {
-    if (!usedEnrichedIds.has(row.candidate_id)) merged.push(row);
+    if (usedEnrichedIds.has(row.candidate_id)) continue;
+    merged.push(row);
+    review.push({
+      severity: "medium",
+      type: "placement_only",
+      candidateName: `${row.first_name} ${row.last_name}`.trim(),
+      message: "An enriched Placement profile exists, but no public directory record currently resolves to it.",
+      suggestedAction: "Confirm whether this person should complete the directory intake, was intentionally removed, or has already been placed.",
+    });
   }
 
-  return merged;
+  const severityRank = { high: 0, medium: 1, low: 2 } as const;
+  review.sort((a, b) => severityRank[a.severity] - severityRank[b.severity] || a.candidateName.localeCompare(b.candidateName));
+  return { rows: merged, review };
+}
+
+export function mergeDirectoryCandidates(
+  directoryPeople: DirectoryPerson[],
+  enrichedRows: PlacementCandidateCacheRow[],
+): PlacementCandidateCacheRow[] {
+  return resolveDirectoryCandidates(directoryPeople, enrichedRows).rows;
+}
+
+export async function getNetworkReview(
+  admin: { from: (table: string) => { select: (columns: string) => any } },
+): Promise<{ issues: NetworkReviewIssue[]; directoryCount: number; enrichedCount: number; mergedCount: number }> {
+  const [directoryPeople, candidatesResult] = await Promise.all([
+    fetchDirectoryPeople(),
+    admin.from("placement_candidate_cache").select("*"),
+  ]);
+  if (candidatesResult.error) throw candidatesResult.error;
+  const enrichedRows = (candidatesResult.data ?? []) as PlacementCandidateCacheRow[];
+  const resolution = resolveDirectoryCandidates(directoryPeople, enrichedRows);
+  return {
+    issues: resolution.review,
+    directoryCount: directoryPeople.length,
+    enrichedCount: enrichedRows.length,
+    mergedCount: resolution.rows.length,
+  };
 }
 
 async function fetchDirectoryPeople(): Promise<DirectoryPerson[]> {
