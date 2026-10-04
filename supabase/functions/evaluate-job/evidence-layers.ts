@@ -93,6 +93,7 @@ export function attachEvidenceLayers<T extends {
     skills?: string[];
   };
   fitBand?: "Strong" | "Possible" | "Exploratory";
+  technicalSkillEvidence?: boolean;
   breakdown?: {
     roleFamily?: { score: number; max: number };
     titleSpecialty?: { score: number; max: number };
@@ -139,8 +140,9 @@ export function attachEvidenceLayers<T extends {
     const substantiveSupport = skillScore > 0 || domainScore > 0;
     const levelStrong = seniorityScore >= 8;
     const technicalSkillRequired = Boolean(options.requiresTechnicalSkillEvidence);
+    const directTechnicalEvidence = Boolean(match.technicalSkillEvidence);
     const corroborationSupported = technicalSkillRequired
-      ? skillScore > 0
+      ? directTechnicalEvidence
       : (substantiveSupport || levelStrong);
     const recommendationSupported = roleSupported && identityOrCapabilitySupported && corroborationSupported;
 
