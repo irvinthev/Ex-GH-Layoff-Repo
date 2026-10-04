@@ -622,7 +622,9 @@ export function prepareJobProfile(input: {
   const titleText = normalize(title);
   const descriptionText = normalize(description);
   const jobText = normalize(`${title} ${description}`);
-  const concepts = conceptLabels(jobText);
+  // Qualification skills/concepts must come from the job description, not merely
+  // from words in the job title. The title is still used for role classification.
+  const concepts = conceptLabels(descriptionText);
   const technicalRequirementTerms = EXPLICIT_TECHNICAL_REQUIREMENTS
     .filter((term) => includesPhrase(jobText, term));
   const requiresTechnicalSkillEvidence = technicalRequirementTerms.length > 0;
@@ -691,16 +693,21 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
           ? 6
           : Math.round(bestTitleRatio * 15);
 
+  const descriptionTokens = tokens(job.descriptionText);
   const matchedSkills = candidate.skillEntries.filter((skill) => {
-    if (includesPhrase(job.jobText, skill.normalized) || overlapRatio(skill.tokens, job.jobTextTokens) >= 0.67) {
+    if (
+      includesPhrase(job.descriptionText, skill.normalized)
+      || overlapRatio(skill.tokens, descriptionTokens) >= 0.67
+    ) {
       return true;
     }
     // Multi-word skills often contain one highly diagnostic atomic capability
-    // (e.g. "SQL Querying", "Dashboard Building"). Give that atomic capability
-    // credit without treating generic words as matches.
+    // (e.g. "SQL Querying", "Dashboard Building"). Match those capabilities
+    // against the job description only so a title such as "Data Analyst" does
+    // not manufacture evidence for "Data Analysis".
     return skill.tokens.some((token) => (
       ATOMIC_CAPABILITY_TERMS.has(token)
-      && job.jobTextTokens.includes(token)
+      && descriptionTokens.includes(token)
     ));
   }).map((skill) => skill.raw);
   const matchedConcepts = job.concepts.filter((label) => candidate.candidateConceptSet.has(label));
