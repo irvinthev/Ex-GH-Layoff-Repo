@@ -748,7 +748,11 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
     job.locationTokens,
     job.remoteType,
   );
-  const total = roleScore + titleScore + skillScore + domainScore + seniority.score + geography.score;
+  // Rank by demonstrated capability, not by validation conditions.
+  // Seniority and geography remain visible review signals but do not suppress
+  // an otherwise strong capability match.
+  const capabilityRaw = roleScore + titleScore + skillScore + domainScore;
+  const capabilityScore = Math.round((capabilityRaw / 80) * 100);
 
   const reasons: string[] = [];
   if (roleScore === 27) reasons.push("Held job title strongly aligns with the role");
@@ -771,8 +775,8 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
   else if (skillScore < 18) gaps.push("Some job responsibilities are not demonstrated explicitly in the recorded evidence");
   const missingConcepts = job.concepts.filter((label) => !candidate.candidateConceptSet.has(label));
   if (missingConcepts.length) gaps.push(`Validate: ${missingConcepts.slice(0, 3).join(", ")}`);
-  if (job.seniority && !seniority.aligned) gaps.push("Seniority alignment needs review");
-  if (!geography.aligned) gaps.push(geography.note);
+  if (job.seniority && !seniority.aligned) gaps.push("Validate role level: capability may fit, but seniority is not aligned");
+  if (!geography.aligned) gaps.push(`Validate location/work model: ${geography.note}`);
 
   return {
     candidate: {
@@ -784,8 +788,8 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
       linkedinUrl: candidate.linkedinUrl,
       skills: candidate.allSkills,
     },
-    score: total,
-    fitBand: total >= 75 ? "Strong" : total >= 55 ? "Possible" : "Exploratory",
+    score: capabilityScore,
+    fitBand: capabilityScore >= 75 ? "Strong" : capabilityScore >= 55 ? "Possible" : "Exploratory",
     technicalSkillEvidence: matchedTechnicalRequirements.length > 0,
     breakdown: {
       roleFamily: { score: roleScore, max: 30 },
