@@ -89,6 +89,7 @@ export type JobProfile = {
   location: string;
   locationTokens: string[];
   remoteType: string;
+  requiresTechnicalSkillEvidence: boolean;
 };
 
 export type CandidateMatch = {
