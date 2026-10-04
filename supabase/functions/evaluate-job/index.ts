@@ -24,7 +24,7 @@ function corsHeaders(req: Request): HeadersInit {
   const origin = req.headers.get("Origin") ?? "";
   return {
     "Access-Control-Allow-Origin": ALLOWED_ORIGINS.has(origin) ? origin : "https://irvinthev.github.io",
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-beta-token",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Vary": "Origin",
   };
@@ -50,6 +50,11 @@ function getDefaultKey(currentName: string, legacyName: string): string {
   return Deno.env.get(legacyName) ?? "";
 }
 
+async function sha256Hex(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders(req) });
   if (req.method !== "POST") return json(req, { error: "Method not allowed" }, 405);
@@ -59,25 +64,44 @@ Deno.serve(async (req: Request) => {
 
   try {
     const authHeader = req.headers.get("Authorization") ?? "";
-    const token = authHeader.replace(/^Bearer\s+/i, "");
-    if (!token) return json(req, { error: "Authentication required" }, 401);
+    const jwtToken = authHeader.replace(/^Bearer\s+/i, "");
+    const betaToken = String(req.headers.get("x-beta-token") ?? "").trim();
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
     const publishableKey = getDefaultKey("SUPABASE_PUBLISHABLE_KEYS", "SUPABASE_ANON_KEY");
     const serviceRoleKey = getDefaultKey("SUPABASE_SECRET_KEYS", "SUPABASE_SERVICE_ROLE_KEY");
     if (!supabaseUrl || !publishableKey || !serviceRoleKey) throw new Error("Function environment is incomplete");
 
-    const authClient = createClient(supabaseUrl, publishableKey, {
-      global: { headers: { Authorization: authHeader } },
-      auth: { persistSession: false, autoRefreshToken: false },
-    });
-    const { data: authData, error: authError } = await authClient.auth.getUser(token);
-    const email = String(authData.user?.email ?? "").trim().toLowerCase();
-    if (authError || !authData.user || !email) return json(req, { error: "Invalid session" }, 401);
-
     const admin = createClient(supabaseUrl, serviceRoleKey, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
+
+    let email = "";
+    let actorUserId: string | null = null;
+
+    if (betaToken) {
+      const tokenHash = await sha256Hex(betaToken);
+      const { data: betaSession, error: betaError } = await admin
+        .from("beta_sessions")
+        .select("email,expires_at")
+        .eq("token_hash", tokenHash)
+        .gt("expires_at", new Date().toISOString())
+        .maybeSingle();
+      if (betaError) throw betaError;
+      if (!betaSession) return json(req, { error: "Beta session expired. Sign in again." }, 401);
+      email = String(betaSession.email ?? "").trim().toLowerCase();
+    } else {
+      if (!jwtToken) return json(req, { error: "Authentication required" }, 401);
+      const authClient = createClient(supabaseUrl, publishableKey, {
+        global: { headers: { Authorization: authHeader } },
+        auth: { persistSession: false, autoRefreshToken: false },
+      });
+      const { data: authData, error: authError } = await authClient.auth.getUser(jwtToken);
+      email = String(authData.user?.email ?? "").trim().toLowerCase();
+      actorUserId = authData.user?.id ?? null;
+      if (authError || !authData.user || !email) return json(req, { error: "Invalid session" }, 401);
+    }
+
     const { data: allowlistEntry, error: allowlistError } = await admin
       .from("admin_allowlist")
       .select("email")
@@ -92,12 +116,15 @@ Deno.serve(async (req: Request) => {
     const action = String(payload?.action ?? "evaluate");
 
     if (action === "history") {
-      const { data: runs, error: historyError } = await admin
+      let historyQuery = admin
         .from("job_evaluation_runs")
         .select("id,title,source_url,location_text,remote_type,source_mode,methodology,role_snapshot,seniority,candidate_count,created_at")
-        .eq("actor_user_id", authData.user.id)
         .order("created_at", { ascending: false })
         .limit(25);
+      historyQuery = actorUserId
+        ? historyQuery.eq("actor_user_id", actorUserId)
+        : historyQuery.eq("actor_email", email);
+      const { data: runs, error: historyError } = await historyQuery;
       if (historyError) throw historyError;
       return json(req, { runs: runs ?? [] });
     }
@@ -105,12 +132,14 @@ Deno.serve(async (req: Request) => {
     if (action === "history_detail") {
       const runId = String(payload?.runId ?? "").trim();
       if (!runId) return json(req, { error: "Run ID is required" }, 400);
-      const { data: run, error: runError } = await admin
+      let runQuery = admin
         .from("job_evaluation_runs")
         .select("id,result_snapshot,created_at")
-        .eq("id", runId)
-        .eq("actor_user_id", authData.user.id)
-        .maybeSingle();
+        .eq("id", runId);
+      runQuery = actorUserId
+        ? runQuery.eq("actor_user_id", actorUserId)
+        : runQuery.eq("actor_email", email);
+      const { data: run, error: runError } = await runQuery.maybeSingle();
       if (runError) throw runError;
       if (!run) return json(req, { error: "Evaluation run not found" }, 404);
       return json(req, { runId: run.id, createdAt: run.created_at, ...run.result_snapshot });
@@ -300,7 +329,8 @@ Deno.serve(async (req: Request) => {
         admin
           .from("job_evaluation_runs")
           .insert({
-            actor_user_id: authData.user.id,
+            actor_user_id: actorUserId,
+            actor_email: email,
             title: evaluation.title,
             source_url: sourceUrl,
             location_text: evaluation.location,
@@ -315,26 +345,28 @@ Deno.serve(async (req: Request) => {
           .then(({ error }) => {
             if (error) console.error("Could not save evaluation history", error);
           }),
-        admin
-          .from("evaluation_metrics")
-          .insert({
-            actor_user_id: authData.user.id,
-            title: evaluation.title,
-            source_url: sourceUrl,
-            source_mode: evaluation.sourceMode,
-            role_slug: evaluation.role?.slug ?? null,
-            cache_status: cacheMetrics.cacheStatus,
-            cache_load_ms: cacheMetrics.loadMs,
-            database_query_ms: cacheMetrics.databaseQueryMs,
-            scoring_ms: scoringMs,
-            total_duration_ms: totalDurationMs,
-            candidate_count: evaluation.candidateCount,
-            cached_candidate_count: cacheMetrics.candidateCount,
-            cache_loaded_at: cacheMetrics.loadedAt,
-          })
-          .then(({ error }) => {
-            if (error) console.error("Could not save evaluation metrics", error);
-          }),
+        actorUserId
+          ? admin
+              .from("evaluation_metrics")
+              .insert({
+                actor_user_id: actorUserId,
+                title: evaluation.title,
+                source_url: sourceUrl,
+                source_mode: evaluation.sourceMode,
+                role_slug: evaluation.role?.slug ?? null,
+                cache_status: cacheMetrics.cacheStatus,
+                cache_load_ms: cacheMetrics.loadMs,
+                database_query_ms: cacheMetrics.databaseQueryMs,
+                scoring_ms: scoringMs,
+                total_duration_ms: totalDurationMs,
+                candidate_count: evaluation.candidateCount,
+                cached_candidate_count: cacheMetrics.candidateCount,
+                cache_loaded_at: cacheMetrics.loadedAt,
+              })
+              .then(({ error }) => {
+                if (error) console.error("Could not save evaluation metrics", error);
+              })
+          : Promise.resolve(),
       ];
       await Promise.allSettled(writes);
     })());
