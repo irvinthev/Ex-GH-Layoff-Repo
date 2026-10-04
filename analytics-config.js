@@ -7,6 +7,6 @@
  * IMPORTANT: analytics must never be required for a user action to succeed.
  */
 window.TALENT_ANALYTICS_CONFIG = Object.freeze({
-  gaMeasurementId: "",
+  gaMeasurementId: "G-XGPHY85PF5",
   cloudflareToken: ""
 });
