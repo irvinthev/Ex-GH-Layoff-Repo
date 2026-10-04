@@ -303,7 +303,9 @@ Deno.serve(async (req: Request) => {
       .select("candidate_id,former_job_title,former_team,function_name,location_text,public_description,public_skills,primary_role_slug,seniority,skills,domains,evidence,candidate_preferences");
     if (evidenceError) throw evidenceError;
 
-    const matches = attachEvidenceLayers(scoredMatches, evidenceRows ?? [])
+    const matches = attachEvidenceLayers(scoredMatches, evidenceRows ?? [], {
+      requiresTechnicalSkillEvidence: job.requiresTechnicalSkillEvidence,
+    })
       .sort((a, b) => b.score - a.score);
     const scoringMs = roundMs(performance.now() - scoringStartedAt);
 
@@ -321,7 +323,7 @@ Deno.serve(async (req: Request) => {
       candidateCount: matches.length,
       evidenceSummary,
       evaluatedAt: new Date().toISOString(),
-      methodology: "Evidence-aware deterministic scoring v8; numeric score remains a comparative fit signal; recommendation bands require corroborating evidence beyond role/title similarity; L1 structured profile + L2 candidate narrative + optional L3 enriched evidence; missing enrichment is not treated as a qualification gap; manual review required",
+      methodology: "Evidence-aware deterministic scoring v9; numeric score remains a comparative fit signal; recommendation bands require corroborating evidence beyond role/title similarity; explicitly technical roles require direct technical skill evidence for Possible/Strong; L1 structured profile + L2 candidate narrative + optional L3 enriched evidence; missing enrichment is not treated as proof of missing capability; manual review required",
       sourceUrl,
       sourceMode,
       importWarning,
