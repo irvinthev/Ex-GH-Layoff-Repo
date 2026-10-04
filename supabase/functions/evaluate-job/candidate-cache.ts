@@ -358,7 +358,16 @@ const EXPLICIT_TECHNICAL_REQUIREMENTS = [
 const ATOMIC_CAPABILITY_TERMS = new Set([
   ...EXPLICIT_TECHNICAL_REQUIREMENTS,
   "dashboard", "dashboards", "reporting", "redash", "excel", "looker", "snowflake",
-  "analytics", "analysis", "analyst", "query", "queries", "querying",
+  "analytics", "analysis", "query", "queries", "querying",
+]);
+
+// Generic occupational/seniority words describe level or job class, not specialty.
+// They must not independently create title similarity (e.g. Helpdesk Analyst vs Data Analyst).
+const GENERIC_TITLE_TOKENS = new Set([
+  "analyst", "analytic", "manager", "management", "specialist", "associate", "lead",
+  "senior", "junior", "staff", "principal", "director", "engineer", "engineering",
+  "developer", "development", "coordinator", "administrator", "consultant", "advisor",
+  "officer", "head", "intern",
 ]);
 
 let cachedCandidateData: CandidateCache | null = null;
@@ -393,6 +402,10 @@ export function tokens(value: unknown): string[] {
     unique.add(stemWord(word));
   }
   return [...unique];
+}
+
+export function titleSpecialtyTokens(value: unknown): string[] {
+  return tokens(value).filter((token) => !GENERIC_TITLE_TOKENS.has(token));
 }
 
 export function includesPhrase(text: string, phrase: string): boolean {
@@ -660,10 +673,12 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
         return phraseTokens.length >= 2 && overlapRatio(phraseTokens, candidateEvidenceTokens) >= 0.75;
       })
     : false;
-  const bestTitleRatio = candidate.candidateTitles.reduce(
-    (best, candidateTitle) => Math.max(best, overlapRatio(candidateTitle.tokens, job.titleTokens)),
-    0,
-  );
+  const jobTitleSpecialtyTokens = titleSpecialtyTokens(job.title);
+  const bestTitleRatio = candidate.candidateTitles.reduce((best, candidateTitle) => {
+    const candidateTitleSpecialtyTokens = titleSpecialtyTokens(candidateTitle.raw);
+    if (!candidateTitleSpecialtyTokens.length || !jobTitleSpecialtyTokens.length) return best;
+    return Math.max(best, overlapRatio(candidateTitleSpecialtyTokens, jobTitleSpecialtyTokens));
+  }, 0);
   const preferredTitleMatch = bestTitleRatio >= 0.5;
 
   const titleScore = bestTitleRatio >= 0.95
