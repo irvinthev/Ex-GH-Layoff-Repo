@@ -44,6 +44,73 @@ let activeSort = "score_desc";
 let activeFilter = "all";
 let showAllMatches = false;
 const DEFAULT_RESULT_LIMIT = 5;
+let spotlightProfiles = [];
+let spotlightLoadPromise = null;
+
+function normalizeLinkedInForUi(value) {
+  try {
+    const raw = String(value ?? "").trim();
+    if (!raw) return "";
+    const url = new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`);
+    const host = url.hostname.toLowerCase().replace(/^www\./, "");
+    const parts = url.pathname.split("/").filter(Boolean);
+    return host === "linkedin.com" && parts[0]?.toLowerCase() === "in" && parts[1]
+      ? `linkedin.com/in/${parts[1].toLowerCase()}`
+      : "";
+  } catch {
+    return "";
+  }
+}
+
+function normalizeNameForUi(value) {
+  return String(value ?? "").trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+async function loadSpotlightProfiles() {
+  if (spotlightLoadPromise) return spotlightLoadPromise;
+  spotlightLoadPromise = fetch("./people-stories.json?v=4")
+    .then((response) => response.ok ? response.json() : [])
+    .then((rows) => {
+      spotlightProfiles = Array.isArray(rows) ? rows.filter((row) => row?.published !== false) : [];
+      return spotlightProfiles;
+    })
+    .catch(() => {
+      spotlightProfiles = [];
+      return spotlightProfiles;
+    });
+  return spotlightLoadPromise;
+}
+
+function findSpotlightProfile(candidate) {
+  const candidateLinkedIn = normalizeLinkedInForUi(candidate?.linkedinUrl);
+  const candidateName = normalizeNameForUi(candidate?.name);
+  return spotlightProfiles.find((profile) => {
+    const profileLinkedIn = normalizeLinkedInForUi(profile?.linkedin_url);
+    if (candidateLinkedIn && profileLinkedIn) return candidateLinkedIn === profileLinkedIn;
+    return candidateName && candidateName === normalizeNameForUi(profile?.name);
+  }) || null;
+}
+
+function getProfileDepth(candidate) {
+  const spotlight = findSpotlightProfile(candidate);
+  if (spotlight) return { label: "Spotlight profile", spotlight };
+  const enriched = candidate?.id && !String(candidate.id).startsWith("directory:");
+  return { label: enriched ? "Enriched profile" : "Directory profile", spotlight: null };
+}
+
+function buildWhySummary(match) {
+  const reasons = Array.isArray(match?.reasons)
+    ? match.reasons.filter((reason) => !String(reason).toLowerCase().startsWith("evidence depth:"))
+    : [];
+  const strongReasons = reasons.filter((reason) =>
+    /direct|skills named|transferable experience|relevant domain|seniority appears aligned|remote-compatible|location appears aligned/i.test(reason)
+  );
+  const selected = strongReasons.slice(0, 3);
+  if (!selected.length) return "";
+  const lead = match.fitBand === "Strong" ? "Why Strong" : match.fitBand === "Possible" ? "Why Possible" : "Why this person surfaced";
+  return `${lead}: ${selected.join(". ")}.`;
+}
+
 
 function setStatus(element, message, kind = "") {
   if (!element) return;
@@ -83,6 +150,7 @@ function showSession(session = getBetaSession()) {
   workspace.hidden = !signedIn;
   sessionEmail.textContent = session?.email ?? "";
   if (signedIn) {
+    loadSpotlightProfiles().catch(() => {});
     loadHistory().catch(() => {
       setStatus(historyStatus, "Recent evaluations could not be loaded.", "warning");
     });
@@ -373,6 +441,14 @@ function renderMatches(data, { scrollToResults = true } = {}) {
         <div class="match-main">
           <h3>${escapeHtml(match.candidate?.name ?? "Candidate name unavailable")}</h3>
           <p class="candidate-meta">${escapeHtml(match.candidate?.formerJobTitle ?? "Role not recorded")} · ${escapeHtml(match.candidate?.location ?? "Location not recorded")}</p>
+          ${(() => {
+            const depth = getProfileDepth(match.candidate);
+            const spotlightUrl = depth.spotlight
+              ? `resources.html?story=${encodeURIComponent(depth.spotlight.slug || "")}`
+              : "";
+            return `<div class="profile-depth-row"><span class="profile-depth-badge">${escapeHtml(depth.label)}</span>${spotlightUrl ? `<a class="spotlight-link" href="${spotlightUrl}">Read Spotlight →</a>` : ""}</div>`;
+          })()}
+          ${buildWhySummary(match) ? `<p class="why-summary"><strong>${escapeHtml(buildWhySummary(match).split(":")[0])}:</strong>${escapeHtml(buildWhySummary(match).slice(buildWhySummary(match).indexOf(":") + 1))}</p>` : ""}
           <div class="evidence-grid">${breakdown}</div>
           <div class="reason-columns">
             <div class="reason-panel evidence-panel"><h4><span aria-hidden="true">✓</span> Why this person surfaced</h4>${renderList(match.reasons)}</div>
