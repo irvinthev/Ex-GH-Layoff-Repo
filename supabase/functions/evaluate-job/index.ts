@@ -51,6 +51,68 @@ function getDefaultKey(currentName: string, legacyName: string): string {
   return Deno.env.get(legacyName) ?? "";
 }
 
+function humanizeLevel(value: string | null): string {
+  const map: Record<string, string> = {
+    intern: "internship-level",
+    entry: "entry-level",
+    junior: "junior-level",
+    associate: "associate-level",
+    mid: "mid-level",
+    senior: "senior-level",
+    lead: "lead-level",
+    staff: "staff-level",
+    principal: "principal-level",
+    manager: "manager-level",
+    director: "director-level",
+    executive: "executive-level",
+    vp: "VP-level",
+  };
+  return value ? (map[value] ?? value) : "";
+}
+
+function parseJobTitleContext(rawTitle: string): { company: string | null; roleTitle: string } {
+  const normalized = rawTitle
+    .replace(/\s+\|\s+LinkedIn\s*$/i, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  const linkedIn = normalized.match(/^(.+?)\s+hiring\s+(.+?)\s+in\s+.+$/i);
+  if (linkedIn) {
+    return { company: linkedIn[1].trim(), roleTitle: linkedIn[2].trim() };
+  }
+  return { company: null, roleTitle: normalized || "this role" };
+}
+
+function buildJobBrief(job: ReturnType<typeof prepareJobProfile>, role: ReturnType<typeof classifyRole>, rawTitle: string) {
+  const { company, roleTitle } = parseJobTitleContext(rawTitle);
+  const subject = company ? `${company} is looking for` : "The company is looking for";
+  const roleFamily = role?.role_family ? ` in the ${role.role_family} family` : "";
+  const sentence1 = `${subject} a ${roleTitle}${roleFamily}.`;
+
+  const technical = [...new Set(job.technicalRequirementTerms)].slice(0, 5);
+  const concepts = [...new Set(job.concepts)]
+    .filter((label) => label !== "Data analysis and BI" || !technical.some((term) => ["sql","tableau","power bi","python"].includes(term)))
+    .slice(0, 3);
+  const focusParts: string[] = [];
+  if (technical.length) focusParts.push(`technical signals such as ${technical.join(", ")}`);
+  if (concepts.length) focusParts.push(`broader focus on ${concepts.join(", ")}`);
+  const sentence2 = focusParts.length
+    ? `The posting emphasizes ${focusParts.join(", with ")}.`
+    : "The posting emphasizes the responsibilities and capabilities described in the job description.";
+
+  const level = humanizeLevel(job.seniority);
+  const workModel = job.remoteType ? job.remoteType.toLowerCase() : "";
+  const context = [level, workModel].filter(Boolean).join(", ");
+  const sentence3 = context
+    ? `It is positioned as a ${context} role, so direct evidence against those requirements should carry the most weight.`
+    : "Direct evidence against the job requirements should carry the most weight when comparing candidates.";
+
+  return {
+    company,
+    roleTitle,
+    narrative: [sentence1, sentence2, sentence3].join(" "),
+  };
+}
+
 async function sha256Hex(value: string): Promise<string> {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
@@ -314,9 +376,11 @@ Deno.serve(async (req: Request) => {
       return summary;
     }, { high: 0, medium: 0, low: 0 });
 
+    const jobBrief = buildJobBrief(job, role, title || "Untitled role");
     const evaluation = {
       title: title || "Untitled role",
       role: role ? { slug: role.slug, functionName: role.function_name, roleFamily: role.role_family, specialty: role.specialty } : null,
+      jobBrief,
       seniority: inferSeniority(title, description),
       location: location || null,
       remoteType: remoteType || null,
