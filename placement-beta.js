@@ -13,6 +13,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 const authPanel = document.querySelector("#authPanel");
 const workspace = document.querySelector("#workspace");
 const loginForm = document.querySelector("#loginForm");
+const googleSignIn = document.querySelector("#googleSignIn");
 const authStatus = document.querySelector("#authStatus");
 const sessionEmail = document.querySelector("#sessionEmail");
 const signOutButton = document.querySelector("#signOut");
@@ -130,7 +131,31 @@ async function loadHistory() {
 
 refreshHistoryButton?.addEventListener("click", loadHistory);
 
-loginForm.addEventListener("submit", async (event) => {
+googleSignIn?.addEventListener("click", async () => {
+  setStatus(authStatus, "Opening Google sign-in…");
+  googleSignIn.disabled = true;
+  const redirectTo = new URL("placement-beta.html", window.location.href).href;
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo,
+      skipBrowserRedirect: true,
+    },
+  });
+  if (error) {
+    googleSignIn.disabled = false;
+    setStatus(authStatus, "Google sign-in is not available yet. Use the email-link fallback below.", "error");
+    return;
+  }
+  if (data?.url) {
+    window.location.assign(data.url);
+    return;
+  }
+  googleSignIn.disabled = false;
+  setStatus(authStatus, "Google sign-in could not be started. Use the email-link fallback below.", "error");
+});
+
+loginForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   setStatus(authStatus, "Sending secure link…");
   const email = new FormData(loginForm).get("email");
@@ -139,8 +164,15 @@ loginForm.addEventListener("submit", async (event) => {
     email,
     options: { emailRedirectTo: redirectTo },
   });
-  if (error) setStatus(authStatus, error.message, "error");
-  else setStatus(authStatus, "Check your email and open the sign-in link on this device.", "success");
+  if (error) {
+    const message = String(error.message ?? "");
+    const friendly = message.toLowerCase().includes("rate limit")
+      ? "Email sign-in is temporarily rate-limited. Try Google sign-in above or wait before requesting another link."
+      : message;
+    setStatus(authStatus, friendly, "error");
+  } else {
+    setStatus(authStatus, "Check your email and open the sign-in link on this device.", "success");
+  }
 });
 
 signOutButton.addEventListener("click", async () => {
