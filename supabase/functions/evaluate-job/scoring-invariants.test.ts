@@ -171,6 +171,33 @@ Deno.test("architectural invariant: generic occupational title words cannot crea
   );
 });
 
+Deno.test("architectural invariant: stronger capability evidence cannot be suppressed by seniority mismatch", () => {
+  const role = prepareRole(DATA_ANALYST_ROLE);
+  const job = dataAnalystJob();
+
+  const strongCapabilitySenior = scoreCandidate(buildCandidateProfile(candidate({
+    candidate_id: "synthetic:strong-capability-senior",
+    former_job_title: "Senior Lead Associate",
+    public_description: "Built SQL queries, Redash dashboards, KPI reporting, and operational analyses for business teams.",
+    public_skills: ["SQL Querying", "Data Analysis", "Dashboard Building"],
+    seniority: "lead",
+  })), role, job);
+
+  const weakCapabilityJunior = scoreCandidate(buildCandidateProfile(candidate({
+    candidate_id: "synthetic:weak-capability-junior",
+    former_job_title: "Junior Analyst",
+    function_name: "Operations",
+    public_description: "Supported general operations reporting and coordination.",
+    public_skills: ["Reporting"],
+    seniority: "entry",
+  })), role, job);
+
+  assert(
+    strongCapabilitySenior.score > weakCapabilityJunior.score,
+    `Strong capability evidence should outrank weaker evidence despite seniority mismatch (${strongCapabilitySenior.score} <= ${weakCapabilityJunior.score})`,
+  );
+});
+
 Deno.test("architectural invariant: explicit technical role requires named technical evidence", () => {
   const role = prepareRole(SOFTWARE_ENGINEER_ROLE);
   const job = prepareJobProfile({
