@@ -13,7 +13,6 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 const authPanel = document.querySelector("#authPanel");
 const workspace = document.querySelector("#workspace");
 const loginForm = document.querySelector("#loginForm");
-const googleSignIn = document.querySelector("#googleSignIn");
 const authStatus = document.querySelector("#authStatus");
 const sessionEmail = document.querySelector("#sessionEmail");
 const signOutButton = document.querySelector("#signOut");
@@ -32,6 +31,7 @@ const historyList = document.querySelector("#historyList");
 const historyStatus = document.querySelector("#historyStatus");
 const refreshHistoryButton = document.querySelector("#refreshHistory");
 
+const BETA_SESSION_KEY = "placement_beta_session";
 let latestPayload = null;
 let activeSort = "score_desc";
 let activeFilter = "all";
@@ -53,16 +53,45 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
-function showSession(session) {
-  const signedIn = Boolean(session?.user);
+function getBetaSession() {
+  try {
+    const raw = sessionStorage.getItem(BETA_SESSION_KEY);
+    if (!raw) return null;
+    const session = JSON.parse(raw);
+    if (!session?.token || !session?.email || !session?.expiresAt) return null;
+    if (Date.parse(session.expiresAt) <= Date.now()) {
+      sessionStorage.removeItem(BETA_SESSION_KEY);
+      return null;
+    }
+    return session;
+  } catch {
+    sessionStorage.removeItem(BETA_SESSION_KEY);
+    return null;
+  }
+}
+
+function showSession(session = getBetaSession()) {
+  const signedIn = Boolean(session?.token);
   authPanel.hidden = signedIn;
   workspace.hidden = !signedIn;
-  sessionEmail.textContent = session?.user?.email ?? "";
+  sessionEmail.textContent = session?.email ?? "";
   if (signedIn) {
     loadHistory().catch(() => {
       setStatus(historyStatus, "Recent evaluations could not be loaded.", "warning");
     });
   }
+}
+
+async function invokePlacement(body) {
+  const session = getBetaSession();
+  if (!session) {
+    showSession(null);
+    throw new Error("Beta session expired. Sign in again.");
+  }
+  return supabase.functions.invoke("evaluate-job", {
+    body,
+    headers: { "x-beta-token": session.token },
+  });
 }
 
 function formatRunDate(value) {
@@ -100,9 +129,7 @@ function renderHistory(runs) {
       const runId = button.getAttribute("data-run-id");
       if (!runId) return;
       setStatus(historyStatus, "Loading saved evaluation…");
-      const { data, error } = await supabase.functions.invoke("evaluate-job", {
-        body: { action: "history_detail", runId },
-      });
+      const { data, error } = await invokePlacement({ action: "history_detail", runId });
       if (error) {
         setStatus(historyStatus, error.message, "error");
         return;
@@ -118,9 +145,7 @@ function renderHistory(runs) {
 async function loadHistory() {
   if (!historyList || !historyStatus) return;
   setStatus(historyStatus, "Loading recent evaluations…");
-  const { data, error } = await supabase.functions.invoke("evaluate-job", {
-    body: { action: "history" },
-  });
+  const { data, error } = await invokePlacement({ action: "history" });
   if (error) {
     setStatus(historyStatus, error.message, "error");
     return;
@@ -131,57 +156,39 @@ async function loadHistory() {
 
 refreshHistoryButton?.addEventListener("click", loadHistory);
 
-googleSignIn?.addEventListener("click", async () => {
-  setStatus(authStatus, "Opening Google sign-in…");
-  googleSignIn.disabled = true;
-  const redirectTo = new URL("placement-beta.html", window.location.href).href;
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo,
-      skipBrowserRedirect: true,
-    },
-  });
-  if (error) {
-    googleSignIn.disabled = false;
-    setStatus(authStatus, "Google sign-in is not available yet. Use the email-link fallback below.", "error");
-    return;
-  }
-  if (data?.url) {
-    window.location.assign(data.url);
-    return;
-  }
-  googleSignIn.disabled = false;
-  setStatus(authStatus, "Google sign-in could not be started. Use the email-link fallback below.", "error");
-});
-
 loginForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
-  setStatus(authStatus, "Sending secure link…");
-  const email = new FormData(loginForm).get("email");
-  const redirectTo = new URL("placement-beta.html", window.location.href).href;
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: { emailRedirectTo: redirectTo },
+  setStatus(authStatus, "Checking beta access…");
+  const form = new FormData(loginForm);
+  const response = await fetch(`${SUPABASE_URL}/functions/v1/beta-auth`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": SUPABASE_PUBLISHABLE_KEY,
+    },
+    body: JSON.stringify({
+      email: String(form.get("email") ?? "").trim(),
+      password: String(form.get("password") ?? ""),
+    }),
   });
-  if (error) {
-    const message = String(error.message ?? "");
-    const friendly = message.toLowerCase().includes("rate limit")
-      ? "Email sign-in is temporarily rate-limited. Try Google sign-in above or wait before requesting another link."
-      : message;
-    setStatus(authStatus, friendly, "error");
-  } else {
-    setStatus(authStatus, "Check your email and open the sign-in link on this device.", "success");
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    setStatus(authStatus, payload?.error ?? "Beta sign-in failed.", "error");
+    return;
   }
+  sessionStorage.setItem(BETA_SESSION_KEY, JSON.stringify(payload));
+  loginForm.reset();
+  setStatus(authStatus, "");
+  showSession(payload);
 });
 
-signOutButton.addEventListener("click", async () => {
-  await supabase.auth.signOut();
+signOutButton.addEventListener("click", () => {
+  sessionStorage.removeItem(BETA_SESSION_KEY);
   resultsSection.hidden = true;
+  showSession(null);
 });
 
-supabase.auth.onAuthStateChange((_event, session) => showSession(session));
-supabase.auth.getSession().then(({ data: { session } }) => showSession(session));
+showSession();
 
 function renderList(items, emptyState = "None identified") {
   return items.length
@@ -367,7 +374,7 @@ evaluationForm.addEventListener("submit", async (event) => {
 
   const form = new FormData(evaluationForm);
   const payload = Object.fromEntries(form.entries());
-  const { data, error } = await supabase.functions.invoke("evaluate-job", { body: payload });
+  const { data, error } = await invokePlacement(payload);
 
   evaluateButton.disabled = false;
   if (error) {
