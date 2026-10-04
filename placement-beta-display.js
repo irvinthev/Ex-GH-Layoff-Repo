@@ -66,6 +66,19 @@ function cleanSummary(summary) {
   });
 }
 
+function reconcileDomainSignal(card) {
+  const hasRelevantDomain = [...card.querySelectorAll(".evidence-panel li")]
+    .some((li) => /relevant domain evidence/i.test(li.textContent || ""));
+  if (!hasRelevantDomain) return;
+  const domainSignal = [...card.querySelectorAll(".qualitative-signal")]
+    .find((item) => item.querySelector(".signal-label")?.textContent === "Domain");
+  if (!domainSignal) return;
+  const value = domainSignal.querySelector(".signal-value");
+  if (value) value.textContent = "Relevant";
+  domainSignal.classList.remove("signal-moderate","signal-limited","signal-unknown");
+  domainSignal.classList.add("signal-strong");
+}
+
 function addExplanation(card) {
   if (card.querySelector(".score-explainer")) return;
   const grid = card.querySelector(".evidence-grid");
@@ -172,6 +185,7 @@ function transformPlacementDisplay(root = document) {
   root.querySelectorAll(".evidence-item").forEach(transformEvidenceItem);
   root.querySelectorAll(".score-column").forEach(transformScoreColumn);
   root.querySelectorAll(".match-card:not(.skeleton-card)").forEach((card, index) => {
+    reconcileDomainSignal(card);
     addExplanation(card);
     addDetailedAnalysis(card, index);
   });
