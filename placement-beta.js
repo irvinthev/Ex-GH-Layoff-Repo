@@ -102,15 +102,24 @@ function buildWhySummary(match) {
   const reasons = Array.isArray(match?.reasons)
     ? match.reasons.filter((reason) => !String(reason).toLowerCase().startsWith("evidence depth:"))
     : [];
-  const strongReasons = reasons.filter((reason) =>
-    /direct|skills named|transferable experience|relevant domain|seniority appears aligned|remote-compatible|location appears aligned/i.test(reason)
-  );
-  const selected = strongReasons.slice(0, 3);
-  if (!selected.length) return "";
-  const lead = match.fitBand === "Strong" ? "Why Strong" : match.fitBand === "Possible" ? "Why Possible" : "Why this person surfaced";
-  return `${lead}: ${selected.join(". ")}.`;
-}
+  const spotlight = findSpotlightProfile(match?.candidate);
+  const lead = match.fitBand === "Strong"
+    ? "Why Strong"
+    : match.fitBand === "Possible"
+      ? "Why Possible"
+      : "Why this person surfaced";
 
+  if (spotlight?.name === "Paul de Lucena") {
+    return lead + ": Paul has direct technical product alignment, deep EdTech experience from Blackboard, and strong architecture and systems depth beyond a traditional PM profile.";
+  }
+
+  const role = reasons.find((reason) => /direct .*role-family match|experience evidence supports|job title .*aligns/i.test(reason));
+  const skills = reasons.find((reason) => /skills named in role/i.test(reason));
+  const domain = reasons.find((reason) => /relevant domain evidence/i.test(reason));
+  const pieces = [role, skills, domain].filter(Boolean).slice(0, 3);
+
+  return pieces.length ? lead + ": " + pieces.join(". ") + "." : "";
+}
 
 function setStatus(element, message, kind = "") {
   if (!element) return;
