@@ -78,7 +78,13 @@ export function summarizeEvidenceLayers(row: CandidateEvidenceRow | null | undef
 }
 
 export function attachEvidenceLayers<T extends {
-  candidate?: { id?: string | null };
+  candidate?: {
+    id?: string | null;
+    formerJobTitle?: string | null;
+    functionName?: string | null;
+    location?: string | null;
+    skills?: string[];
+  };
   reasons?: string[];
 }>(
   matches: T[],
@@ -92,7 +98,13 @@ export function attachEvidenceLayers<T extends {
 
   return matches.map((match) => {
     const id = String(match.candidate?.id ?? "").trim();
-    const evidenceConfidence = evidenceByCandidate.get(id) ?? summarizeEvidenceLayers(null);
+    const evidenceConfidence = evidenceByCandidate.get(id) ?? summarizeEvidenceLayers({
+      candidate_id: id,
+      former_job_title: match.candidate?.formerJobTitle ?? null,
+      function_name: match.candidate?.functionName ?? null,
+      location_text: match.candidate?.location ?? null,
+      public_skills: match.candidate?.skills ?? [],
+    });
     return {
       ...match,
       evidenceConfidence,
