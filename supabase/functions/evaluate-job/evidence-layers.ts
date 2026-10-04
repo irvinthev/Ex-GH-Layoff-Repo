@@ -105,6 +105,7 @@ export function attachEvidenceLayers<T extends {
 }>(
   matches: T[],
   rows: CandidateEvidenceRow[],
+  options: { requiresTechnicalSkillEvidence?: boolean } = {},
 ): Array<T & { evidenceConfidence: EvidenceLayerSummary; evidenceAssessment: MatchEvidenceAssessment }> {
   const evidenceByCandidate = new Map<string, EvidenceLayerSummary>();
   for (const row of rows) {
@@ -135,7 +136,11 @@ export function attachEvidenceLayers<T extends {
     const titleSupported = titleScore >= 10;
     const substantiveSupport = skillScore > 0 || domainScore > 0;
     const levelStrong = seniorityScore >= 8;
-    const recommendationSupported = roleSupported && titleSupported && (substantiveSupport || levelStrong);
+    const technicalSkillRequired = Boolean(options.requiresTechnicalSkillEvidence);
+    const corroborationSupported = technicalSkillRequired
+      ? skillScore > 0
+      : (substantiveSupport || levelStrong);
+    const recommendationSupported = roleSupported && titleSupported && corroborationSupported;
 
     const originalBand = match.fitBand ?? "Exploratory";
     const adjustedBand = originalBand === "Strong"
@@ -154,9 +159,13 @@ export function attachEvidenceLayers<T extends {
       strength,
       bandAdjusted,
       note: recommendationSupported
-        ? "Recommendation is supported by role/title alignment plus corroborating skill, domain, or level evidence."
+        ? technicalSkillRequired
+          ? "Recommendation is supported by role/title alignment plus direct technical skill evidence."
+          : "Recommendation is supported by role/title alignment plus corroborating skill, domain, or level evidence."
         : roleSupported && titleSupported
-          ? "Role/title alignment is present, but corroborating skill, domain, or level evidence is limited."
+          ? technicalSkillRequired
+            ? "Role/title alignment is present, but the current profile does not evidence a technical skill explicitly required by this role."
+            : "Role/title alignment is present, but corroborating skill, domain, or level evidence is limited."
           : "Current evidence is too thin for a higher-confidence recommendation.",
     };
 
