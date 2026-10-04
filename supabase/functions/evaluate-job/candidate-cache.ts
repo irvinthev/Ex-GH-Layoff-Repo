@@ -694,29 +694,44 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
           : Math.round(bestTitleRatio * 15);
 
   const descriptionTokens = tokens(job.descriptionText);
-  const matchedSkills = candidate.skillEntries.filter((skill) => {
+  const matchedSkillEntries = candidate.skillEntries.filter((skill) => {
     if (
       includesPhrase(job.descriptionText, skill.normalized)
       || overlapRatio(skill.tokens, descriptionTokens) >= 0.67
     ) {
       return true;
     }
-    // Multi-word skills often contain one highly diagnostic atomic capability
-    // (e.g. "SQL Querying", "Dashboard Building"). Match those capabilities
-    // against the job description only so a title such as "Data Analyst" does
-    // not manufacture evidence for "Data Analysis".
     return skill.tokens.some((token) => (
       ATOMIC_CAPABILITY_TERMS.has(token)
       && descriptionTokens.includes(token)
     ));
-  }).map((skill) => skill.raw);
-  const matchedConcepts = job.concepts.filter((label) => candidate.candidateConceptSet.has(label));
+  });
+
+  const matchedSkills = matchedSkillEntries.map((skill) => skill.raw);
   const matchedTechnicalRequirements = job.technicalRequirementTerms.filter((term) => (
     includesPhrase(candidate.evidenceNormalized, term)
   ));
-  const directSkillPoints = Math.min(16, matchedSkills.length * 4);
-  const conceptPoints = Math.min(4, matchedConcepts.length * 2);
-  const skillScore = Math.min(20, directSkillPoints + conceptPoints);
+  const matchedTechnicalSet = new Set(matchedTechnicalRequirements.map((term) => normalize(term)));
+
+  // Core requirement evidence must be anchored to a diagnostic capability or
+  // an explicit technical requirement in the JD. Exact-but-incidental phrases
+  // may be surfaced as context, but they receive only minimal scoring credit.
+  const coreSkillEntries = matchedSkillEntries.filter((skill) => (
+    skill.tokens.some((token) => (
+      ATOMIC_CAPABILITY_TERMS.has(token)
+      && descriptionTokens.includes(token)
+    ))
+    || [...matchedTechnicalSet].some((term) => (
+      includesPhrase(skill.normalized, term)
+      || includesPhrase(candidate.evidenceNormalized, term)
+    ))
+  ));
+  const contextualSkillEntries = matchedSkillEntries.filter((skill) => !coreSkillEntries.includes(skill));
+  const matchedConcepts = job.concepts.filter((label) => candidate.candidateConceptSet.has(label));
+
+  const coreSkillPoints = Math.min(20, coreSkillEntries.length * 6);
+  const contextualSkillPoints = Math.min(2, contextualSkillEntries.length);
+  const skillScore = Math.min(20, coreSkillPoints + contextualSkillPoints);
 
   // Capability evidence can establish role-family relevance even when the
   // candidate's organizational title/function obscures the work they actually did.
@@ -740,9 +755,8 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
           : 0;
 
   const matchedDomains = candidate.domainEntries.filter((domain) => (
-    includesPhrase(job.jobText, domain.normalized)
-    || overlapRatio(domain.tokens, job.jobTextTokens) >= 0.67
-    || domain.concepts.some((label) => job.conceptSet.has(label))
+    includesPhrase(job.descriptionText, domain.normalized)
+    || overlapRatio(domain.tokens, descriptionTokens) >= 0.67
   )).map((domain) => domain.raw);
   const domainScore = Math.min(15, matchedDomains.length * 4);
 
@@ -766,9 +780,10 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
   else if (roleScore === 24 && preferredTitleMatch) reasons.push("Held job title aligns with the role");
   else if (roleScore === 24 && role) reasons.push(`Experience evidence supports ${role.role_family}`);
   else if (roleScore === 18 && role) reasons.push(`Related ${role.function_name} function`);
-  if (matchedSkills.length) reasons.push(`Skills named in role: ${matchedSkills.slice(0, 3).join(", ")}`);
+  if (coreSkillEntries.length) reasons.push(`Core skills evidenced: ${coreSkillEntries.slice(0, 3).map((skill) => skill.raw).join(", ")}`);
+  if (contextualSkillEntries.length) reasons.push(`Contextual overlap: ${contextualSkillEntries.slice(0, 2).map((skill) => skill.raw).join(", ")}`);
   if (matchedTechnicalRequirements.length) reasons.push(`Technical requirement evidence: ${matchedTechnicalRequirements.slice(0, 3).join(", ")}`);
-  if (matchedConcepts.length) reasons.push(`Transferable experience: ${matchedConcepts.slice(0, 4).join(", ")}`);
+  if (matchedConcepts.length) reasons.push(`Transferable context: ${matchedConcepts.slice(0, 4).join(", ")}`);
   if (matchedDomains.length) reasons.push(`Relevant domain evidence: ${matchedDomains.slice(0, 2).join(", ")}`);
   if (seniority.score === 10) reasons.push("Seniority appears aligned");
   else if (seniority.score === 7) reasons.push("Seniority is adjacent to the role level");
