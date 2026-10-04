@@ -346,6 +346,14 @@ const SENIORITY_RANK: Record<string, number> = {
   vp: 6,
 };
 
+
+const EXPLICIT_TECHNICAL_REQUIREMENTS = [
+  "java", "python", "javascript", "typescript", "react", "angular", "node.js", "nodejs",
+  "c#", ".net", "kotlin", "scala", "rust", "ruby", "php", "sql", "tableau", "power bi",
+  "aws", "azure", "gcp", "kubernetes", "docker", "terraform", "spring", "spring boot",
+  "microservices", "backend", "back end", "frontend", "front end", "full stack",
+] as const;
+
 let cachedCandidateData: CandidateCache | null = null;
 let cacheLoadPromise: Promise<{ cache: CandidateCache; databaseQueryMs: number }> | null = null;
 
@@ -592,6 +600,8 @@ export function prepareJobProfile(input: {
   const descriptionText = normalize(description);
   const jobText = normalize(`${title} ${description}`);
   const concepts = conceptLabels(jobText);
+  const requiresTechnicalSkillEvidence = EXPLICIT_TECHNICAL_REQUIREMENTS
+    .some((term) => includesPhrase(jobText, term));
   return {
     title,
     description,
@@ -606,6 +616,7 @@ export function prepareJobProfile(input: {
     location: input.location.trim(),
     locationTokens: tokens(input.location),
     remoteType: input.remoteType.trim(),
+    requiresTechnicalSkillEvidence,
   };
 }
 
@@ -701,7 +712,8 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
   if (matchedSkills.length) reasons.push(`Skills named in role: ${matchedSkills.slice(0, 3).join(", ")}`);
   if (matchedConcepts.length) reasons.push(`Transferable experience: ${matchedConcepts.slice(0, 4).join(", ")}`);
   if (matchedDomains.length) reasons.push(`Relevant domain evidence: ${matchedDomains.slice(0, 2).join(", ")}`);
-  if (seniority.aligned) reasons.push("Seniority appears aligned");
+  if (seniority.score === 10) reasons.push("Seniority appears aligned");
+  else if (seniority.score === 7) reasons.push("Seniority is adjacent to the role level");
   if (geography.aligned) reasons.push(geography.note);
 
   const gaps: string[] = [];
