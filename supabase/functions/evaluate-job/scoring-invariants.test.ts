@@ -198,6 +198,29 @@ Deno.test("architectural invariant: stronger capability evidence cannot be suppr
   );
 });
 
+Deno.test("architectural invariant: job title cannot manufacture skill evidence", () => {
+  const role = prepareRole(DATA_ANALYST_ROLE);
+  const job = prepareJobProfile({
+    title: "Junior Data Analyst",
+    description: "Coordinate recurring operational work and communicate status updates.",
+    location: "Chicago",
+    remoteType: "Hybrid",
+  });
+
+  const candidateWithDataAnalysis = scoreCandidate(buildCandidateProfile(candidate({
+    candidate_id: "synthetic:title-only-skill",
+    public_description: "Operations associate.",
+    public_skills: ["Data Analysis"],
+    seniority: "entry",
+  })), role, job);
+
+  assertEqual(
+    candidateWithDataAnalysis.breakdown.skills.score,
+    0,
+    "The words Data Analyst in the job title created skill evidence not present in the description",
+  );
+});
+
 Deno.test("architectural invariant: explicit technical role requires named technical evidence", () => {
   const role = prepareRole(SOFTWARE_ENGINEER_ROLE);
   const job = prepareJobProfile({
