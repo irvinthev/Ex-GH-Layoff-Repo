@@ -47,15 +47,21 @@
       <div>
         <p class="step-label">Beta access</p>
         <h2 id="authHeading">Recruiter access</h2>
-        <p>Use your authorized email and the shared beta password.</p>
+        <p>Sign in with an authorized account. Access is still controlled by the Placement Engineer allowlist.</p>
       </div>
-      <form id="loginForm" class="login-form beta-password-form">
-        <label for="email">Email</label>
-        <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
-        <label for="betaPassword">Beta password</label>
-        <input id="betaPassword" name="password" type="password" autocomplete="current-password" required placeholder="Beta password" />
-        <button class="primary-btn" type="submit">Enter Placement Engineer</button>
-      </form>
+      <div class="oauth-login">
+        <button id="googleSignIn" class="primary-btn google-signin-btn" type="button">Continue with Google</button>
+      </div>
+      <details class="email-fallback">
+        <summary>Use email link instead</summary>
+        <form id="loginForm" class="login-form">
+          <label for="email">Email</label>
+          <div class="inline-form">
+            <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+            <button class="secondary-btn" type="submit">Send sign-in link</button>
+          </div>
+        </form>
+      </details>
       <p id="authStatus" class="status-message" role="status"></p>
     </section>
 
@@ -168,7 +174,7 @@
     </div>
   </footer>
 
-  <script type="module" src="placement-beta-password.js?v=1"></script>
+  <script type="module" src="placement-beta.js?v=3"></script>
   <script type="module" src="placement-beta-display.js?v=2"></script>
   <script src="analytics-config.js"></script>
   <script src="analytics.js"></script>
