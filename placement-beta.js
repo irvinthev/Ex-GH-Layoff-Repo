@@ -21,6 +21,7 @@ const evaluateButton = document.querySelector("#evaluateButton");
 const evaluationStatus = document.querySelector("#evaluationStatus");
 const resultsSection = document.querySelector("#resultsSection");
 const evaluationSummary = document.querySelector("#evaluationSummary");
+const jobBrief = document.querySelector("#jobBrief");
 const results = document.querySelector("#results");
 const jobUrlInput = document.querySelector("#jobUrl");
 const jobDescription = document.querySelector("#jobDescription");
@@ -398,6 +399,20 @@ function renderLoadingState() {
 function renderMatches(data, { scrollToResults = true } = {}) {
   resultsSection.setAttribute("aria-busy", "false");
   const role = data.evaluation.role;
+  const brief = data.evaluation?.jobBrief;
+  if (jobBrief) {
+    if (brief?.narrative) {
+      jobBrief.hidden = false;
+      jobBrief.innerHTML = `
+        <span class="job-brief-kicker">JD snapshot</span>
+        <h3>What the company is looking for</h3>
+        <p>${escapeHtml(brief.narrative)}</p>
+      `;
+    } else {
+      jobBrief.hidden = true;
+      jobBrief.innerHTML = "";
+    }
+  }
   const source = data.evaluation.sourceUrl
     ? `<a class="summary-pill summary-link" href="${escapeHtml(data.evaluation.sourceUrl)}" target="_blank" rel="noopener noreferrer">Open source job ↗</a>`
     : `<span class="summary-pill">Pasted description</span>`;
