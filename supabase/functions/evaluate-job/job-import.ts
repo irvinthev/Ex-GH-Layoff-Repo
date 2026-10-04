@@ -166,12 +166,19 @@ export function extractJobPostingHtml(html: string, canonicalUrl: string): Impor
     || metaContent(html, "twitter:title")
     || titleFromPage;
   const structuredDescription = htmlToText(job?.description);
+  const pageTextDescription = fallbackPageText(html);
   const metaDescription = metaContent(html, "description") || metaContent(html, "og:description");
+
+  // Meta descriptions on job platforms are often generic sharing/SEO copy
+  // ("Company hiring X on LinkedIn") rather than the actual job description.
+  // Prefer readable page body text whenever structured JobPosting data is absent.
   const description = structuredDescription.length >= 50
     ? structuredDescription
-    : metaDescription.length >= 50
-      ? metaDescription
-      : fallbackPageText(html);
+    : pageTextDescription.length >= 200
+      ? pageTextDescription
+      : metaDescription.length >= 50
+        ? metaDescription
+        : pageTextDescription;
   if (description.length < 50) throw new Error("The job page did not expose enough readable job details");
 
   const locationParts = collectAddress(job?.jobLocation);
