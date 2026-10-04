@@ -1,3 +1,4 @@
+import type { RequirementUnit } from "./qualification-evidence.ts";
 export type Role = {
   slug: string;
   function_name: string;
@@ -80,6 +81,8 @@ export type JobProfile = {
   description: string;
   titleText: string;
   descriptionText: string;
+  coreRequirements: RequirementUnit[];
+  preferredRequirements: RequirementUnit[];
   titleTokens: string[];
   jobText: string;
   jobTextTokens: string[];
@@ -106,6 +109,13 @@ export type CandidateMatch = {
   score: number;
   fitBand: "Strong" | "Possible" | "Exploratory";
   technicalSkillEvidence: boolean;
+  coreCoverage: {
+    recognized: string[];
+    evidenced: string[];
+    notEvidenced: string[];
+    ratio: number | null;
+    preferredEvidenced: string[];
+  };
   breakdown: {
     roleFamily: { score: number; max: 30 };
     titleSpecialty: { score: number; max: 15 };

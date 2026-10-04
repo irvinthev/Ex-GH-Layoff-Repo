@@ -1,3 +1,4 @@
+import { CAPABILITY_UNITS, TECHNICAL_UNITS, qualificationSections, qualificationEvidence, qualificationNarrative } from "./qualification-evidence.ts";
 import type {
   CachedRole,
   CacheLoadMetrics,
@@ -348,19 +349,6 @@ const SENIORITY_RANK: Record<string, number> = {
 };
 
 
-const EXPLICIT_TECHNICAL_REQUIREMENTS = [
-  "java", "python", "javascript", "typescript", "react", "angular", "node.js", "nodejs",
-  "c#", ".net", "kotlin", "scala", "rust", "ruby", "php", "sql", "tableau", "power bi",
-  "aws", "azure", "gcp", "kubernetes", "docker", "terraform", "spring", "spring boot",
-  "microservices", "backend", "back end", "frontend", "front end", "full stack",
-] as const;
-
-const ATOMIC_CAPABILITY_TERMS = new Set([
-  ...EXPLICIT_TECHNICAL_REQUIREMENTS,
-  "dashboard", "dashboards", "reporting", "redash", "excel", "looker", "snowflake",
-  "analytics", "analysis", "query", "queries", "querying",
-]);
-
 // Generic occupational/seniority words describe level or job class, not specialty.
 // They must not independently create title similarity (e.g. Helpdesk Analyst vs Data Analyst).
 const GENERIC_TITLE_TOKENS = new Set([
@@ -380,6 +368,7 @@ function roundMs(value: number): number {
 export function normalize(value: unknown): string {
   return String(value ?? "")
     .toLowerCase()
+    .replace(/\.(?=\s|$)/g, " ")
     .replace(/[^a-z0-9+#.]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();
@@ -580,9 +569,8 @@ export function buildCandidateProfile(row: PlacementCandidateCacheRow): Candidat
     row.public_description,
     ...publicSkills,
     ...featureSkills,
-    ...domains,
-    JSON.stringify(row.evidence ?? {}),
-  ].join(" "));
+    ...qualificationEvidence(row.evidence),
+  ].map((value) => qualificationNarrative(String(value ?? ""))).join(" "));
   const candidateConcepts = conceptLabels(evidenceNormalized);
   const preferredLocations = uniqueValues([row.location_text, ...candidatePreference.preferred_locations]);
 
@@ -620,19 +608,27 @@ export function prepareJobProfile(input: {
   const title = input.title.trim();
   const description = input.description.trim();
   const titleText = normalize(title);
-  const descriptionText = normalize(description);
+  const sections = qualificationSections(description);
+  const descriptionText = normalize(sections.core);
+  const preferredText = normalize(sections.preferred);
   const jobText = normalize(`${title} ${description}`);
   // Qualification skills/concepts must come from the job description, not merely
   // from words in the job title. The title is still used for role classification.
   const concepts = conceptLabels(descriptionText);
-  const technicalRequirementTerms = EXPLICIT_TECHNICAL_REQUIREMENTS
-    .filter((term) => includesPhrase(jobText, term));
+  const coreRequirements = CAPABILITY_UNITS.filter((unit) => unit.terms.some((term) => includesPhrase(descriptionText, term)));
+  const preferredRequirements = CAPABILITY_UNITS.filter((unit) => unit.terms.some((term) => includesPhrase(preferredText, term))
+    && !coreRequirements.includes(unit));
+  const technicalRequirementTerms = TECHNICAL_UNITS
+    .filter((unit) => unit.terms.some((term) => includesPhrase(descriptionText, term)))
+    .map((unit) => unit.label);
   const requiresTechnicalSkillEvidence = technicalRequirementTerms.length > 0;
   return {
     title,
     description,
     titleText,
     descriptionText,
+    coreRequirements,
+    preferredRequirements,
     titleTokens: tokens(title),
     jobText,
     jobTextTokens: tokens(jobText),
@@ -693,54 +689,27 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
           ? 6
           : Math.round(bestTitleRatio * 15);
 
-  const descriptionTokens = tokens(job.descriptionText);
-  const matchedSkillEntries = candidate.skillEntries.filter((skill) => {
-    if (
-      includesPhrase(job.descriptionText, skill.normalized)
-      || overlapRatio(skill.tokens, descriptionTokens) >= 0.67
-    ) {
-      return true;
-    }
-    return skill.tokens.some((token) => (
-      ATOMIC_CAPABILITY_TERMS.has(token)
-      && descriptionTokens.includes(token)
-    ));
-  });
+  const evidenced = (unit: { terms: readonly string[] }) => unit.terms.some((term) => includesPhrase(candidate.evidenceNormalized, term));
+  const matchedCore = job.coreRequirements.filter(evidenced);
+  const matchedPreferred = job.preferredRequirements.filter(evidenced);
+  const matchedTechnicalRequirements = TECHNICAL_UNITS
+    .filter((unit) => job.technicalRequirementTerms.includes(unit.label) && evidenced(unit))
+    .map((unit) => unit.label);
 
-  const matchedSkills = matchedSkillEntries.map((skill) => skill.raw);
-  const matchedTechnicalRequirements = job.technicalRequirementTerms.filter((term) => (
-    includesPhrase(candidate.evidenceNormalized, term)
+  // Context never becomes core merely because SQL (or another technology)
+  // occurs elsewhere in the profile. Optional capabilities cannot score here.
+  const contextualSkillEntries = candidate.skillEntries.filter((skill) => (
+    !CAPABILITY_UNITS.some((unit) => unit.terms.some((term) => includesPhrase(skill.normalized, term)))
+    && includesPhrase(job.descriptionText, skill.normalized)
   ));
-  const matchedTechnicalSet = new Set(matchedTechnicalRequirements.map((term) => normalize(term)));
-
-  // Core requirement evidence must be anchored to a diagnostic capability or
-  // an explicit technical requirement in the JD. Exact-but-incidental phrases
-  // may be surfaced as context, but they receive only minimal scoring credit.
-  const coreSkillEntries = matchedSkillEntries.filter((skill) => (
-    skill.tokens.some((token) => (
-      ATOMIC_CAPABILITY_TERMS.has(token)
-      && descriptionTokens.includes(token)
-    ))
-    || [...matchedTechnicalSet].some((term) => (
-      includesPhrase(skill.normalized, term)
-      || includesPhrase(candidate.evidenceNormalized, term)
-    ))
-  ));
-  const contextualSkillEntries = matchedSkillEntries.filter((skill) => !coreSkillEntries.includes(skill));
   const matchedConcepts = job.concepts.filter((label) => candidate.candidateConceptSet.has(label));
-
-  const coreSkillPoints = Math.min(20, coreSkillEntries.length * 6);
-  const contextualSkillPoints = Math.min(2, contextualSkillEntries.length);
+  const coreSkillPoints = Math.min(20, matchedCore.length * 6);
+  const contextualSkillPoints = Math.min(2, new Set(contextualSkillEntries.map((skill) => skill.normalized)).size);
   const skillScore = Math.min(20, coreSkillPoints + contextualSkillPoints);
 
-  // Capability evidence can establish role-family relevance even when the
-  // candidate's organizational title/function obscures the work they actually did.
-  // Require more than a single weak keyword: either semantic role evidence plus
-  // some skill support, or multiple skill/concept signals.
-  const capabilityEvidenceMatch = (
-    (semanticEvidenceRoleMatch && skillScore >= 4)
-    || matchedSkills.length >= 2
-    || (matchedSkills.length >= 1 && matchedConcepts.length >= 1)
+  // A generic concept or two contextual labels cannot establish a role family.
+  const capabilityEvidenceMatch = matchedCore.length > 0 && (
+    semanticEvidenceRoleMatch || matchedCore.length >= 2 || matchedConcepts.length >= 1
   );
   const evidenceRoleMatch = exactEvidenceRoleMatch || capabilityEvidenceMatch;
 
@@ -754,10 +723,9 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
           ? 18
           : 0;
 
-  const matchedDomains = candidate.domainEntries.filter((domain) => (
+  const matchedDomains = [...new Map(candidate.domainEntries.filter((domain) => (
     includesPhrase(job.descriptionText, domain.normalized)
-    || overlapRatio(domain.tokens, descriptionTokens) >= 0.67
-  )).map((domain) => domain.raw);
+  )).map((domain) => [domain.normalized, domain.raw])).values()];
   const domainScore = Math.min(15, matchedDomains.length * 4);
 
   const seniority = seniorityScore(candidate.seniority, job.seniority);
@@ -780,7 +748,8 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
   else if (roleScore === 24 && preferredTitleMatch) reasons.push("Held job title aligns with the role");
   else if (roleScore === 24 && role) reasons.push(`Experience evidence supports ${role.role_family}`);
   else if (roleScore === 18 && role) reasons.push(`Related ${role.function_name} function`);
-  if (coreSkillEntries.length) reasons.push(`Core skills evidenced: ${coreSkillEntries.slice(0, 3).map((skill) => skill.raw).join(", ")}`);
+  if (matchedCore.length) reasons.push(`Core capabilities evidenced: ${matchedCore.map((unit) => unit.label).join(", ")}`);
+  if (matchedPreferred.length) reasons.push(`Preferred capabilities evidenced (not core points): ${matchedPreferred.map((unit) => unit.label).join(", ")}`);
   if (contextualSkillEntries.length) reasons.push(`Contextual overlap: ${contextualSkillEntries.slice(0, 2).map((skill) => skill.raw).join(", ")}`);
   if (matchedTechnicalRequirements.length) reasons.push(`Technical requirement evidence: ${matchedTechnicalRequirements.slice(0, 3).join(", ")}`);
   if (matchedConcepts.length) reasons.push(`Transferable context: ${matchedConcepts.slice(0, 4).join(", ")}`);
@@ -813,6 +782,13 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
     score: capabilityScore,
     fitBand: capabilityScore >= 75 ? "Strong" : capabilityScore >= 55 ? "Possible" : "Exploratory",
     technicalSkillEvidence: matchedTechnicalRequirements.length > 0,
+    coreCoverage: {
+      recognized: job.coreRequirements.map((unit) => unit.label),
+      evidenced: matchedCore.map((unit) => unit.label),
+      notEvidenced: job.coreRequirements.filter((unit) => !matchedCore.includes(unit)).map((unit) => unit.label),
+      ratio: job.coreRequirements.length ? matchedCore.length / job.coreRequirements.length : null,
+      preferredEvidenced: matchedPreferred.map((unit) => unit.label),
+    },
     breakdown: {
       roleFamily: { score: roleScore, max: 30 },
       titleSpecialty: { score: titleScore, max: 15 },
