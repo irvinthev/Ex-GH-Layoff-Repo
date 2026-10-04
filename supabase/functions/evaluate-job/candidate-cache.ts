@@ -555,7 +555,9 @@ export function buildCandidateProfile(row: PlacementCandidateCacheRow): Candidat
     rolePreferences.set(preference.role_slug, preference);
   }
   const candidatePreference = coerceCandidatePreference(row.candidate_preferences);
-  const candidateTitles = uniqueValues([row.former_job_title, ...candidatePreference.target_titles]).map(tokenizeLabel);
+  // Qualification scoring uses demonstrated/held titles only. Target titles are
+  // candidate intent and must not increase qualification fit.
+  const candidateTitles = uniqueValues([row.former_job_title]).map(tokenizeLabel);
   const allSkills = uniqueValues([...featureSkills, ...publicSkills]);
   const skillEntries = allSkills.map(tokenizeLabel);
   const domainEntries = domains.map(tokenizeLabel);
@@ -648,9 +650,6 @@ export function classifyRole(job: JobProfile, roles: CachedRole[]): CachedRole |
 }
 
 export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | null, job: JobProfile): CandidateMatch {
-  const rolePreference = role ? candidate.rolePreferences.get(role.slug) ?? null : null;
-  const targetPreference = rolePreference && rolePreference.preference !== "avoid" ? rolePreference : null;
-  const avoidedRole = rolePreference?.preference === "avoid";
   const candidateEvidenceTokens = tokens(candidate.evidenceNormalized);
   const exactEvidenceRoleMatch = role
     ? role.phrases.some((phrase) => includesPhrase(candidate.evidenceNormalized, phrase))
@@ -708,23 +707,15 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
   );
   const evidenceRoleMatch = exactEvidenceRoleMatch || capabilityEvidenceMatch;
 
-  const roleScore = avoidedRole
-    ? 0
-    : role && candidate.candidateRole === role.slug
-      ? 30
-      : preferredTitleMatch && bestTitleRatio >= 0.75
-        ? 27
-        : preferredTitleMatch
-          ? 24
-          : role && targetPreference && evidenceRoleMatch
-            ? 28
-            : role && evidenceRoleMatch
-              ? 24
-              : role && candidate.functionNameNormalized === role.normalizedFunctionName
-                ? 18
-                : role && targetPreference
-                  ? 12
-                  : 0;
+  const roleScore = preferredTitleMatch && bestTitleRatio >= 0.75
+    ? 27
+    : preferredTitleMatch
+      ? 24
+      : role && evidenceRoleMatch
+        ? 24
+        : role && candidate.functionNameNormalized === role.normalizedFunctionName
+          ? 18
+          : 0;
 
   const matchedDomains = candidate.domainEntries.filter((domain) => (
     includesPhrase(job.jobText, domain.normalized)
@@ -745,13 +736,10 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
   const total = roleScore + titleScore + skillScore + domainScore + seniority.score + geography.score;
 
   const reasons: string[] = [];
-  if (roleScore === 30 && role) reasons.push(`Direct ${role.role_family} role-family match`);
-  else if (roleScore === 28 && role) reasons.push(`Target ${role.role_family} role supported by experience evidence`);
-  else if (roleScore === 27) reasons.push("Job title strongly aligns with a candidate target title");
-  else if (roleScore === 24 && preferredTitleMatch) reasons.push("Job title aligns with a candidate target title");
+  if (roleScore === 27) reasons.push("Held job title strongly aligns with the role");
+  else if (roleScore === 24 && preferredTitleMatch) reasons.push("Held job title aligns with the role");
   else if (roleScore === 24 && role) reasons.push(`Experience evidence supports ${role.role_family}`);
   else if (roleScore === 18 && role) reasons.push(`Related ${role.function_name} function`);
-  else if (roleScore === 12 && role) reasons.push(`Candidate is open to ${role.role_family}; qualification evidence is limited`);
   if (matchedSkills.length) reasons.push(`Skills named in role: ${matchedSkills.slice(0, 3).join(", ")}`);
   if (matchedTechnicalRequirements.length) reasons.push(`Technical requirement evidence: ${matchedTechnicalRequirements.slice(0, 3).join(", ")}`);
   if (matchedConcepts.length) reasons.push(`Transferable experience: ${matchedConcepts.slice(0, 4).join(", ")}`);
@@ -762,7 +750,6 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
 
   const gaps: string[] = [];
   if (!role && !preferredTitleMatch) gaps.push("Role family could not be classified confidently");
-  else if (avoidedRole && role) gaps.push(`Candidate marked ${role.role_family} as a role to avoid`);
   else if (roleScore === 0 && role) gaps.push(`No direct evidence for ${role.role_family}`);
   else if (roleScore < 24 && role) gaps.push(`Prior title is adjacent to, rather than directly within, ${role.role_family}`);
   if (skillScore < 12) gaps.push("Limited responsibility and skill overlap found in the recorded evidence");
