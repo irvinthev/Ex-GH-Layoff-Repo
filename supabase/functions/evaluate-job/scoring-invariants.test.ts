@@ -151,6 +151,26 @@ Deno.test("architectural invariant: demonstrated capability can surface a mislea
   );
 });
 
+Deno.test("architectural invariant: generic occupational title words cannot create specialty alignment", () => {
+  const role = prepareRole(DATA_ANALYST_ROLE);
+  const job = dataAnalystJob();
+
+  const helpdeskAnalyst = scoreCandidate(buildCandidateProfile(candidate({
+    candidate_id: "synthetic:helpdesk-analyst",
+    former_job_title: "Helpdesk Analyst II",
+    function_name: "Customer Care & Support",
+    public_description: "Helpdesk analyst providing IT support and issue resolution.",
+    public_skills: ["IT Support", "Troubleshooting"],
+    seniority: "mid",
+  })), role, job);
+
+  assertEqual(
+    helpdeskAnalyst.breakdown.titleSpecialty.score,
+    0,
+    "Shared generic word 'Analyst' created false title-specialty alignment",
+  );
+});
+
 Deno.test("architectural invariant: explicit technical role requires named technical evidence", () => {
   const role = prepareRole(SOFTWARE_ENGINEER_ROLE);
   const job = prepareJobProfile({
