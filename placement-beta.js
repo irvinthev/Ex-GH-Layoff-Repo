@@ -30,6 +30,13 @@ const filterStrong = document.querySelector("#filterStrong");
 const historyList = document.querySelector("#historyList");
 const historyStatus = document.querySelector("#historyStatus");
 const refreshHistoryButton = document.querySelector("#refreshHistory");
+const networkReviewButton = document.querySelector("#networkReviewButton");
+const networkReviewCount = document.querySelector("#networkReviewCount");
+const networkReviewPanel = document.querySelector("#networkReviewPanel");
+const networkReviewStatus = document.querySelector("#networkReviewStatus");
+const networkReviewSummary = document.querySelector("#networkReviewSummary");
+const networkReviewList = document.querySelector("#networkReviewList");
+const refreshNetworkReviewButton = document.querySelector("#refreshNetworkReview");
 
 const BETA_SESSION_KEY = "placement_beta_session";
 let latestPayload = null;
@@ -78,6 +85,9 @@ function showSession(session = getBetaSession()) {
   if (signedIn) {
     loadHistory().catch(() => {
       setStatus(historyStatus, "Recent evaluations could not be loaded.", "warning");
+    });
+    loadNetworkReview({ quiet: true }).catch(() => {
+      // Keep Placement Engineer usable if the admin hygiene check cannot load.
     });
   }
 }
@@ -155,6 +165,66 @@ async function loadHistory() {
 }
 
 refreshHistoryButton?.addEventListener("click", loadHistory);
+
+function renderNetworkReview(data) {
+  const issues = Array.isArray(data?.issues) ? data.issues : [];
+  if (networkReviewCount) {
+    networkReviewCount.textContent = String(issues.length);
+    networkReviewCount.hidden = issues.length === 0;
+  }
+  if (networkReviewSummary) {
+    const high = issues.filter((issue) => issue.severity === "high").length;
+    const medium = issues.filter((issue) => issue.severity === "medium").length;
+    const low = issues.filter((issue) => issue.severity === "low").length;
+    networkReviewSummary.innerHTML = `
+      <span><strong>${issues.length}</strong> open</span>
+      <span><strong>${high}</strong> high</span>
+      <span><strong>${medium}</strong> medium</span>
+      <span><strong>${low}</strong> low</span>
+      <span><strong>${data?.directoryCount ?? 0}</strong> directory</span>
+      <span><strong>${data?.enrichedCount ?? 0}</strong> enriched</span>
+    `;
+  }
+  if (!networkReviewList) return;
+  if (!issues.length) {
+    networkReviewList.innerHTML = '<p class="history-empty">No network review items right now.</p>';
+    return;
+  }
+  networkReviewList.innerHTML = issues.map((issue) => `
+    <article class="network-review-item severity-${escapeHtml(issue.severity)}">
+      <div class="network-review-item-top">
+        <strong>${escapeHtml(issue.candidateName)}</strong>
+        <span class="review-severity">${escapeHtml(issue.severity)}</span>
+      </div>
+      <p>${escapeHtml(issue.message)}</p>
+      <small>${escapeHtml(issue.suggestedAction)}</small>
+    </article>
+  `).join("");
+}
+
+async function loadNetworkReview({ quiet = false } = {}) {
+  if (!networkReviewList) return;
+  if (!quiet) setStatus(networkReviewStatus, "Checking directory identities…");
+  const { data, error } = await invokePlacement({ action: "network_review" });
+  if (error) {
+    if (!quiet) setStatus(networkReviewStatus, error.message, "error");
+    return;
+  }
+  renderNetworkReview(data);
+  if (!quiet) setStatus(networkReviewStatus, "");
+}
+
+networkReviewButton?.addEventListener("click", () => {
+  const opening = networkReviewPanel?.hidden !== false;
+  if (networkReviewPanel) networkReviewPanel.hidden = !opening;
+  networkReviewButton.setAttribute("aria-expanded", opening ? "true" : "false");
+  if (opening) loadNetworkReview().catch(() => setStatus(networkReviewStatus, "Network Review could not be loaded.", "error"));
+});
+
+refreshNetworkReviewButton?.addEventListener("click", () => {
+  loadNetworkReview().catch(() => setStatus(networkReviewStatus, "Network Review could not be loaded.", "error"));
+});
+
 
 loginForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
