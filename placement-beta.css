@@ -254,3 +254,37 @@ button { border: 0; cursor: pointer; }
   border-radius: 10px;
   background: var(--primary-light);
 }
+
+
+/* Beta auth: Google first, email fallback */
+.oauth-login {
+  margin-top: 1rem;
+}
+.google-signin-btn {
+  width: 100%;
+}
+.email-fallback {
+  margin-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 0.9rem;
+}
+.email-fallback summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: #4b5563;
+}
+.email-fallback .login-form {
+  margin-top: 0.9rem;
+}
+.secondary-btn {
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #111827;
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.secondary-btn:hover {
+  background: #f9fafb;
+}
