@@ -13,6 +13,180 @@ import type {
 } from "./types.ts";
 
 export const CACHE_TTL_MS = 60 * 60 * 1000;
+const DIRECTORY_URL = "https://irvinthev.github.io/Ex-GH-Layoff-Repo/people.json";
+
+type DirectoryPerson = {
+  "First Name"?: string;
+  "Last Name"?: string;
+  "Former Job Title"?: string;
+  "Former Team"?: string;
+  "Function"?: string;
+  "Location"?: string;
+  "LinkedIn URL"?: string;
+  "Description"?: string;
+  "Top 3 Skills"?: string;
+  "Open to Work"?: string;
+};
+
+function clean(value: unknown): string {
+  return String(value ?? "").trim();
+}
+
+export function normalizeLinkedInIdentity(value: unknown): string | null {
+  const raw = clean(value);
+  if (!raw) return null;
+  try {
+    const candidate = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+    const url = new URL(candidate);
+    const host = url.hostname.toLowerCase().replace(/^www\./, "");
+    if (host !== "linkedin.com") return null;
+    const parts = url.pathname.split("/").filter(Boolean);
+    if (parts.length < 2 || parts[0].toLowerCase() !== "in") return null;
+    const slug = parts[1].toLowerCase();
+    if (!slug || slug === "me") return null;
+    return `linkedin.com/in/${slug}`;
+  } catch {
+    return null;
+  }
+}
+
+export function normalizeCandidateName(firstName: unknown, lastName: unknown): string {
+  return `${clean(firstName)} ${clean(lastName)}`
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function directorySkills(value: unknown): string[] {
+  return clean(value)
+    .split(/[,;\n]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function directoryCandidateId(person: DirectoryPerson): string {
+  const linkedIn = normalizeLinkedInIdentity(person["LinkedIn URL"]);
+  if (linkedIn) return `directory:${linkedIn}`;
+  return `directory:name:${normalizeCandidateName(person["First Name"], person["Last Name"]).replace(/\s+/g, "-")}`;
+}
+
+function directoryToCandidateRow(person: DirectoryPerson): PlacementCandidateCacheRow {
+  const title = clean(person["Former Job Title"]) || null;
+  return {
+    candidate_id: directoryCandidateId(person),
+    first_name: clean(person["First Name"]),
+    last_name: clean(person["Last Name"]),
+    former_job_title: title,
+    former_team: clean(person["Former Team"]) || null,
+    function_name: clean(person["Function"]) || null,
+    location_text: clean(person["Location"]) || null,
+    linkedin_url: normalizeLinkedInIdentity(person["LinkedIn URL"])
+      ? clean(person["LinkedIn URL"])
+      : null,
+    public_description: clean(person["Description"]) || null,
+    public_skills: directorySkills(person["Top 3 Skills"]),
+    primary_role_slug: null,
+    seniority: title ? inferSeniority(title, "") : null,
+    skills: [],
+    domains: [],
+    evidence: {},
+    role_preferences: [],
+    candidate_preferences: null,
+  };
+}
+
+export function mergeDirectoryCandidates(
+  directoryPeople: DirectoryPerson[],
+  enrichedRows: PlacementCandidateCacheRow[],
+): PlacementCandidateCacheRow[] {
+  const enrichedByLinkedIn = new Map<string, PlacementCandidateCacheRow[]>();
+  const enrichedByName = new Map<string, PlacementCandidateCacheRow[]>();
+
+  for (const row of enrichedRows) {
+    const linkedIn = normalizeLinkedInIdentity(row.linkedin_url);
+    if (linkedIn) {
+      const rows = enrichedByLinkedIn.get(linkedIn) ?? [];
+      rows.push(row);
+      enrichedByLinkedIn.set(linkedIn, rows);
+    }
+    const name = normalizeCandidateName(row.first_name, row.last_name);
+    if (name) {
+      const rows = enrichedByName.get(name) ?? [];
+      rows.push(row);
+      enrichedByName.set(name, rows);
+    }
+  }
+
+  const usedEnrichedIds = new Set<string>();
+  const seenDirectoryKeys = new Set<string>();
+  const merged: PlacementCandidateCacheRow[] = [];
+
+  for (const person of directoryPeople) {
+    const base = directoryToCandidateRow(person);
+    const linkedIn = normalizeLinkedInIdentity(person["LinkedIn URL"]);
+    const name = normalizeCandidateName(person["First Name"], person["Last Name"]);
+    const directoryKey = linkedIn ? `li:${linkedIn}` : `name:${name}`;
+    if (!name || seenDirectoryKeys.has(directoryKey)) continue;
+    seenDirectoryKeys.add(directoryKey);
+
+    const linkedInMatches = linkedIn
+      ? (enrichedByLinkedIn.get(linkedIn) ?? []).filter((row) => !usedEnrichedIds.has(row.candidate_id))
+      : [];
+    const nameMatches = (enrichedByName.get(name) ?? []).filter((row) => !usedEnrichedIds.has(row.candidate_id));
+    const enriched = linkedInMatches.length === 1
+      ? linkedInMatches[0]
+      : linkedInMatches.length === 0 && nameMatches.length === 1
+        ? nameMatches[0]
+        : null;
+
+    if (!enriched) {
+      merged.push(base);
+      continue;
+    }
+
+    usedEnrichedIds.add(enriched.candidate_id);
+    merged.push({
+      ...enriched,
+      // Public directory fields remain the baseline source of truth.
+      first_name: base.first_name || enriched.first_name,
+      last_name: base.last_name || enriched.last_name,
+      former_job_title: base.former_job_title || enriched.former_job_title,
+      former_team: base.former_team || enriched.former_team,
+      function_name: base.function_name || enriched.function_name,
+      location_text: base.location_text || enriched.location_text,
+      linkedin_url: linkedIn ? base.linkedin_url : enriched.linkedin_url,
+      public_description: base.public_description || enriched.public_description,
+      public_skills: base.public_skills?.length ? base.public_skills : enriched.public_skills,
+      // Enrichment-only fields remain overlays; they do not create a second candidate.
+      primary_role_slug: enriched.primary_role_slug,
+      seniority: enriched.seniority || base.seniority,
+      skills: enriched.skills,
+      domains: enriched.domains,
+      evidence: enriched.evidence,
+      role_preferences: enriched.role_preferences,
+      candidate_preferences: enriched.candidate_preferences,
+    });
+  }
+
+  // Preserve Placement-only records until an admin resolves why they are absent
+  // from the public directory (for example, newly enriched or intentionally removed).
+  for (const row of enrichedRows) {
+    if (!usedEnrichedIds.has(row.candidate_id)) merged.push(row);
+  }
+
+  return merged;
+}
+
+async function fetchDirectoryPeople(): Promise<DirectoryPerson[]> {
+  const response = await fetch(DIRECTORY_URL, {
+    headers: { "Accept": "application/json" },
+    signal: AbortSignal.timeout(8000),
+  });
+  if (!response.ok) throw new Error(`Directory load failed with HTTP ${response.status}`);
+  const payload = await response.json();
+  if (!Array.isArray(payload)) throw new Error("Directory payload was not an array");
+  return payload as DirectoryPerson[];
+}
 
 const CONCEPT_GROUPS = [
   { label: "Implementation lifecycle", terms: ["implementation", "onboarding", "deployment", "rollout", "launch", "go live", "cutover", "adoption"] },
@@ -470,15 +644,20 @@ async function refreshCandidateCache(
   now: number,
 ): Promise<{ cache: CandidateCache; databaseQueryMs: number }> {
   const queryStartedAt = performance.now();
-  const [rolesResult, candidatesResult] = await Promise.all([
+  const [rolesResult, candidatesResult, directoryPeople] = await Promise.all([
     admin.from("role_taxonomy").select("slug,function_name,role_family,specialty,aliases").eq("active", true),
     admin.from("placement_candidate_cache").select("*"),
+    fetchDirectoryPeople(),
   ]);
   const databaseQueryMs = roundMs(performance.now() - queryStartedAt);
   if (rolesResult.error) throw rolesResult.error;
   if (candidatesResult.error) throw candidatesResult.error;
-  const cache = buildCandidateCache(
+  const mergedRows = mergeDirectoryCandidates(
+    directoryPeople,
     (candidatesResult.data ?? []) as PlacementCandidateCacheRow[],
+  );
+  const cache = buildCandidateCache(
+    mergedRows,
     (rolesResult.data ?? []) as Role[],
     now,
   );
