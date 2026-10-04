@@ -221,6 +221,36 @@ Deno.test("architectural invariant: job title cannot manufacture skill evidence"
   );
 });
 
+Deno.test("architectural invariant: contextual overlap cannot outweigh core requirement evidence", () => {
+  const role = prepareRole(DATA_ANALYST_ROLE);
+  const job = prepareJobProfile({
+    title: "Junior Data Analyst",
+    description: "Use SQL to analyze data, build dashboards, create recurring reports, and communicate findings cross-functionally.",
+    location: "Remote",
+    remoteType: "Remote",
+  });
+
+  const coreEvidenceCandidate = scoreCandidate(buildCandidateProfile(candidate({
+    candidate_id: "synthetic:core-evidence",
+    public_description: "Built SQL queries, dashboards, and recurring reports for operations teams.",
+    public_skills: ["SQL Querying", "Data Analysis", "Dashboard Building"],
+    seniority: "lead",
+  })), role, job);
+
+  const contextualCandidate = scoreCandidate(buildCandidateProfile(candidate({
+    candidate_id: "synthetic:contextual",
+    former_job_title: "Technical Product Manager",
+    public_description: "Led cross-functional teams and operational planning.",
+    public_skills: ["Technical Product Management", "Cross-Functional Leadership", "Operations Management"],
+    seniority: "senior",
+  })), role, job);
+
+  assert(
+    coreEvidenceCandidate.breakdown.skills.score > contextualCandidate.breakdown.skills.score,
+    `Core requirement evidence should score above contextual overlap (${coreEvidenceCandidate.breakdown.skills.score} <= ${contextualCandidate.breakdown.skills.score})`,
+  );
+});
+
 Deno.test("architectural invariant: explicit technical role requires named technical evidence", () => {
   const role = prepareRole(SOFTWARE_ENGINEER_ROLE);
   const job = prepareJobProfile({
