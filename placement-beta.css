@@ -288,3 +288,10 @@ button { border: 0; cursor: pointer; }
 .secondary-btn:hover {
   background: #f9fafb;
 }
+
+.profile-depth-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0 14px}
+.profile-depth-badge{display:inline-flex;align-items:center;padding:5px 9px;border:1px solid #d8e1ee;border-radius:999px;background:#f8fafc;color:#64748b;font-size:11px;font-weight:750;letter-spacing:.02em}
+.spotlight-link{font-size:12px;font-weight:700;color:var(--primary);text-decoration:none}
+.spotlight-link:hover{text-decoration:underline}
+.why-summary{margin:0 0 14px;padding:12px 14px;border:1px solid #e2e8f0;border-radius:12px;background:#fff;color:#334155;font-size:13px;line-height:1.5}
+.why-summary strong{color:#0f172a}
