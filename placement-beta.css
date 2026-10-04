@@ -224,3 +224,33 @@ button { border: 0; cursor: pointer; }
   .recruiter-query-actions { align-items:stretch; }
   .recruiter-query-actions .primary-btn { width:100%; justify-content:center; }
 }
+
+
+/* Curated beta result experience */
+.result-count-action {
+  color: var(--primary);
+  border-color: var(--primary-border);
+  background: var(--primary-light);
+}
+.match-card .reason-columns {
+  margin-top: 14px;
+}
+.match-card .evidence-panel h4,
+.match-card .gap-panel h4 {
+  font-size: 14px;
+  letter-spacing: -.01em;
+}
+.match-card .reason-panel {
+  padding: 15px;
+}
+.match-card .reason-panel li {
+  line-height: 1.45;
+  margin-bottom: 5px;
+}
+.match-card .candidate-link {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border: 1px solid var(--primary-border);
+  border-radius: 10px;
+  background: var(--primary-light);
+}
