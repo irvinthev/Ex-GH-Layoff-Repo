@@ -7,7 +7,7 @@ Status: Ready with qualifications for code review. Implemented and replayed loca
 - Reviewed issue https://github.com/irvinthev/Ex-GH-Layoff-Repo/issues/38 (no comments at retrieval).
 - Baseline repository: `cc8ddbddf2564bbb128010e599922222acd38475`.
 - Read deployed evaluate-job version 29; candidate-cache.ts differs from baseline only by trailing whitespace.
-- Retrieved authorized candidate-cache rows and active role taxonomy read-only. Merged those rows with the unchanged public people.json using the production merge function. Dan is directory-only; the other four have enriched rows. Public directory fields override enriched public descriptions, titles and public skills when nonempty.
+- Retrieved authorized candidate-cache rows and active role taxonomy read-only. Merged those rows with the unchanged public people.json using the production merge function. DB is directory-only; the other four have enriched rows. Public directory fields override enriched public descriptions, titles and public skills when nonempty.
 - Retrieved the live LinkedIn HTML for job 4460477929 and ran the existing importer. It selected the dedicated description container (sourceMode page_text), not recommended jobs. Actual description includes company context, responsibilities, required experience, Preferred, Benefits, and values.
 - Reproduced all five scores AND component scores from saved run `b68f31b3-0146-4ff3-b026-3007f4473f72`, created 2026-10-04 23:16:02 UTC. The saved run does not persist the original JD; same-input historical replay cannot be proven beyond the exact matching score/component results using the freshly retrieved JD and current rows.
 - Private enriched records and the full JD were used locally, not added to the public repository.
@@ -18,7 +18,7 @@ Root cause is candidate-label counting plus overly permissive evidence matching,
 
 The proposed invariant, stated before implementation: **One evidenced JD capability earns credit once, regardless of the number of synonymous profile labels or source layers. Context, preferences and unrelated technical evidence cannot manufacture core credit.**
 
-Expected direction before implementation: Dan gains relative to Paul and Elena; Kelsey loses preferred-tool and context advantages; Carnell retains direct support but loses inflated domain points. No individual-specific rules, new scoring weights, band adjustments or public-directory edits were proposed.
+Expected direction before implementation: DB gains relative to PDL and EM; KP loses preferred-tool and context advantages; CC retains direct support but loses inflated domain points. No individual-specific rules, new scoring weights, band adjustments or public-directory edits were proposed.
 
 ### Exact original point trace
 
@@ -26,19 +26,19 @@ Final score = `Math.round((role + title + skills + domain) / 80 * 100)`.
 
 | Candidate | Role /30 | Title /15 | Skills /20 | Domain /15 | Raw /80 | Score | Seniority /10 (excluded) | Location /10 (excluded) |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Carnell Cross | 24 | 0 | 20 | 15 | 59 | 74 | 7 | 10 |
-| Paul de Lucena | 24 | 0 | 12 | 12 | 48 | 60 | 0 | 10 |
-| Kelsey Peretti | 24 | 0 | 18 | 4 | 46 | 57 | 0 | 10 |
-| Elena Moilan | 24 | 0 | 18 | 0 | 42 | 53 | 0 | 10 |
-| Dan Bridgens | 24 | 0 | 18 | 0 | 42 | 53 | 0 | 10 |
+| CC | 24 | 0 | 20 | 15 | 59 | 74 | 7 | 10 |
+| PDL | 24 | 0 | 12 | 12 | 48 | 60 | 0 | 10 |
+| KP | 24 | 0 | 18 | 4 | 46 | 57 | 0 | 10 |
+| EM | 24 | 0 | 18 | 0 | 42 | 53 | 0 | 10 |
+| DB | 24 | 0 | 18 | 0 | 42 | 53 | 0 | 10 |
 
-Elena appears before Dan on a tie because the score-only stable sort preserves candidate input order. It is not an additional qualification preference.
+EM appears before DB on a tie because the score-only stable sort preserves candidate input order. It is not an additional qualification preference.
 
-- **Dan:** three profile skill labels contribute 6 each: SQL Querying, Data Analysis, Dashboard Building. His Redash/reporting narrative resolves technical/concept evidence but does not independently create a skill entry. No domains. Redash is not expressly named in this JD; its relevance is BI-tool experience, not an exact required-tool match.
-- **Paul:** Data Analysis and Analytics contribute 12, although these describe substantially the same capability. SQL/Python exist in resume technical evidence, but are not feature/public skill entries. Three domain labels contribute 4 each: Education Technology, Mission-Driven Technology, Healthcare Access. None is an exact phrase in the JD. Separate words across the whole description satisfy token overlap; these points do not establish analyst-task capability. Healthcare relevance may be useful context, but the JD makes clinical/healthcare exposure preferred, and the candidate field also includes positioning/interests rather than uniformly documented work.
-- **Kelsey:** SQL, Tableau and Advanced Excel contribute 18. SQL and spreadsheets are directly relevant required experience; Tableau is preferred. Operations contributes 4 exact domain points. She has relevant evidence, not merely a rich profile; the old score failed to distinguish required from preferred evidence.
-- **Elena:** SQL, Python and Operations contribute 18. Python is preferred. Operations becomes a *core skill* because the filter checks `includesPhrase(candidate.evidenceNormalized, term)` inside the loop for every matched skill. Once ANY technical term matches the candidate, this clause is true for every otherwise matched skill. SQL evidence cannot justify six core points for Operations.
-- **Carnell:** SQL, Tableau, Excel, Python and Data Analysis reach the 20-point skill cap. Domains Data Analytics, Business Intelligence, Support Operations and Business Operations reach the 15-point cap. Only Business Intelligence is an exact phrase; it occurs in Preferred. The others match dispersed words. His SQL, Excel, analysis and dashboard evidence are substantial, so Dan should not automatically outrank him.
+- **DB:** three profile skill labels contribute 6 each: SQL Querying, Data Analysis, Dashboard Building. His Redash/reporting narrative resolves technical/concept evidence but does not independently create a skill entry. No domains. Redash is not expressly named in this JD; its relevance is BI-tool experience, not an exact required-tool match.
+- **PDL:** Data Analysis and Analytics contribute 12, although these describe substantially the same capability. SQL/Python exist in resume technical evidence, but are not feature/public skill entries. Three domain labels contribute 4 each: Education Technology, Mission-Driven Technology, Healthcare Access. None is an exact phrase in the JD. Separate words across the whole description satisfy token overlap; these points do not establish analyst-task capability. Healthcare relevance may be useful context, but the JD makes clinical/healthcare exposure preferred, and the candidate field also includes positioning/interests rather than uniformly documented work.
+- **KP:** SQL, Tableau and Advanced Excel contribute 18. SQL and spreadsheets are directly relevant required experience; Tableau is preferred. Operations contributes 4 exact domain points. She has relevant evidence, not merely a rich profile; the old score failed to distinguish required from preferred evidence.
+- **EM:** SQL, Python and Operations contribute 18. Python is preferred. Operations becomes a *core skill* because the filter checks `includesPhrase(candidate.evidenceNormalized, term)` inside the loop for every matched skill. Once ANY technical term matches the candidate, this clause is true for every otherwise matched skill. SQL evidence cannot justify six core points for Operations.
+- **CC:** SQL, Tableau, Excel, Python and Data Analysis reach the 20-point skill cap. Domains Data Analytics, Business Intelligence, Support Operations and Business Operations reach the 15-point cap. Only Business Intelligence is an exact phrase; it occurs in Preferred. The others match dispersed words. His SQL, Excel, analysis and dashboard evidence are substantial, so DB should not automatically outrank him.
 
 ## Full scoring path
 
@@ -64,16 +64,16 @@ Elena appears before Dan on a tie because the score-only stable sort preserves c
 
 | Candidate | Role | Title | Skills | Domain | Raw /80 | Before → after | Band after | Recognized core coverage |
 |---|---:|---:|---:|---:|---:|---:|---|---|
-| Carnell Cross | 24 | 0 | 20 | 0 | 44 | 74 → 55 | Possible | 4/7: SQL, analysis, reporting/dashboards, spreadsheets |
-| Dan Bridgens | 24 | 0 | 18 | 0 | 42 | 53 → 53 | Exploratory | 3/7: SQL, analysis, reporting/dashboards |
-| Kelsey Peretti | 24 | 0 | 12 | 4 | 40 | 57 → 50 | Exploratory | 2/7: SQL, spreadsheets |
-| Paul de Lucena | 24 | 0 | 12 | 0 | 36 | 60 → 45 | Exploratory | 2/7: SQL, analysis |
-| Elena Moilan | 24 | 0 | 7 | 0 | 31 | 53 → 39 | Exploratory | 1/7: SQL; plus one contextual Operations point |
+| CC | 24 | 0 | 20 | 0 | 44 | 74 → 55 | Possible | 4/7: SQL, analysis, reporting/dashboards, spreadsheets |
+| DB | 24 | 0 | 18 | 0 | 42 | 53 → 53 | Exploratory | 3/7: SQL, analysis, reporting/dashboards |
+| KP | 24 | 0 | 12 | 4 | 40 | 57 → 50 | Exploratory | 2/7: SQL, spreadsheets |
+| PDL | 24 | 0 | 12 | 0 | 36 | 60 → 45 | Exploratory | 2/7: SQL, analysis |
+| EM | 24 | 0 | 7 | 0 | 31 | 53 → 39 | Exploratory | 1/7: SQL; plus one contextual Operations point |
 
 The other recognized units are data quality, data documentation, and communicating findings. These are not explicitly resolved by the current lexical evidence model for these candidates; no claim is made that they lack those capabilities. Python/Tableau remain visible as preferred evidence where recorded.
 
-Original ordering: Carnell > Paul > Kelsey > Elena = Dan.
-New ordering: Carnell > Dan > Kelsey > Paul > Elena.
+Original ordering: CC > PDL > KP > EM = DB.
+New ordering: CC > DB > KP > PDL > EM.
 
 ## Answers to the architectural questions / remaining risk
 
@@ -90,7 +90,7 @@ New ordering: Carnell > Dan > Kelsey > Paul > Elena.
 - The approved enrichment field list is conservative; new schemas require explicit mapping and tests. Existing structured skills are accepted as source assertions, not independently verified credentials.
 - Preferred evidence no longer contributes primary capability points. This is an intentional general change; test it on broader role families before deployment.
 - Missing recorded evidence is unresolved, not proof of inability. This review validates engine mechanics against stored evidence, not resumes/career claims independently.
-- No Dan-specific condition exists. Public people.json and directory code are unchanged. No production data or function was changed.
+- No candidate-specific condition exists. Public people.json and directory code are unchanged. No production data or function was changed.
 
 ## Verification
 
