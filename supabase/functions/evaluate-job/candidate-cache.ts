@@ -380,8 +380,13 @@ export function tokens(value: unknown): string[] {
 }
 
 export function includesPhrase(text: string, phrase: string): boolean {
-  const cleaned = normalize(phrase);
-  return cleaned.length > 1 && text.includes(cleaned);
+  const cleanedText = normalize(text);
+  const cleanedPhrase = normalize(phrase);
+  if (cleanedPhrase.length <= 1 || !cleanedText) return false;
+
+  // Match normalized whole phrases, not arbitrary substrings. This prevents
+  // short skills such as "LTI" from matching unrelated words such as "multi".
+  return ` ${cleanedText} `.includes(` ${cleanedPhrase} `);
 }
 
 export function overlapRatio(left: string[], right: string[]): number {
