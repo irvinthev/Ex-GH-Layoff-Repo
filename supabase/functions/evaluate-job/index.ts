@@ -3,6 +3,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.95.0";
 import {
   classifyRole,
   getCandidateCache,
+  getNetworkReview,
   inferSeniority,
   prepareJobProfile,
   scoreCandidate,
@@ -114,6 +115,11 @@ Deno.serve(async (req: Request) => {
 
     const payload = await req.json().catch(() => null) as Record<string, unknown> | null;
     const action = String(payload?.action ?? "evaluate");
+
+    if (action === "network_review") {
+      const review = await getNetworkReview(admin);
+      return json(req, review);
+    }
 
     if (action === "history") {
       let historyQuery = admin
