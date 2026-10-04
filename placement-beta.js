@@ -34,6 +34,8 @@ const refreshHistoryButton = document.querySelector("#refreshHistory");
 let latestPayload = null;
 let activeSort = "score_desc";
 let activeFilter = "all";
+let showAllMatches = false;
+const DEFAULT_RESULT_LIMIT = 5;
 
 function setStatus(element, message, kind = "") {
   if (!element) return;
@@ -105,6 +107,7 @@ function renderHistory(runs) {
         return;
       }
       latestPayload = data;
+      showAllMatches = false;
       setStatus(historyStatus, `Loaded ${data.evaluation?.title ?? "saved evaluation"} from ${formatRunDate(data.createdAt)}.`, "success");
       renderMatches(data);
     });
@@ -232,7 +235,14 @@ function renderMatches(data, { scrollToResults = true } = {}) {
     location: "Location",
   };
 
-  const visibleMatches = sortAndFilterMatches(data.matches ?? [], activeSort, activeFilter);
+  const filteredMatches = sortAndFilterMatches(data.matches ?? [], activeSort, activeFilter);
+  const visibleMatches = showAllMatches ? filteredMatches : filteredMatches.slice(0, DEFAULT_RESULT_LIMIT);
+  const hiddenMatchCount = Math.max(0, filteredMatches.length - visibleMatches.length);
+  if (filteredMatches.length > DEFAULT_RESULT_LIMIT) {
+    evaluationSummary.insertAdjacentHTML("beforeend",
+      `<button id="toggleAllMatches" class="summary-action result-count-action" type="button">${showAllMatches ? "Show Top 5" : `View All ${filteredMatches.length} Matches`}</button>`
+    );
+  }
   results.innerHTML = visibleMatches.map((match, index) => {
     const fitTone = getFitTone(match);
     const breakdown = Object.entries(match.breakdown ?? {}).map(([key, value]) => `
@@ -256,13 +266,21 @@ function renderMatches(data, { scrollToResults = true } = {}) {
           <p class="candidate-meta">${escapeHtml(match.candidate?.formerJobTitle ?? "Role not recorded")} · ${escapeHtml(match.candidate?.location ?? "Location not recorded")}</p>
           <div class="evidence-grid">${breakdown}</div>
           <div class="reason-columns">
-            <div class="reason-panel evidence-panel"><h4><span aria-hidden="true">✓</span> Evidence for match</h4>${renderList(match.reasons)}</div>
-            <div class="reason-panel gap-panel"><h4><span aria-hidden="true">⚠</span> Review gaps</h4>${renderList(match.gaps, "No immediate gaps identified")}</div>
+            <div class="reason-panel evidence-panel"><h4><span aria-hidden="true">✓</span> Why this person surfaced</h4>${renderList(match.reasons)}</div>
+            <div class="reason-panel gap-panel"><h4><span aria-hidden="true">⚠</span> Potential gaps</h4>${renderList(match.gaps, "No immediate gaps identified")}</div>
           </div>
           ${linkedin}
         </div>
       </article>`;
   }).join("");
+
+  const toggleAllMatches = document.querySelector("#toggleAllMatches");
+  if (toggleAllMatches) {
+    toggleAllMatches.addEventListener("click", () => {
+      showAllMatches = !showAllMatches;
+      renderMatches(data, { scrollToResults: false });
+    });
+  }
 
   const exportButton = document.querySelector("#exportResults");
   if (exportButton) {
@@ -297,6 +315,7 @@ wireResultControls({
   onChange: ({ sort, filter }) => {
     activeSort = sort;
     activeFilter = filter;
+    showAllMatches = false;
     if (latestPayload) renderMatches(latestPayload, { scrollToResults: false });
   },
 });
@@ -338,6 +357,7 @@ evaluationForm.addEventListener("submit", async (event) => {
       : "Evaluation complete.";
   setStatus(evaluationStatus, completionMessage, data.evaluation.importWarning ? "warning" : "success");
   latestPayload = data;
+  showAllMatches = false;
   renderMatches(data);
   loadHistory().catch(() => {
     setStatus(historyStatus, "Evaluation saved, but recent history could not refresh.", "warning");
