@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex,nofollow" />
   <title>Placement Engineer | TalentBot HQ</title>
   <link rel="stylesheet" href="style.css?v=guide-nav-2" />
-  <link rel="stylesheet" href="placement-beta.css?v=4" />
+  <link rel="stylesheet" href="placement-beta.css?v=5" />
 </head>
 <body>
   <nav class="site-nav" aria-label="Main navigation">
@@ -62,8 +62,27 @@
     <section id="workspace" class="workspace" hidden>
       <div class="session-bar">
         <span>Signed in as <strong id="sessionEmail"></strong></span>
-        <button id="signOut" class="text-button" type="button">Sign out</button>
+        <div class="session-actions">
+          <button id="networkReviewButton" class="text-button network-review-trigger" type="button" aria-expanded="false" aria-controls="networkReviewPanel">
+            Network Review <span id="networkReviewCount" class="review-count" hidden>0</span>
+          </button>
+          <button id="signOut" class="text-button" type="button">Sign out</button>
+        </div>
       </div>
+
+      <section id="networkReviewPanel" class="placement-panel network-review-panel" hidden aria-labelledby="networkReviewHeading">
+        <div class="panel-heading">
+          <div>
+            <p class="step-label">Admin review</p>
+            <h2 id="networkReviewHeading">Network Review</h2>
+            <p>Directory identity checks and follow-up items.</p>
+          </div>
+          <button id="refreshNetworkReview" class="summary-action" type="button">Refresh</button>
+        </div>
+        <div id="networkReviewStatus" class="status-message" role="status"></div>
+        <div id="networkReviewSummary" class="network-review-summary"></div>
+        <div id="networkReviewList" class="network-review-list"></div>
+      </section>
 
       <section class="placement-panel history-panel" aria-labelledby="historyHeading">
         <div class="panel-heading">
@@ -168,7 +187,7 @@
     </div>
   </footer>
 
-  <script type="module" src="placement-beta.js?v=4"></script>
+  <script type="module" src="placement-beta.js?v=5"></script>
   <script type="module" src="placement-beta-display.js?v=2"></script>
   <script src="analytics-config.js"></script>
   <script src="analytics.js"></script>
