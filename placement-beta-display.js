@@ -18,6 +18,12 @@ function qualitativeSignal(label, score, max) {
     if (ratio >= 0.4) return { text: "Partial", tone: "moderate" };
     return { text: "Review", tone: "limited" };
   }
+  if (label === "Domain") {
+    if (ratio >= 0.8) return { text: "Strong", tone: "strong" };
+    if (ratio >= 0.5) return { text: "Moderate", tone: "moderate" };
+    if (ratio > 0) return { text: "Limited", tone: "limited" };
+    return { text: "Not evidenced in profile", tone: "unknown" };
+  }
   if (ratio >= 0.8) return { text: "Strong", tone: "strong" };
   if (ratio >= 0.55) return { text: "Moderate", tone: "moderate" };
   if (ratio > 0) return { text: "Limited", tone: "limited" };
