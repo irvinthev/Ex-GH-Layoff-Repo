@@ -128,22 +128,18 @@ export function attachEvidenceLayers<T extends {
     const titleScore = breakdown?.titleSpecialty?.score ?? 0;
     const skillScore = breakdown?.skills?.score ?? 0;
     const domainScore = breakdown?.domain?.score ?? 0;
-    const seniorityScore = breakdown?.seniority?.score ?? 0;
-
-    // Keep the numeric score as the comparative ranking signal, but make the
-    // recommendation band require corroborating evidence beyond role/title
-    // similarity. Missing enrichment is never treated as proof of a gap.
+    // Recommendation support is capability-based. Seniority is a validation
+    // condition and must not create or rescue qualification evidence.
     const roleSupported = roleScore >= 24;
     const titleSupported = titleScore >= 10;
     const capabilitySupported = skillScore >= 6 || domainScore >= 8;
     const identityOrCapabilitySupported = titleSupported || capabilitySupported;
     const substantiveSupport = skillScore > 0 || domainScore > 0;
-    const levelStrong = seniorityScore >= 8;
     const technicalSkillRequired = Boolean(options.requiresTechnicalSkillEvidence);
     const directTechnicalEvidence = Boolean(match.technicalSkillEvidence);
     const corroborationSupported = technicalSkillRequired
       ? directTechnicalEvidence
-      : (substantiveSupport || levelStrong);
+      : substantiveSupport;
     const recommendationSupported = roleSupported && identityOrCapabilitySupported && corroborationSupported;
 
     const originalBand = match.fitBand ?? "Exploratory";
@@ -165,11 +161,11 @@ export function attachEvidenceLayers<T extends {
       note: recommendationSupported
         ? technicalSkillRequired
           ? "Recommendation is supported by role/title alignment plus direct technical skill evidence."
-          : "Recommendation is supported by role/title alignment plus corroborating skill, domain, or level evidence."
+          : "Recommendation is supported by role/title alignment plus corroborating skill or domain evidence."
         : roleSupported && identityOrCapabilitySupported
           ? technicalSkillRequired
             ? "Role-family relevance is present, but the current profile does not evidence a technical skill explicitly required by this role."
-            : "Role-family relevance is present, but corroborating skill, domain, or level evidence is limited."
+            : "Role-family relevance is present, but corroborating skill or domain evidence is limited."
           : roleSupported
             ? "Role-family relevance is present, but neither title alignment nor enough capability evidence is recorded for a higher-confidence recommendation."
             : "Current evidence is too thin for a higher-confidence recommendation.",
