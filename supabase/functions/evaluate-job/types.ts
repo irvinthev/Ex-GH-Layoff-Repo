@@ -90,6 +90,7 @@ export type JobProfile = {
   locationTokens: string[];
   remoteType: string;
   requiresTechnicalSkillEvidence: boolean;
+  technicalRequirementTerms: string[];
 };
 
 export type CandidateMatch = {
@@ -104,6 +105,7 @@ export type CandidateMatch = {
   };
   score: number;
   fitBand: "Strong" | "Possible" | "Exploratory";
+  technicalSkillEvidence: boolean;
   breakdown: {
     roleFamily: { score: number; max: 30 };
     titleSpecialty: { score: number; max: 15 };
