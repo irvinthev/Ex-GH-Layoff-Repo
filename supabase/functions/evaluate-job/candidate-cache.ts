@@ -355,6 +355,12 @@ const EXPLICIT_TECHNICAL_REQUIREMENTS = [
   "microservices", "backend", "back end", "frontend", "front end", "full stack",
 ] as const;
 
+const ATOMIC_CAPABILITY_TERMS = new Set([
+  ...EXPLICIT_TECHNICAL_REQUIREMENTS,
+  "dashboard", "dashboards", "reporting", "redash", "excel", "looker", "snowflake",
+  "analytics", "analysis", "analyst", "query", "queries", "querying",
+]);
+
 let cachedCandidateData: CandidateCache | null = null;
 let cacheLoadPromise: Promise<{ cache: CandidateCache; databaseQueryMs: number }> | null = null;
 
@@ -602,8 +608,9 @@ export function prepareJobProfile(input: {
   const descriptionText = normalize(description);
   const jobText = normalize(`${title} ${description}`);
   const concepts = conceptLabels(jobText);
-  const requiresTechnicalSkillEvidence = EXPLICIT_TECHNICAL_REQUIREMENTS
-    .some((term) => includesPhrase(jobText, term));
+  const technicalRequirementTerms = EXPLICIT_TECHNICAL_REQUIREMENTS
+    .filter((term) => includesPhrase(jobText, term));
+  const requiresTechnicalSkillEvidence = technicalRequirementTerms.length > 0;
   return {
     title,
     description,
@@ -619,6 +626,7 @@ export function prepareJobProfile(input: {
     locationTokens: tokens(input.location),
     remoteType: input.remoteType.trim(),
     requiresTechnicalSkillEvidence,
+    technicalRequirementTerms,
   };
 }
 
@@ -669,12 +677,25 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
           ? 6
           : Math.round(bestTitleRatio * 15);
 
-  const matchedSkills = candidate.skillEntries.filter((skill) => (
-    includesPhrase(job.jobText, skill.normalized) || overlapRatio(skill.tokens, job.jobTextTokens) >= 0.67
-  )).map((skill) => skill.raw);
+  const matchedSkills = candidate.skillEntries.filter((skill) => {
+    if (includesPhrase(job.jobText, skill.normalized) || overlapRatio(skill.tokens, job.jobTextTokens) >= 0.67) {
+      return true;
+    }
+    // Multi-word skills often contain one highly diagnostic atomic capability
+    // (e.g. "SQL Querying", "Dashboard Building"). Give that atomic capability
+    // credit without treating generic words as matches.
+    return skill.tokens.some((token) => (
+      ATOMIC_CAPABILITY_TERMS.has(token)
+      && job.jobTextTokens.includes(token)
+    ));
+  }).map((skill) => skill.raw);
   const matchedConcepts = job.concepts.filter((label) => candidate.candidateConceptSet.has(label));
-  const conceptCoverage = job.concepts.length ? matchedConcepts.length / job.concepts.length : 0;
-  const skillScore = Math.min(20, Math.min(6, matchedSkills.length * 2) + Math.round(conceptCoverage * 14));
+  const matchedTechnicalRequirements = job.technicalRequirementTerms.filter((term) => (
+    includesPhrase(candidate.evidenceNormalized, term)
+  ));
+  const directSkillPoints = Math.min(16, matchedSkills.length * 4);
+  const conceptPoints = Math.min(4, matchedConcepts.length * 2);
+  const skillScore = Math.min(20, directSkillPoints + conceptPoints);
 
   // Capability evidence can establish role-family relevance even when the
   // candidate's organizational title/function obscures the work they actually did.
@@ -732,6 +753,7 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
   else if (roleScore === 18 && role) reasons.push(`Related ${role.function_name} function`);
   else if (roleScore === 12 && role) reasons.push(`Candidate is open to ${role.role_family}; qualification evidence is limited`);
   if (matchedSkills.length) reasons.push(`Skills named in role: ${matchedSkills.slice(0, 3).join(", ")}`);
+  if (matchedTechnicalRequirements.length) reasons.push(`Technical requirement evidence: ${matchedTechnicalRequirements.slice(0, 3).join(", ")}`);
   if (matchedConcepts.length) reasons.push(`Transferable experience: ${matchedConcepts.slice(0, 4).join(", ")}`);
   if (matchedDomains.length) reasons.push(`Relevant domain evidence: ${matchedDomains.slice(0, 2).join(", ")}`);
   if (seniority.score === 10) reasons.push("Seniority appears aligned");
@@ -762,6 +784,7 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
     },
     score: total,
     fitBand: total >= 75 ? "Strong" : total >= 55 ? "Possible" : "Exploratory",
+    technicalSkillEvidence: matchedTechnicalRequirements.length > 0,
     breakdown: {
       roleFamily: { score: roleScore, max: 30 },
       titleSpecialty: { score: titleScore, max: 15 },
