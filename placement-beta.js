@@ -325,7 +325,7 @@ function renderMatches(data, { scrollToResults = true } = {}) {
   evaluationSummary.innerHTML = [
     `<span class="summary-pill"><strong>${escapeHtml(role?.roleFamily ?? "Unclassified")}</strong> role family</span>`,
     `<span class="summary-pill"><strong>${escapeHtml(data.evaluation.seniority ?? "Not detected")}</strong> seniority</span>`,
-    `<span class="summary-pill"><strong>${data.evaluation.candidateCount}</strong> opted-in candidates</span>`,
+    `<span class="summary-pill"><strong>${data.evaluation.candidateCount}</strong> candidates evaluated</span>`,
     `<span class="summary-pill"><strong>${summaryStats.strong}</strong> Strong Fits | <strong>${summaryStats.moderate}</strong> Moderate | <strong>${summaryStats.review}</strong> Need Review</span>`,
     `<span class="summary-pill"><strong>${summaryStats.averageScore}</strong> average score</span>`,
     `<span class="summary-pill summary-legend" title="Role Family 30pts, Title/Specialty 15pts, Skills 20pts, Domain 15pts, Seniority 10pts, Location 10pts">Category weights: 30 / 15 / 20 / 15 / 10 / 10</span>`,
