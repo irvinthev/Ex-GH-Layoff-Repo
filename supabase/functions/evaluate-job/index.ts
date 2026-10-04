@@ -323,7 +323,7 @@ Deno.serve(async (req: Request) => {
       candidateCount: matches.length,
       evidenceSummary,
       evaluatedAt: new Date().toISOString(),
-      methodology: "Evidence-aware deterministic scoring v12; qualification scoring is invariant to candidate intent metadata such as target titles, role preferences, and manually assigned primary role; multi-word skills are decomposed into diagnostic atomic capabilities; semantic concept bonuses are capped; role-family relevance may be established by demonstrated capability evidence when title/function are misleading; explicitly technical roles require direct evidence of a named technical requirement for Possible/Strong; missing enrichment is not treated as proof of missing capability; manual review required",
+      methodology: "Evidence-aware deterministic scoring v13; qualification scoring is invariant to candidate intent metadata such as target titles, role preferences, and manually assigned primary role; generic occupational title tokens such as analyst, manager, specialist, lead, associate, and engineer cannot independently create title-specialty alignment; multi-word skills are decomposed into diagnostic atomic capabilities; semantic concept bonuses are capped; role-family relevance may be established by demonstrated capability evidence when title/function are misleading; explicitly technical roles require direct evidence of a named technical requirement for Possible/Strong; missing enrichment is not treated as proof of missing capability; manual review required",
       sourceUrl,
       sourceMode,
       importWarning,
