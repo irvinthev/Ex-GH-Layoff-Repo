@@ -164,3 +164,63 @@ button { border: 0; cursor: pointer; }
 .history-meta { display: grid; justify-items: end; gap: 4px; flex: 0 0 auto; }
 .history-source { display: inline-flex; padding: 3px 7px; border-radius: 999px; background: var(--primary-light); color: var(--primary); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
 @media (max-width: 640px) { .history-row { align-items: flex-start; } .history-meta { justify-items: start; } }
+
+
+/* Placement Engineer beta UI */
+.sr-only { position:absolute !important; width:1px !important; height:1px !important; padding:0 !important; margin:-1px !important; overflow:hidden !important; clip:rect(0,0,0,0) !important; white-space:nowrap !important; border:0 !important; }
+.placement-shell { max-width: 1180px; }
+.placement-hero { max-width: none; display:grid; grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr); gap:34px; align-items:center; padding:34px; border:1px solid #dbe7ff; border-radius:24px; background:linear-gradient(135deg,#f7fbff 0%,#eef4ff 48%,#faf8ff 100%); box-shadow:0 16px 42px rgba(31,64,150,.08); }
+.placement-hero h1 { max-width:720px; margin:14px 0 16px; font-size:clamp(44px,7vw,72px); line-height:.96; letter-spacing:-.055em; }
+.placement-hero h1 span { color:var(--primary); }
+.placement-hero > .hero-copy > p { max-width:730px; color:var(--text-muted); font-size:19px; line-height:1.55; margin:0; }
+.placement-badge-row { display:flex; gap:8px; flex-wrap:wrap; }
+.placement-badge { display:inline-flex; align-items:center; min-height:32px; padding:6px 11px; border-radius:999px; border:1px solid var(--primary-border); background:var(--primary-light); color:var(--primary); font-size:11px; font-weight:850; letter-spacing:.08em; text-transform:uppercase; }
+.placement-badge-new { color:#be185d; background:#fdf2f8; border-color:#fbcfe8; }
+.hero-explainer { padding:22px; border:1px solid rgba(37,99,235,.13); border-radius:18px; background:rgba(255,255,255,.86); box-shadow:0 14px 32px rgba(30,64,175,.08); transform:rotate(-1.2deg); }
+.hero-explainer strong { display:block; margin-bottom:12px; font-size:17px; }
+.hero-explainer ul { list-style:none; margin:0; padding:0; display:grid; gap:10px; color:#334155; font-size:14px; }
+.hero-explainer li { position:relative; padding-left:26px; }
+.hero-explainer li::before { content:"✓"; position:absolute; left:0; top:-1px; width:18px; height:18px; display:grid; place-items:center; border-radius:50%; background:#dbeafe; color:#2563eb; font-size:11px; font-weight:900; }
+.auth-panel { max-width:760px; margin:24px auto 0; }
+.workspace { margin-top:24px; }
+.recruiter-query-panel { order:1; padding:30px; }
+.session-bar { order:0; }
+.history-panel { order:3; }
+#resultsSection { order:2; }
+.recruiter-query-heading { align-items:start; }
+.recruiter-query-heading h2 { font-size:30px; letter-spacing:-.03em; }
+.recruiter-query-form { gap:20px; }
+.query-option { display:grid; gap:10px; }
+.query-option-label { display:flex; align-items:center; gap:9px; color:var(--text); }
+.query-option-label > span { width:26px; height:26px; display:grid; place-items:center; border-radius:50%; background:#eaf1ff; color:#2563eb; font-size:12px; font-weight:850; }
+.query-option-label strong { font-size:15px; }
+.job-source-field { padding:0; background:transparent; border:0; }
+.job-source-field input, .recruiter-query-form textarea { border-width:1.5px; border-color:#d8e1ee; box-shadow:0 6px 18px rgba(15,23,42,.04); }
+.job-source-field input { min-height:58px; font-size:16px; }
+.recruiter-query-form textarea { min-height:150px; font-size:15px; }
+.query-divider { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:12px; color:#94a3b8; font-size:11px; font-weight:800; letter-spacing:.08em; }
+.query-divider::before,.query-divider::after { content:""; height:1px; background:#e2e8f0; }
+.advanced-options { border:1px solid #e2e8f0; border-radius:12px; background:#f8fafc; }
+.advanced-options summary { padding:13px 15px; cursor:pointer; color:#475569; font-size:13px; font-weight:750; }
+.advanced-options .form-grid { padding:0 15px 15px; }
+.recruiter-query-actions { justify-content:space-between; }
+.recruiter-query-actions .primary-btn { min-height:52px; padding:0 22px; border-radius:12px; font-size:15px; box-shadow:0 9px 22px rgba(37,99,235,.22); }
+.results-intro { margin:26px 0 14px; }
+.results-intro h2 { margin:3px 0 6px; font-size:30px; letter-spacing:-.03em; }
+.results-intro > p:last-child { max-width:780px; margin:0; color:var(--text-muted); font-size:14px; line-height:1.5; }
+.history-panel { margin-top:18px; opacity:.96; }
+.history-panel .step-label::after { content:" · admin"; }
+@media (max-width:820px) {
+  .placement-hero { grid-template-columns:1fr; padding:26px; }
+  .hero-explainer { transform:none; }
+  .placement-hero h1 { font-size:clamp(42px,12vw,62px); }
+}
+@media (max-width:520px) {
+  .placement-hero { padding:22px 18px; border-radius:18px; }
+  .placement-hero h1 { font-size:44px; }
+  .placement-hero > .hero-copy > p { font-size:16px; }
+  .recruiter-query-panel { padding:20px; }
+  .recruiter-query-heading h2,.results-intro h2 { font-size:25px; }
+  .recruiter-query-actions { align-items:stretch; }
+  .recruiter-query-actions .primary-btn { width:100%; justify-content:center; }
+}
