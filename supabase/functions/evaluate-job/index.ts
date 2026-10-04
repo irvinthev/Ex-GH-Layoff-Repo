@@ -323,7 +323,7 @@ Deno.serve(async (req: Request) => {
       candidateCount: matches.length,
       evidenceSummary,
       evaluatedAt: new Date().toISOString(),
-      methodology: "Evidence-aware deterministic scoring v10; numeric score remains a comparative fit signal; role-family relevance may be established by demonstrated capability evidence when title/function are misleading; recommendation bands accept title alignment or sufficient capability evidence, while explicitly technical roles still require direct technical skill evidence for Possible/Strong; L1 structured profile + L2 candidate narrative + optional L3 enriched evidence; missing enrichment is not treated as proof of missing capability; manual review required",
+      methodology: "Evidence-aware deterministic scoring v11; multi-word candidate skills are decomposed into diagnostic atomic capabilities; semantic concept bonuses are capped to prevent one broad concept from inflating a match; role-family relevance may be established by demonstrated capability evidence when title/function are misleading; explicitly technical roles require direct evidence of a named technical requirement for Possible/Strong; missing enrichment is not treated as proof of missing capability; manual review required",
       sourceUrl,
       sourceMode,
       importWarning,
