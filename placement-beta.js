@@ -102,23 +102,26 @@ function buildWhySummary(match) {
   const reasons = Array.isArray(match?.reasons)
     ? match.reasons.filter((reason) => !String(reason).toLowerCase().startsWith("evidence depth:"))
     : [];
-  const spotlight = findSpotlightProfile(match?.candidate);
   const lead = match.fitBand === "Strong"
     ? "Why Strong"
     : match.fitBand === "Possible"
       ? "Why Possible"
       : "Why this person surfaced";
 
-  if (spotlight?.name === "Paul de Lucena") {
-    return lead + ": Paul has direct technical product alignment, deep EdTech experience from Blackboard, and strong architecture and systems depth beyond a traditional PM profile.";
-  }
-
-  const role = reasons.find((reason) => /direct .*role-family match|experience evidence supports|job title .*aligns/i.test(reason));
+  // Build the recruiter summary from this job's evidence only. Spotlight and
+  // enrichment improve what evidence is available, but never inject a canned
+  // candidate narrative or independently change ranking.
+  const role = reasons.find((reason) => /direct .*role-family match|target .*role supported|experience evidence supports|job title .*aligns|related .*function/i.test(reason));
   const skills = reasons.find((reason) => /skills named in role/i.test(reason));
+  const transferable = reasons.find((reason) => /transferable experience/i.test(reason));
   const domain = reasons.find((reason) => /relevant domain evidence/i.test(reason));
-  const pieces = [role, skills, domain].filter(Boolean).slice(0, 3);
+  const level = reasons.find((reason) => /seniority appears aligned/i.test(reason));
+  const pieces = [role, skills, transferable, domain, level].filter(Boolean).slice(0, 3);
 
-  return pieces.length ? lead + ": " + pieces.join(". ") + "." : "";
+  if (pieces.length) return lead + ": " + pieces.join(". ") + ".";
+
+  const assessment = String(match?.evidenceAssessment?.note ?? "").trim();
+  return assessment ? lead + ": " + assessment : "";
 }
 
 function setStatus(element, message, kind = "") {
