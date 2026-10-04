@@ -74,6 +74,7 @@ function reconcileDomainSignal(card) {
     .find((item) => item.querySelector(".signal-label")?.textContent === "Domain");
   if (!domainSignal) return;
   const value = domainSignal.querySelector(".signal-value");
+  if (value?.textContent === "Relevant" && domainSignal.classList.contains("signal-strong")) return;
   if (value) value.textContent = "Relevant";
   domainSignal.classList.remove("signal-moderate","signal-limited","signal-unknown");
   domainSignal.classList.add("signal-strong");
