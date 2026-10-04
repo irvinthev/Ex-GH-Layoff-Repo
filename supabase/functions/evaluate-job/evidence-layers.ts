@@ -9,6 +9,13 @@ export type EvidenceLayerSummary = {
   note: string;
 };
 
+
+export type MatchEvidenceAssessment = {
+  strength: "Supported" | "Partial" | "Thin";
+  note: string;
+  bandAdjusted: boolean;
+};
+
 type CandidateEvidenceRow = {
   candidate_id?: string | null;
   former_job_title?: string | null;
@@ -85,11 +92,20 @@ export function attachEvidenceLayers<T extends {
     location?: string | null;
     skills?: string[];
   };
+  fitBand?: "Strong" | "Possible" | "Exploratory";
+  breakdown?: {
+    roleFamily?: { score: number; max: number };
+    titleSpecialty?: { score: number; max: number };
+    skills?: { score: number; max: number };
+    domain?: { score: number; max: number };
+    seniority?: { score: number; max: number };
+    location?: { score: number; max: number };
+  };
   reasons?: string[];
 }>(
   matches: T[],
   rows: CandidateEvidenceRow[],
-): Array<T & { evidenceConfidence: EvidenceLayerSummary }> {
+): Array<T & { evidenceConfidence: EvidenceLayerSummary; evidenceAssessment: MatchEvidenceAssessment }> {
   const evidenceByCandidate = new Map<string, EvidenceLayerSummary>();
   for (const row of rows) {
     const id = String(row.candidate_id ?? "").trim();
@@ -105,9 +121,50 @@ export function attachEvidenceLayers<T extends {
       location_text: match.candidate?.location ?? null,
       public_skills: match.candidate?.skills ?? [],
     });
+    const breakdown = match.breakdown;
+    const roleScore = breakdown?.roleFamily?.score ?? 0;
+    const titleScore = breakdown?.titleSpecialty?.score ?? 0;
+    const skillScore = breakdown?.skills?.score ?? 0;
+    const domainScore = breakdown?.domain?.score ?? 0;
+    const seniorityScore = breakdown?.seniority?.score ?? 0;
+
+    // Keep the numeric score as the comparative ranking signal, but make the
+    // recommendation band require corroborating evidence beyond role/title
+    // similarity. Missing enrichment is never treated as proof of a gap.
+    const roleSupported = roleScore >= 24;
+    const titleSupported = titleScore >= 10;
+    const substantiveSupport = skillScore > 0 || domainScore > 0;
+    const levelStrong = seniorityScore >= 8;
+    const recommendationSupported = roleSupported && titleSupported && (substantiveSupport || levelStrong);
+
+    const originalBand = match.fitBand ?? "Exploratory";
+    const adjustedBand = originalBand === "Strong"
+      ? (recommendationSupported ? "Strong" : "Possible")
+      : originalBand === "Possible"
+        ? (recommendationSupported ? "Possible" : "Exploratory")
+        : "Exploratory";
+
+    const strength: MatchEvidenceAssessment["strength"] = recommendationSupported
+      ? "Supported"
+      : roleSupported && titleSupported
+        ? "Partial"
+        : "Thin";
+    const bandAdjusted = adjustedBand !== originalBand;
+    const evidenceAssessment: MatchEvidenceAssessment = {
+      strength,
+      bandAdjusted,
+      note: recommendationSupported
+        ? "Recommendation is supported by role/title alignment plus corroborating skill, domain, or level evidence."
+        : roleSupported && titleSupported
+          ? "Role/title alignment is present, but corroborating skill, domain, or level evidence is limited."
+          : "Current evidence is too thin for a higher-confidence recommendation.",
+    };
+
     return {
       ...match,
+      fitBand: adjustedBand,
       evidenceConfidence,
+      evidenceAssessment,
       reasons: [...(match.reasons ?? []), evidenceConfidence.note],
     };
   });
