@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex,nofollow" />
-  <title>Placement Intelligence | TalentBot HQ</title>
+  <title>Placement Engineer | TalentBot HQ</title>
   <link rel="stylesheet" href="style.css?v=guide-nav-2" />
-  <link rel="stylesheet" href="placement.css?v=signals-1" />
+  <link rel="stylesheet" href="placement.css?v=placement-engineer-1" />
 </head>
 <body>
   <nav class="site-nav" aria-label="Main navigation">
@@ -23,16 +23,31 @@
   </nav>
 
   <main class="placement-shell">
-    <header class="placement-header">
-      <p class="eyebrow">Admin workspace</p>
-      <h1>Placement Intelligence</h1>
-      <p>Paste a job URL or description to rank opted-in alumni using visible evidence. Match signals are decision support—not hiring decisions.</p>
+    <header class="placement-header placement-hero">
+      <div class="hero-copy">
+        <div class="placement-badge-row">
+          <span class="placement-badge">Placement Engineer</span>
+          <span class="placement-badge placement-badge-new">Beta</span>
+        </div>
+        <h1>Who are you trying to <span>hire?</span></h1>
+        <p>Paste a job link or describe the person you need. I’ll surface matching talent from the network and explain why each person surfaced.</p>
+      </div>
+      <aside class="hero-explainer" aria-label="How Placement Engineer works">
+        <strong>From role to real people.</strong>
+        <ul>
+          <li>Find matching talent</li>
+          <li>Surface the strongest fits</li>
+          <li>Explain the evidence</li>
+          <li>Flag what still needs validation</li>
+        </ul>
+      </aside>
     </header>
 
     <section id="authPanel" class="placement-panel auth-panel" aria-labelledby="authHeading">
       <div>
-        <h2 id="authHeading">Secure sign in</h2>
-        <p>A passwordless sign-in link will be sent to the authorized admin email.</p>
+        <p class="step-label">Beta access</p>
+        <h2 id="authHeading">Recruiter access</h2>
+        <p>Enter an authorized email. We’ll send you a passwordless sign-in link.</p>
       </div>
       <form id="loginForm" class="login-form">
         <label for="email">Email</label>
@@ -62,43 +77,64 @@
         <div id="historyList" class="history-list"></div>
       </section>
 
-      <section class="placement-panel">
-        <div class="panel-heading">
+      <section class="placement-panel recruiter-query-panel">
+        <div class="panel-heading recruiter-query-heading">
           <div>
-            <p class="step-label">Single evaluation</p>
-            <h2>Describe the opportunity</h2>
+            <p class="step-label">Placement Engineer</p>
+            <h2>Tell me who you need.</h2>
           </div>
-          <p>Provide a public job URL, a description, or both.</p>
+          <p>Use a live job posting, describe the hire yourself, or provide both.</p>
         </div>
 
-        <form id="evaluationForm" class="evaluation-form">
-          <label class="job-source-field">Job URL
-            <input id="jobUrl" name="jobUrl" type="url" inputmode="url" autocomplete="url" placeholder="https://company.com/jobs/role" />
-            <span class="field-help">We’ll try to read the public job page. If the site blocks access, paste the description below.</span>
-          </label>
-          <div class="form-grid">
-            <label>Role title<input id="roleTitle" name="title" placeholder="Senior Product Manager" /></label>
-            <label>Location<input id="roleLocation" name="location" placeholder="Boston, MA" /></label>
-            <label>Work model
-              <select id="remoteType" name="remoteType">
-                <option value="">Not specified</option>
-                <option value="Remote">Remote</option>
-                <option value="Hybrid">Hybrid</option>
-                <option value="On-site">On-site</option>
-              </select>
+        <form id="evaluationForm" class="evaluation-form recruiter-query-form">
+          <div class="query-option">
+            <div class="query-option-label"><span>1</span><strong>Paste a job link</strong></div>
+            <label class="job-source-field">
+              <span class="sr-only">Job URL</span>
+              <input id="jobUrl" name="jobUrl" type="url" inputmode="url" autocomplete="url" placeholder="https://company.com/jobs/12345" />
+              <span class="field-help">We’ll attempt to read the public posting automatically.</span>
             </label>
           </div>
-          <label>Job description
-            <textarea id="jobDescription" name="description" rows="14" minlength="50" placeholder="Optional when the job URL can be read. Otherwise, paste the complete description here..."></textarea>
-          </label>
-          <div class="form-actions">
-            <button id="evaluateButton" class="primary-btn" type="submit">Evaluate candidates</button>
+
+          <div class="query-divider"><span>OR</span></div>
+
+          <div class="query-option">
+            <div class="query-option-label"><span>2</span><strong>Describe the person you need</strong></div>
+            <label>
+              <span class="sr-only">Job description</span>
+              <textarea id="jobDescription" name="description" rows="7" minlength="50" placeholder="e.g. Senior product manager with marketplace experience, Chicago or remote, strong API/platform background..."></textarea>
+            </label>
+          </div>
+
+          <details class="advanced-options">
+            <summary>Advanced options</summary>
+            <div class="form-grid">
+              <label>Role title<input id="roleTitle" name="title" placeholder="Senior Product Manager" /></label>
+              <label>Location<input id="roleLocation" name="location" placeholder="Chicago, IL" /></label>
+              <label>Work model
+                <select id="remoteType" name="remoteType">
+                  <option value="">Not specified</option>
+                  <option value="Remote">Remote</option>
+                  <option value="Hybrid">Hybrid</option>
+                  <option value="On-site">On-site</option>
+                </select>
+              </label>
+            </div>
+          </details>
+
+          <div class="form-actions recruiter-query-actions">
+            <button id="evaluateButton" class="primary-btn" type="submit">Find Matching Talent →</button>
             <span id="evaluationStatus" class="status-message" role="status"></span>
           </div>
         </form>
       </section>
 
       <section id="resultsSection" hidden>
+        <div class="results-intro">
+          <p class="step-label">Matching talent</p>
+          <h2>People worth looking at</h2>
+          <p>Ranked using the evidence currently available in the network. Review the explanation and validate anything material before making a hiring decision.</p>
+        </div>
         <nav class="results-toolbar" aria-label="Result controls">
           <label class="sort-control" for="sortResults">
             <span>Sort results</span>
@@ -132,8 +168,8 @@
     </div>
   </footer>
 
-  <script type="module" src="placement.js?v=scoring-4"></script>
-  <script type="module" src="placement-display.js?v=signals-1"></script>
+  <script type="module" src="placement.js?v=placement-engineer-1"></script>
+  <script type="module" src="placement-display.js?v=placement-engineer-1"></script>
   <script src="analytics-config.js"></script>
   <script src="analytics.js"></script>
 </body>
