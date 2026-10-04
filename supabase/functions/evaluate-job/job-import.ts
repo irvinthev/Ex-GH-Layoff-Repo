@@ -78,7 +78,7 @@ function htmlToText(value: unknown): string {
     .replace(/<noscript\b[^>]*>[\s\S]*?<\/noscript>/gi, " ")
     .replace(/<svg\b[^>]*>[\s\S]*?<\/svg>/gi, " ")
     .replace(/<br\s*\/?\s*>/gi, "\n")
-    .replace(/<\/p\s*>/gi, "\n")
+    .replace(/<\/(?:p|h[1-6])\s*>/gi, "\n")
     .replace(/<\/li\s*>/gi, "\n")
     .replace(/<[^>]+>/g, " "))
     .replace(/[ \t]+/g, " ")
@@ -176,7 +176,7 @@ function linkedInJobDescription(html: string, canonicalUrl: string): string {
   for (const pattern of patterns) {
     const match = html.match(pattern)?.[1] ?? "";
     const text = htmlToText(match);
-    if (text.length >= 200) return text.slice(0, 50_000);
+    if (text.length >= 50) return text.slice(0, 50_000);
   }
   return "";
 }
@@ -200,7 +200,7 @@ export function extractJobPostingHtml(html: string, canonicalUrl: string): Impor
   // which would otherwise inflate candidate skill/domain matches.
   const description = structuredDescription.length >= 50
     ? structuredDescription
-    : providerDescription.length >= 200
+    : providerDescription.length >= 50
       ? providerDescription
       : pageTextDescription.length >= 200
         ? pageTextDescription
