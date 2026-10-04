@@ -305,6 +305,7 @@ const CONCEPT_GROUPS = [
   { label: "Risk and escalations", terms: ["risk management", "implementation risk", "escalation", "issue resolution", "troubleshooting", "compliance"] },
   { label: "Cross-functional leadership", terms: ["cross functional", "stakeholder management", "multiple stakeholders", "partnering across", "executive update", "sales and engineering", "cross team collaboration"] },
   { label: "Automation", terms: ["automation", "automated", "scripting", "python"] },
+  { label: "Data analysis and BI", terms: ["data analysis", "data analytics", "data analyst", "business intelligence", "sql", "dashboard", "reporting", "redash", "tableau", "power bi"] },
   { label: "Change and enablement", terms: ["change management", "enablement", "training", "organizational change"] },
   // Calibrated semantic groups. These intentionally map adjacent vocabulary to the
   // same underlying career evidence without changing the scoring weights.
@@ -370,6 +371,7 @@ export function normalize(value: unknown): string {
 }
 
 function stemWord(word: string): string {
+  if (["analysis", "analytics", "analytical", "analyst", "analyze", "analyzing"].includes(word)) return "analytic";
   if (word.length > 5 && word.endsWith("sses")) return word.slice(0, -2);
   if (word.length > 4 && word.endsWith("ies")) return `${word.slice(0, -3)}y`;
   if (word.length > 4 && word.endsWith("s") && !word.endsWith("ss")) return word.slice(0, -1);
@@ -641,12 +643,49 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
   const rolePreference = role ? candidate.rolePreferences.get(role.slug) ?? null : null;
   const targetPreference = rolePreference && rolePreference.preference !== "avoid" ? rolePreference : null;
   const avoidedRole = rolePreference?.preference === "avoid";
-  const evidenceRoleMatch = role ? role.phrases.some((phrase) => includesPhrase(candidate.evidenceNormalized, phrase)) : false;
+  const candidateEvidenceTokens = tokens(candidate.evidenceNormalized);
+  const exactEvidenceRoleMatch = role
+    ? role.phrases.some((phrase) => includesPhrase(candidate.evidenceNormalized, phrase))
+    : false;
+  const semanticEvidenceRoleMatch = role
+    ? role.phrases.some((phrase) => {
+        const phraseTokens = tokens(phrase);
+        return phraseTokens.length >= 2 && overlapRatio(phraseTokens, candidateEvidenceTokens) >= 0.75;
+      })
+    : false;
   const bestTitleRatio = candidate.candidateTitles.reduce(
     (best, candidateTitle) => Math.max(best, overlapRatio(candidateTitle.tokens, job.titleTokens)),
     0,
   );
   const preferredTitleMatch = bestTitleRatio >= 0.5;
+
+  const titleScore = bestTitleRatio >= 0.95
+    ? 15
+    : bestTitleRatio >= 0.75
+      ? 13
+      : bestTitleRatio >= 0.5
+        ? 10
+        : bestTitleRatio >= 0.34
+          ? 6
+          : Math.round(bestTitleRatio * 15);
+
+  const matchedSkills = candidate.skillEntries.filter((skill) => (
+    includesPhrase(job.jobText, skill.normalized) || overlapRatio(skill.tokens, job.jobTextTokens) >= 0.67
+  )).map((skill) => skill.raw);
+  const matchedConcepts = job.concepts.filter((label) => candidate.candidateConceptSet.has(label));
+  const conceptCoverage = job.concepts.length ? matchedConcepts.length / job.concepts.length : 0;
+  const skillScore = Math.min(20, Math.min(6, matchedSkills.length * 2) + Math.round(conceptCoverage * 14));
+
+  // Capability evidence can establish role-family relevance even when the
+  // candidate's organizational title/function obscures the work they actually did.
+  // Require more than a single weak keyword: either semantic role evidence plus
+  // some skill support, or multiple skill/concept signals.
+  const capabilityEvidenceMatch = (
+    (semanticEvidenceRoleMatch && skillScore >= 4)
+    || matchedSkills.length >= 2
+    || (matchedSkills.length >= 1 && matchedConcepts.length >= 1)
+  );
+  const evidenceRoleMatch = exactEvidenceRoleMatch || capabilityEvidenceMatch;
 
   const roleScore = avoidedRole
     ? 0
@@ -665,23 +704,6 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
                 : role && targetPreference
                   ? 12
                   : 0;
-
-  const titleScore = bestTitleRatio >= 0.95
-    ? 15
-    : bestTitleRatio >= 0.75
-      ? 13
-      : bestTitleRatio >= 0.5
-        ? 10
-        : bestTitleRatio >= 0.34
-          ? 6
-          : Math.round(bestTitleRatio * 15);
-
-  const matchedSkills = candidate.skillEntries.filter((skill) => (
-    includesPhrase(job.jobText, skill.normalized) || overlapRatio(skill.tokens, job.jobTextTokens) >= 0.67
-  )).map((skill) => skill.raw);
-  const matchedConcepts = job.concepts.filter((label) => candidate.candidateConceptSet.has(label));
-  const conceptCoverage = job.concepts.length ? matchedConcepts.length / job.concepts.length : 0;
-  const skillScore = Math.min(20, Math.min(6, matchedSkills.length * 2) + Math.round(conceptCoverage * 14));
 
   const matchedDomains = candidate.domainEntries.filter((domain) => (
     includesPhrase(job.jobText, domain.normalized)
