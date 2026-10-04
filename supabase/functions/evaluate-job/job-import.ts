@@ -156,6 +156,31 @@ function fallbackPageText(html: string): string {
     .slice(0, 50_000);
 }
 
+function linkedInJobDescription(html: string, canonicalUrl: string): string {
+  let hostname = "";
+  try {
+    hostname = new URL(canonicalUrl).hostname.toLowerCase().replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+  if (hostname !== "linkedin.com") return "";
+
+  // LinkedIn public job pages expose the actual JD inside a dedicated
+  // show-more/description container. Prefer this over the full page body,
+  // which also contains recommended jobs, site chrome, and unrelated text.
+  const patterns = [
+    /<div[^>]+class=["'][^"']*show-more-less-html__markup[^"']*["'][^>]*>([\s\S]*?)<\/div>/i,
+    /<div[^>]+class=["'][^"']*description__text[^"']*["'][^>]*>([\s\S]*?)<\/div>/i,
+    /<section[^>]+class=["'][^"']*description[^"']*["'][^>]*>([\s\S]*?)<\/section>/i,
+  ];
+  for (const pattern of patterns) {
+    const match = html.match(pattern)?.[1] ?? "";
+    const text = htmlToText(match);
+    if (text.length >= 200) return text.slice(0, 50_000);
+  }
+  return "";
+}
+
 export function extractJobPostingHtml(html: string, canonicalUrl: string): ImportedJob {
   const job = jsonLdRecords(html).find(isJobPosting);
   const titleFromPage = htmlToText(html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1] ?? "")
@@ -166,19 +191,22 @@ export function extractJobPostingHtml(html: string, canonicalUrl: string): Impor
     || metaContent(html, "twitter:title")
     || titleFromPage;
   const structuredDescription = htmlToText(job?.description);
+  const providerDescription = linkedInJobDescription(html, canonicalUrl);
   const pageTextDescription = fallbackPageText(html);
   const metaDescription = metaContent(html, "description") || metaContent(html, "og:description");
 
-  // Meta descriptions on job platforms are often generic sharing/SEO copy
-  // ("Company hiring X on LinkedIn") rather than the actual job description.
-  // Prefer readable page body text whenever structured JobPosting data is absent.
+  // Prefer provider-specific job-description containers before generic page body.
+  // Whole-page text can contain recommended jobs and unrelated site content,
+  // which would otherwise inflate candidate skill/domain matches.
   const description = structuredDescription.length >= 50
     ? structuredDescription
-    : pageTextDescription.length >= 200
-      ? pageTextDescription
-      : metaDescription.length >= 50
-        ? metaDescription
-        : pageTextDescription;
+    : providerDescription.length >= 200
+      ? providerDescription
+      : pageTextDescription.length >= 200
+        ? pageTextDescription
+        : metaDescription.length >= 50
+          ? metaDescription
+          : pageTextDescription;
   if (description.length < 50) throw new Error("The job page did not expose enough readable job details");
 
   const locationParts = collectAddress(job?.jobLocation);
