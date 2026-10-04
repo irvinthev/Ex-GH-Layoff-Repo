@@ -321,7 +321,7 @@ Deno.serve(async (req: Request) => {
       candidateCount: matches.length,
       evidenceSummary,
       evaluatedAt: new Date().toISOString(),
-      methodology: "Evidence-aware deterministic scoring v7; L1 structured profile + L2 candidate narrative + optional L3 enriched evidence; fit and evidence confidence are separate; missing L3 does not reduce fit; manual review required",
+      methodology: "Evidence-aware deterministic scoring v8; numeric score remains a comparative fit signal; recommendation bands require corroborating evidence beyond role/title similarity; L1 structured profile + L2 candidate narrative + optional L3 enriched evidence; missing enrichment is not treated as a qualification gap; manual review required",
       sourceUrl,
       sourceMode,
       importWarning,
