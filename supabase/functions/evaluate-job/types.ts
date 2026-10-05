@@ -89,6 +89,7 @@ export type JobProfile = {
   titleText: string;
   descriptionText: string;
   coreRequirements: RequirementUnit[];
+  requirementsParsed: boolean;
   preferredRequirements: RequirementUnit[];
   titleTokens: string[];
   jobText: string;

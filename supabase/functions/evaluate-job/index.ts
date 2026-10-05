@@ -377,6 +377,7 @@ Deno.serve(async (req: Request) => {
       title: title || "Untitled role",
       role: role ? { slug: role.slug, functionName: role.function_name, roleFamily: role.role_family, specialty: role.specialty } : null,
       jobBrief,
+      requirementsParsed: job.requirementsParsed,
       seniority: inferSeniority(title, description),
       location: location || null,
       remoteType: remoteType || null,

@@ -361,6 +361,7 @@ const GENERIC_TITLE_TOKENS = new Set([
   "developer", "development", "coordinator", "administrator", "consultant", "advisor",
   "officer", "head", "intern",
 ]);
+const APPROVED_SHORT_TOKENS = new Set(["ai", "it", "hr", "ux", "qa", "bi", "pm"]);
 
 let cachedCandidateData: CandidateCache | null = null;
 let cacheLoadPromise: Promise<{ cache: CandidateCache; databaseQueryMs: number }> | null = null;
@@ -391,7 +392,7 @@ export function tokens(value: unknown): string[] {
   if (!normalized) return [];
   const unique = new Set<string>();
   for (const word of normalized.split(" ")) {
-    if (word.length <= 2 || STOP_WORDS.has(word)) continue;
+    if ((word.length <= 2 && !APPROVED_SHORT_TOKENS.has(word)) || STOP_WORDS.has(word)) continue;
     unique.add(stemWord(word));
   }
   return [...unique];
@@ -547,7 +548,7 @@ export function prepareRole(role: Role): CachedRole {
     ...role,
     aliases: coerceStringArray(role.aliases),
     phrases,
-    phraseTokens: tokens(phrases.join(" ")),
+    phraseTokens: titleSpecialtyTokens(phrases.join(" ")),
     normalizedFunctionName: normalize(role.function_name),
   };
 }
@@ -640,6 +641,7 @@ export function prepareJobProfile(input: {
     titleText,
     descriptionText,
     coreRequirements,
+    requirementsParsed: coreRequirements.length > 0,
     preferredRequirements,
     titleTokens: tokens(title),
     jobText,
@@ -662,10 +664,11 @@ export function classifyRole(job: JobProfile, roles: CachedRole[]): CachedRole |
   for (const role of roles) {
     let points = 0;
     for (const phrase of role.phrases) {
+      if (!titleSpecialtyTokens(phrase).length) continue;
       if (includesPhrase(job.titleText, phrase)) points += 8;
       if (includesPhrase(bodyText, phrase)) points += 2;
     }
-    points += overlapRatio(job.titleTokens, role.phraseTokens) * 5;
+    points += overlapRatio(titleSpecialtyTokens(job.title), role.phraseTokens) * 5;
     if (!best || points > best.points) best = { role, points };
   }
 
