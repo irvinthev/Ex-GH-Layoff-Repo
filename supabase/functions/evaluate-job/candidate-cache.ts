@@ -62,7 +62,11 @@ function directorySkills(value: unknown): string[] {
   return clean(value)
     .split(/[,;\n]/)
     .map((item) => item.trim())
-    .filter(Boolean);
+    .filter(Boolean)
+    // The current directory export can place experience bands (for example
+    // "9-12 years" or "12+ years") in the legacy Top 3 Skills field. Those are
+    // profile metadata, not skills, and must not enter qualification scoring.
+    .filter((item) => !/^\d+\s*(?:[-–]\s*\d+|\+)\s*years?$/i.test(item));
 }
 
 function directoryCandidateId(person: DirectoryPerson): string {
