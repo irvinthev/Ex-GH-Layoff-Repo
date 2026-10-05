@@ -383,7 +383,7 @@ Deno.serve(async (req: Request) => {
       candidateCount: matches.length,
       evidenceSummary,
       evaluatedAt: new Date().toISOString(),
-      methodology: "Evidence-aware deterministic scoring v19; one canonical merged candidate profile drives both scoring and evidence reporting; held-title specialty and role-family evidence are scored independently so title alone cannot create role-family credit; qualification points use distinct recognized JD capability units resolved from public narrative, public skills and approved enriched evidence; evidence provenance is retained for matched capabilities; profile depth is metadata only and never increases score or rank; explicit preferred sections and company/benefits sections do not supply core points; seniority and location remain validation signals; manual review required",
+      methodology: "Evidence-aware deterministic scoring v20; one canonical merged candidate profile drives both scoring and evidence reporting; held-title specialty and role-family evidence are independent, and title-derived concepts cannot create role-family credit; higher role-family credit requires exact role evidence or corroborated evidence across multiple distinct core JD capabilities, while function alignment remains a lower-strength signal; qualification points use distinct recognized JD capability units resolved from public narrative, public skills and approved enriched evidence; evidence provenance is retained for matched capabilities; profile depth is metadata only and never increases score or rank; explicit preferred sections and company/benefits sections do not supply core points; seniority and location remain validation signals; manual review required",
       sourceUrl,
       sourceMode,
       importWarning,
