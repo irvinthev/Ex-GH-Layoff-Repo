@@ -731,9 +731,13 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
   const contextualSkillPoints = Math.min(2, new Set(contextualSkillEntries.map((skill) => skill.normalized)).size);
   const skillScore = Math.min(20, coreSkillPoints + contextualSkillPoints);
 
-  const capabilityEvidenceMatch = matchedCore.length > 0 && (
-    semanticEvidenceRoleMatch || matchedCore.length >= 2 || matchedConcepts.length >= 1
-  );
+  // Generic transferable concepts (for example cross-functional leadership)
+  // cannot establish a role family by themselves. Role-family credit requires
+  // either semantic role evidence plus a JD capability, or at least two distinct
+  // evidenced core capabilities.
+  const capabilityEvidenceMatch = (
+    semanticEvidenceRoleMatch && matchedCore.length >= 1
+  ) || matchedCore.length >= 2;
   const evidenceRoleMatch = exactEvidenceRoleMatch || capabilityEvidenceMatch;
 
   // Role-family and title are intentionally independent. A matching held title
