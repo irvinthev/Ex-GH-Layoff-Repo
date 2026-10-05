@@ -778,7 +778,7 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
       : null;
   };
 
-  const evidenceTrace = matchedCore
+  const evidenceTrace: CandidateMatch["evidenceTrace"] = matchedCore
     .map(traceForUnit)
     .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
 
