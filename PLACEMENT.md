@@ -31,7 +31,7 @@ Seniority and location/work model are retained as **validation signals** (10 poi
 Current controls:
 
 - Held-title specialty is scored independently. A matching title cannot also create role-family credit by itself.
-- Role-family credit comes from documented experience/capability evidence or, at a lower level, related function alignment.
+- Role-family credit is independent from held-title scoring. Higher role-family credit requires exact role evidence or corroboration across multiple distinct core JD capabilities; generic transferable concepts alone cannot establish the role family. Related function alignment remains a lower-strength signal.
 - Skills are scored from distinct recognized JD capability units. Repeating the same capability across directory text, public skills, resume enrichment, or structured enrichment cannot multiply points.
 - Directory `Description` is first-class candidate evidence. If it resolves a JD capability, that match is eligible for scoring and provenance reporting.
 - Preferred/optional JD sections do not supply core qualification points.
@@ -99,4 +99,4 @@ Outcome strength is an analysis field, not a scoring input:
 
 The initial calibration dataset contains validated feedback from Jill Weinstein, Kelsey Peretti, and Elena Moilan. Paul de Lucena's two recommendations are retained as pending feedback and must not be counted as validated outcomes.
 
-Regression tests cover the semantic failure modes exposed by the first validation set, including higher-education/EdTech equivalence and transferable logistics/operations evidence.
+Regression tests cover canonical directory evidence, enrichment invariance, title/role-family separation, provenance, higher-education/EdTech equivalence, and transferable logistics/operations evidence.
