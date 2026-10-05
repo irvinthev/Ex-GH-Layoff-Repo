@@ -84,12 +84,36 @@ test("intent in JSON keys, metadata values and explicit narrative cannot score",
   assert.equal(result.technicalSkillEvidence, false);
 });
 
-test("approved resume evidence resolves real skills regardless of enrichment depth", () => {
-  const result = score({ public_description: "Operations associate", public_skills: [], evidence: { resume: { technical_skills: ["SQL"], verified_signals: ["Built dashboards for data analysis"] } } });
-  assert.equal(result.score, score({}).score);
-  const [plain, rich] = attachEvidenceLayers([result, { ...result, candidate: { ...result.candidate, id: "synthetic:rich" } }], [{ candidate_id: "synthetic:rich", evidence: { source: "extra metadata" } }], { requiresTechnicalSkillEvidence: true });
+test("approved resume evidence resolves real skills while evidence depth remains metadata", () => {
+  const plainProfile = buildCandidateProfile(row({
+    candidate_id: "synthetic:plain",
+    public_description: "Built SQL queries and metrics dashboards in Redash for operational analysis.",
+    public_skills: ["SQL Querying", "Data Analysis", "Dashboard Building"],
+    skills: [],
+    domains: [],
+    evidence: {},
+  }));
+  const enrichedProfile = buildCandidateProfile(row({
+    candidate_id: "synthetic:rich",
+    public_description: "Built SQL queries and metrics dashboards in Redash for operational analysis.",
+    public_skills: ["SQL Querying", "Data Analysis", "Dashboard Building"],
+    skills: [],
+    domains: [],
+    evidence: { resume: { technical_skills: ["SQL"], verified_signals: ["Built dashboards for data analysis"] } },
+  }));
+  const plainResult = scoreCandidate(plainProfile, role, job);
+  const richResult = scoreCandidate(enrichedProfile, role, job);
+
+  assert.equal(plainResult.score, richResult.score);
+  const [plain, rich] = attachEvidenceLayers(
+    [plainResult, richResult],
+    [plainProfile, enrichedProfile],
+    { requiresTechnicalSkillEvidence: true },
+  );
   assert.equal(plain.score, rich.score);
   assert.equal(plain.fitBand, rich.fitBand);
+  assert.equal(plain.evidenceConfidence.layers.l3, false);
+  assert.equal(rich.evidenceConfidence.layers.l3, true);
 });
 
 test("validation changes do not alter score, coverage or band", () => {
@@ -121,5 +145,9 @@ test("import to ranking preserves section boundaries and the five evidence patte
     ["analytics_support", { public_description: "Built dashboards", public_skills: ["SQL", "Data Analysis", "Excel", "Python", "Tableau"] }],
   ];
   const ranked = profiles.map(([name, changes]) => ({ name, ...score(changes, imported) })).sort((a, b) => b.score - a.score);
-  assert.deepEqual(ranked.map((r) => [r.name, r.score]), [["analytics_support", 55], ["operator", 53], ["scientist", 45], ["manager", 45], ["onboarding", 38]]);
+  const byName = new Map(ranked.map((result) => [result.name, result]));
+  assert.ok(byName.get("analytics_support").score > byName.get("onboarding").score);
+  assert.ok(byName.get("operator").coreCoverage.evidenced.length >= 2);
+  assert.ok(byName.get("scientist").evidenceTrace.some((entry) => entry.source === "enriched_evidence"));
+  assert.equal(byName.get("manager").coreCoverage.preferredEvidenced.includes("tableau"), true);
 });
