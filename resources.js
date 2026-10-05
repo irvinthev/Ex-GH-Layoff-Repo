@@ -317,6 +317,11 @@ function renderPeopleStories(stories) {
       }
 
       toggle.onclick = () => {
+        if (!previewStory && story.published === true && story.slug) {
+          window.location.href = `spotlight/${encodeURIComponent(story.slug)}/`;
+          return;
+        }
+
         const isExpanded = card.classList.toggle("expanded");
         toggle.setAttribute("aria-expanded", isExpanded ? "true" : "false");
         toggle.textContent = isExpanded ? "Show less ↑" : "Read full story ↓";
