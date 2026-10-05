@@ -677,6 +677,10 @@ export function classifyRole(job: JobProfile, roles: CachedRole[]): CachedRole |
 }
 
 export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | null, job: JobProfile): CandidateMatch {
+  const activeReviewer = candidate.reviewerEvidence.filter((record) => record.active);
+  const validatedReviewerTitles = activeReviewer.filter((record) =>
+    record.evidence_type === "title" && record.status === "validated"
+  );
   // Capability evidence intentionally excludes the held title. Title has its own
   // scoring component and must not independently manufacture role-family or skill credit.
   const capabilityEvidenceNormalized = normalize([
@@ -688,14 +692,27 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
   ].map((value) => qualificationNarrative(String(value ?? ""))).join(" "));
   const capabilityEvidenceTokens = tokens(capabilityEvidenceNormalized);
 
+  const reviewerRoleEvidence = role
+    ? validatedReviewerTitles.filter((record) =>
+        role.phrases.some((phrase) => {
+          const phraseTokens = tokens(phrase);
+          return includesPhrase(normalize(record.value), phrase)
+            || (phraseTokens.length >= 2 && overlapRatio(phraseTokens, tokens(record.value)) >= 0.75);
+        })
+      )
+    : [];
   const exactEvidenceRoleMatch = role
     ? role.phrases.some((phrase) => includesPhrase(capabilityEvidenceNormalized, phrase))
+      || reviewerRoleEvidence.some((record) =>
+        role.phrases.some((phrase) => includesPhrase(normalize(record.value), phrase))
+      )
     : false;
   const semanticEvidenceRoleMatch = role
     ? role.phrases.some((phrase) => {
         const phraseTokens = tokens(phrase);
         return phraseTokens.length >= 2 && overlapRatio(phraseTokens, capabilityEvidenceTokens) >= 0.75;
       })
+      || reviewerRoleEvidence.length > 0
     : false;
 
   const jobTitleSpecialtyTokens = titleSpecialtyTokens(job.title);
@@ -716,10 +733,10 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
           : Math.round(bestTitleRatio * 15);
 
   // Reviewer-validated capabilities resolve evidence only for capabilities the
-  // JD requires. They are treated like any other evidenced capability and add
-  // no bonus. Rejected records never create evidence. Validated titles are
-  // display-only and never replace the held title.
-  const activeReviewer = candidate.reviewerEvidence.filter((record) => record.active);
+  // JD requires. Validated titles can corroborate role-family interpretation,
+  // but remain outside the held-title specialty score. Neither adds a bonus.
+  // Rejected records never create evidence, and validated titles never replace
+  // the held title.
   const reviewerValidates = (unit: { label: string; terms: readonly string[] }) =>
     activeReviewer.some((record) => {
       if (record.evidence_type !== "capability" || record.status !== "validated") return false;
@@ -824,10 +841,18 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
   }
 
   if (role && roleScore >= 24) {
+    const reviewerRoleSource = reviewerRoleEvidence[0];
     const roleSource = evidenceSources.find((entry) =>
       role.phrases.some((phrase) => includesPhrase(entry.evidence, phrase))
     );
-    if (roleSource) {
+    if (reviewerRoleSource) {
+      evidenceTrace.push({
+        capability: `Role family: ${role.role_family}`,
+        source: "reviewer_validated",
+        evidence: reviewerRoleSource.value,
+        reviewerSourceType: reviewerRoleSource.source_type,
+      });
+    } else if (roleSource) {
       evidenceTrace.push({
         capability: `Role family: ${role.role_family}`,
         source: roleSource.source,

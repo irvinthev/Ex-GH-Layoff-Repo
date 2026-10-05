@@ -45,6 +45,30 @@ test("validated title does not overwrite the held title or title score", () => {
   assert.equal(reviewed.reviewerEvidence[0].value, "Data Analyst");
 });
 
+test("validated title corroborates role family without changing held-title specialty scoring", () => {
+  const candidate = buildCandidateProfile(row({
+    public_description: "Used SQL for data analysis and built dashboards for recurring reports.",
+  }));
+  const base = scoreCandidate(candidate, role, job);
+  const reviewed = scoreCandidate(withReviewerEvidence(candidate, [
+    record({ evidence_type: "title", value: "Data Analyst" }),
+  ]), role, job);
+  const rejected = scoreCandidate(withReviewerEvidence(candidate, [
+    record({ evidence_type: "title", value: "Data Analyst", status: "rejected" }),
+  ]), role, job);
+
+  assert.ok(reviewed.breakdown.roleFamily.score > base.breakdown.roleFamily.score);
+  assert.equal(reviewed.breakdown.roleFamily.score, 30);
+  assert.equal(reviewed.candidate.formerJobTitle, "Operations Associate");
+  assert.equal(reviewed.breakdown.titleSpecialty.score, base.breakdown.titleSpecialty.score);
+  assert.equal(reviewed.breakdown.titleSpecialty.score, 0);
+  assert.equal(rejected.breakdown.roleFamily.score, base.breakdown.roleFamily.score);
+  const roleTrace = reviewed.evidenceTrace.find((entry) => entry.capability === "Role family: Data Analytics");
+  assert.equal(roleTrace.source, "reviewer_validated");
+  assert.equal(roleTrace.reviewerSourceType, "linkedin");
+  assert.equal(roleTrace.evidence, "Data Analyst");
+});
+
 function fakeAdmin(allowlisted) {
   const writes = [];
   const from = (table) => {
