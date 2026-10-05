@@ -31,7 +31,7 @@ export const CAPABILITY_UNITS: RequirementUnit[] = [
     "partnering across", "sales and engineering", "cross team collaboration",
   ] },
   { label: "Software product delivery", terms: [
-    "software delivery", "product delivery", "product development", "product launch",
+    "software delivery", "technical delivery", "product delivery", "product development", "product launch",
     "release planning", "product release", "roadmap execution", "agile", "scrum",
     "sprint planning", "product backlog", "backlog prioritization", "user stories",
     "acceptance criteria", "0 1 product", "0 1 products", "built product", "built products",
