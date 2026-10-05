@@ -423,7 +423,7 @@ function renderMatches(data, { scrollToResults = true } = {}) {
     `<span class="summary-pill"><strong>${data.evaluation.candidateCount}</strong> candidates evaluated</span>`,
     `<span class="summary-pill"><strong>${summaryStats.strong}</strong> Strong Fits | <strong>${summaryStats.moderate}</strong> Moderate | <strong>${summaryStats.review}</strong> Need Review</span>`,
     `<span class="summary-pill"><strong>${summaryStats.averageScore}</strong> average score</span>`,
-    `<span class="summary-pill summary-legend" title="Role Family 30pts, Title/Specialty 15pts, Skills 20pts, Domain 15pts, Seniority 10pts, Location 10pts">Category weights: 30 / 15 / 20 / 15 / 10 / 10</span>`,
+    `<span class="summary-pill summary-legend" title="Qualification score: Role Family 30pts, Title/Specialty 15pts, Skills 20pts, Domain 15pts. Seniority and location are validation signals only.">Qualification: 30 / 15 / 20 / 15 · Level/location validate</span>`,
     `<span class="summary-pill">Manual review required</span>`,
     source,
     `<button id="exportResults" class="summary-action" type="button">Export Results</button>`,
@@ -459,6 +459,19 @@ function renderMatches(data, { scrollToResults = true } = {}) {
     const linkedin = match.candidate?.linkedinUrl
       ? `<a class="candidate-link" href="${escapeHtml(match.candidate?.linkedinUrl)}" target="_blank" rel="noopener noreferrer">Review LinkedIn →</a>`
       : "";
+    const provenance = Array.isArray(match.evidenceTrace) && match.evidenceTrace.length
+      ? `<details class="evidence-provenance">
+          <summary>Evidence sources</summary>
+          <div class="evidence-provenance-list">
+            ${match.evidenceTrace.map((trace) => `
+              <div class="evidence-provenance-item">
+                <strong>${escapeHtml(trace.capability ?? "Evidence")}</strong>
+                <span>${escapeHtml(String(trace.source ?? "").replaceAll("_", " "))}</span>
+                <p>${escapeHtml(trace.evidence ?? "")}</p>
+              </div>`).join("")}
+          </div>
+        </details>`
+      : "";
     return `
       <article class="match-card fit-${fitTone}" style="--stagger-delay:${index * 60}ms">
         <div class="score-column">
@@ -481,6 +494,7 @@ function renderMatches(data, { scrollToResults = true } = {}) {
             <div class="reason-panel evidence-panel"><h4><span aria-hidden="true">✓</span> Why this person surfaced</h4>${renderList(match.reasons)}</div>
             <div class="reason-panel gap-panel"><h4><span aria-hidden="true">⚠</span> Potential gaps</h4>${renderList(match.gaps, "No immediate gaps identified")}</div>
           </div>
+          ${provenance}
           ${linkedin}
         </div>
       </article>`;
