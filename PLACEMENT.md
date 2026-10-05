@@ -4,40 +4,63 @@ This MVP provides a private, role-first matching workflow for the TalentBot HQ.
 
 ## What it does
 
-1. An administrator signs in with a Supabase passwordless email link.
+1. An administrator signs in through the private beta access flow.
 2. The administrator provides a public job URL, a pasted description, or both. Public pages are imported when readable; the paste workflow remains available when a job board blocks automated access.
-3. The `evaluate-job` Edge Function verifies the user JWT and checks the server-only admin allowlist.
-4. Only opted-in, open-to-work candidates are scored and returned.
-5. The page displays the score breakdown, supporting evidence, and gaps requiring review.
-   - Results can be sorted (highest score, lowest score, name A-Z) and filtered to strong fits (score ≥ 80).
-   - Summary pills include fit distribution, average score, and a CSV export action.
+3. The `evaluate-job` Edge Function validates the beta session (or supported legacy JWT path) and checks the server-only admin allowlist.
+4. The candidate population is built from public `people.json` directory records, then merged with optional Supabase enrichment using LinkedIn-first identity resolution and conservative name fallback.
+5. One canonical merged candidate profile drives both qualification scoring and evidence-depth reporting.
+6. The page displays the score breakdown, evidence provenance, and gaps requiring review.
+   - Results can be sorted and filtered by fit.
+   - Current fit bands are Strong ≥ 75, Possible ≥ 55, otherwise Exploratory.
 
 Evaluation history is saved privately for administrators. Candidate recommendations and observed outcomes can also be recorded in `placement_calibration_feedback` for calibration. Calibration outcomes are analytics labels only: they never add candidate-specific bonuses to the fit score.
 
 ## Scoring model
 
-| Signal | Points |
+Primary qualification score is normalized from four merit components:
+
+| Signal | Max points |
 | --- | ---: |
 | Role family | 30 |
 | Title / specialty | 15 |
-| Skills | 20 |
+| Skills / recognized JD capabilities | 20 |
 | Domain | 15 |
-| Seniority | 10 |
-| Location / work model | 10 |
 
-The matcher uses both literal signals and controlled semantic concept groups. V7 expands equivalencies for product marketing/GTM, education technology/higher education, operations execution, technical program delivery, product strategy, platform/integrations, fintech/payments, finance systems, and the existing implementation/procurement concepts. Verified resume evidence can support a secondary role family even when a candidate's former title differs. A stated target role alone is not treated as proof of qualification.
+Seniority and location/work model are retained as **validation signals** (10 points each in the breakdown UI) but are excluded from the normalized capability score.
 
-The weights and fit thresholds are unchanged. Semantic expansion improves evidence recognition rather than inflating scores.
+Current controls:
 
-Scores are deterministic decision support. They are not hiring recommendations and always require human review. There are no candidate-specific score bonuses.
+- Held-title specialty is scored independently. A matching title cannot also create role-family credit by itself.
+- Role-family credit comes from documented experience/capability evidence or, at a lower level, related function alignment.
+- Skills are scored from distinct recognized JD capability units. Repeating the same capability across directory text, public skills, resume enrichment, or structured enrichment cannot multiply points.
+- Directory `Description` is first-class candidate evidence. If it resolves a JD capability, that match is eligible for scoring and provenance reporting.
+- Preferred/optional JD sections do not supply core qualification points.
+- Domain points require explicit job-description relevance; broad semantic context alone is insufficient.
+- Candidate intent, target titles, Spotlight status, profile depth, and enrichment breadth do not add qualification points.
+- Missing enrichment is not negative evidence.
+
+### Evidence layers
+
+The same canonical candidate used by `scoreCandidate()` is also used for evidence-depth reporting:
+
+- **L1** — structured public profile facts: held title, team, function, location.
+- **L2** — public candidate narrative and public skills from the directory.
+- **L3** — approved enriched qualification evidence such as structured enriched skills/domains and resume-derived evidence.
+
+Profile depth is metadata, not merit. A Directory Profile can outrank an Enriched or Spotlight Profile.
+
+Matched capabilities also include provenance identifying the supporting source (for example directory description, public skill, enriched skill, or enriched evidence).
+
+Scores are deterministic comparative signals, not qualification percentages or hiring probabilities. Human review remains required.
 
 ## Deployment
 
 - Static page: `placement.html`, `placement.css`, and `placement.js`
 - Function: `supabase/functions/evaluate-job/index.ts`
 - Cache helpers: `supabase/functions/evaluate-job/candidate-cache.ts` and `supabase/functions/evaluate-job/types.ts`
-- Function configuration: JWT verification must remain enabled.
-- Candidate data is loaded from the `placement_candidate_cache` materialized view and refreshed daily via `pg_cron`; in-memory function cache TTL is 1 hour per isolate.
+- Function configuration: `verify_jwt` is disabled because the function performs custom beta-session authorization in the request body/header path; do not remove that application-layer authorization.
+- Candidate baseline comes from public `people.json`. Supabase `placement_candidate_cache` is an optional enrichment overlay, not the authoritative roster.
+- The merged canonical candidate cache has a 1-hour in-memory TTL per Edge Function isolate.
 - Evaluation timing is persisted to `evaluation_metrics` for cache/query monitoring.
 - Browser key: the Supabase publishable key in `placement.js` is designed to be public. Never add a service-role key to browser code.
 - URL imports accept public HTTPS pages, follow only validated redirects, stop after 10 seconds, and limit downloaded HTML to 1 MB. Imported descriptions are not saved by this MVP.
