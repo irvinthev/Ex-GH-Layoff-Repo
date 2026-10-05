@@ -72,6 +72,7 @@ export type CandidateProfile = {
   publicDescription: string | null;
   publicSkills: string[];
   enrichedSkills: string[];
+  enrichedEvidence: string[];
   domains: string[];
   hasEnrichedEvidence: boolean;
   allSkills: string[];
