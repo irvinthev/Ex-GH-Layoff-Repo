@@ -723,7 +723,10 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
     !CAPABILITY_UNITS.some((unit) => unit.terms.some((term) => includesPhrase(skill.normalized, term)))
     && includesPhrase(job.descriptionText, skill.normalized)
   ));
-  const matchedConcepts = job.concepts.filter((label) => candidate.candidateConceptSet.has(label));
+  // Transferable concepts must come from capability evidence, not the held title.
+  // This closes an indirect title -> role-family path for titles such as Data Analyst.
+  const capabilityConceptSet = new Set(conceptLabels(capabilityEvidenceNormalized));
+  const matchedConcepts = job.concepts.filter((label) => capabilityConceptSet.has(label));
   const coreSkillPoints = Math.min(20, matchedCore.length * 6);
   const contextualSkillPoints = Math.min(2, new Set(contextualSkillEntries.map((skill) => skill.normalized)).size);
   const skillScore = Math.min(20, coreSkillPoints + contextualSkillPoints);
