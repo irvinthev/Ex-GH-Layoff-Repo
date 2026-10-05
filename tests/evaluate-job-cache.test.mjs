@@ -43,6 +43,27 @@ const candidateRow = {
   },
 };
 
+function createDelayedAdminStub() {
+  const calls = { roles: 0, candidates: 0 };
+  let release;
+  const waitForRelease = new Promise((resolve) => {
+    release = resolve;
+  });
+  return {
+    calls,
+    release,
+    from(table) {
+      return {
+        select() {
+          if (table === "role_taxonomy") {
+            return {
+              eq() {
+                calls.roles += 1;
+                return waitForRelease.then(() => ({ data: [roleRecord], error: null }));
+              },
+            };
+          }
+
 function createAdminStub() {
   const calls = { roles: 0, candidates: 0 };
   return {
@@ -59,27 +80,7 @@ function createAdminStub() {
             };
           }
 
-          function createDelayedAdminStub() {
-            const calls = { roles: 0, candidates: 0 };
-            let release;
-            const waitForRelease = new Promise((resolve) => {
-              release = resolve;
-            });
-            return {
-              calls,
-              release,
-              from(table) {
-                return {
-                  select() {
-                    if (table === "role_taxonomy") {
-                      return {
-                        eq() {
-                          calls.roles += 1;
-                          return waitForRelease.then(() => ({ data: [roleRecord], error: null }));
-                        },
-                      };
-                    }
-                    if (table === "placement_candidate_cache") {
+          if (table === "placement_candidate_cache") {
                       calls.candidates += 1;
                       return waitForRelease.then(() => ({ data: [candidateRow], error: null }));
                     }
