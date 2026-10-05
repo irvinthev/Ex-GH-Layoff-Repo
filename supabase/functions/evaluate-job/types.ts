@@ -56,6 +56,7 @@ export type CandidateProfile = {
   id: string;
   name: string;
   formerJobTitle: string | null;
+  formerTeam: string | null;
   functionName: string | null;
   functionNameNormalized: string;
   location: string | null;
@@ -68,6 +69,11 @@ export type CandidateProfile = {
   preferredLocationTokens: string[][];
   rolePreferences: Map<string, RolePreferenceRecord>;
   candidateTitles: TokenizedLabel[];
+  publicDescription: string | null;
+  publicSkills: string[];
+  enrichedSkills: string[];
+  domains: string[];
+  hasEnrichedEvidence: boolean;
   allSkills: string[];
   skillEntries: TokenizedLabel[];
   domainEntries: TokenizedLabel[];
@@ -116,6 +122,11 @@ export type CandidateMatch = {
     ratio: number | null;
     preferredEvidenced: string[];
   };
+  evidenceTrace: Array<{
+    capability: string;
+    source: "held_title" | "directory_team" | "directory_description" | "public_skill" | "enriched_skill" | "enriched_evidence";
+    evidence: string;
+  }>;
   breakdown: {
     roleFamily: { score: number; max: 30 };
     titleSpecialty: { score: number; max: 15 };
