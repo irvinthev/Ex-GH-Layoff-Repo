@@ -55,10 +55,6 @@ export function summarizeEvidenceLayers(profile: CandidateProfile | null | undef
 export function attachEvidenceLayers<T extends {
   candidate?: {
     id?: string | null;
-    formerJobTitle?: string | null;
-    functionName?: string | null;
-    location?: string | null;
-    skills?: string[];
   };
   fitBand?: "Strong" | "Possible" | "Exploratory";
   technicalSkillEvidence?: boolean;
@@ -73,24 +69,14 @@ export function attachEvidenceLayers<T extends {
   reasons?: string[];
 }>(
   matches: T[],
-  rows: CandidateEvidenceRow[],
+  candidates: CandidateProfile[],
   options: { requiresTechnicalSkillEvidence?: boolean } = {},
 ): Array<T & { evidenceConfidence: EvidenceLayerSummary; evidenceAssessment: MatchEvidenceAssessment }> {
-  const evidenceByCandidate = new Map<string, EvidenceLayerSummary>();
-  for (const row of rows) {
-    const id = String(row.candidate_id ?? "").trim();
-    if (id) evidenceByCandidate.set(id, summarizeEvidenceLayers(row));
-  }
+  const candidateById = new Map(candidates.map((candidate) => [candidate.id, candidate]));
 
   return matches.map((match) => {
     const id = String(match.candidate?.id ?? "").trim();
-    const evidenceConfidence = evidenceByCandidate.get(id) ?? summarizeEvidenceLayers({
-      candidate_id: id,
-      former_job_title: match.candidate?.formerJobTitle ?? null,
-      function_name: match.candidate?.functionName ?? null,
-      location_text: match.candidate?.location ?? null,
-      public_skills: match.candidate?.skills ?? [],
-    });
+    const evidenceConfidence = summarizeEvidenceLayers(candidateById.get(id));
     const breakdown = match.breakdown;
     const roleScore = breakdown?.roleFamily?.score ?? 0;
     const titleScore = breakdown?.titleSpecialty?.score ?? 0;
