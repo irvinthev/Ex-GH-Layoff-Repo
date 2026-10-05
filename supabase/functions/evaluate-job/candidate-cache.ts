@@ -722,7 +722,7 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
     return Math.max(best, overlapRatio(candidateTitleSpecialtyTokens, jobTitleSpecialtyTokens));
   }, 0);
 
-  const titleScore = bestTitleRatio >= 0.95
+  const heldTitleScore = bestTitleRatio >= 0.95
     ? 15
     : bestTitleRatio >= 0.75
       ? 13
@@ -732,11 +732,17 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
           ? 6
           : Math.round(bestTitleRatio * 15);
 
+  const bestReviewerTitleRatio = validatedReviewerTitles.reduce((best, record) => {
+    const reviewerTitleSpecialtyTokens = titleSpecialtyTokens(record.value);
+    if (!reviewerTitleSpecialtyTokens.length || !jobTitleSpecialtyTokens.length) return best;
+    return Math.max(best, overlapRatio(reviewerTitleSpecialtyTokens, jobTitleSpecialtyTokens));
+  }, 0);
+
   // Reviewer-validated capabilities resolve evidence only for capabilities the
-  // JD requires. Validated titles can corroborate role-family interpretation,
-  // but remain outside the held-title specialty score. Neither adds a bonus.
-  // Rejected records never create evidence, and validated titles never replace
-  // the held title.
+  // JD requires. A validated title may establish bounded role-equivalency credit
+  // only when the candidate also has substantive core-capability evidence for
+  // this specific JD. It never overwrites the held title and cannot exceed 12/15.
+  // Rejected records never create evidence.
   const reviewerValidates = (unit: { label: string; terms: readonly string[] }) =>
     activeReviewer.some((record) => {
       if (record.evidence_type !== "capability" || record.status !== "validated") return false;
@@ -748,6 +754,21 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
     || (job.coreRequirements.some((core) => core.label === unit.label) && reviewerValidates(unit));
   const matchedCore = job.coreRequirements.filter(evidenced);
   const matchedPreferred = job.preferredRequirements.filter(evidenced);
+
+  const reviewerEquivalentTitleScore = matchedCore.length >= 2
+    ? bestReviewerTitleRatio >= 0.95
+      ? 12
+      : bestReviewerTitleRatio >= 0.75
+        ? 10
+        : bestReviewerTitleRatio >= 0.5
+          ? 8
+          : bestReviewerTitleRatio >= 0.34
+            ? 5
+            : 0
+    : 0;
+  const titleScore = Math.max(heldTitleScore, reviewerEquivalentTitleScore);
+  const reviewerTitleDeterminedScore = reviewerEquivalentTitleScore > heldTitleScore;
+
   const matchedTechnicalRequirements = TECHNICAL_UNITS
     .filter((unit) => job.technicalRequirementTerms.includes(unit.label) && evidenced(unit))
     .map((unit) => unit.label);
@@ -832,12 +853,27 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
     .map(traceForUnit)
     .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
 
-  if (titleScore > 0 && candidate.formerJobTitle) {
-    evidenceTrace.push({
-      capability: "Title alignment",
-      source: "held_title",
-      evidence: candidate.formerJobTitle,
-    });
+  if (titleScore > 0) {
+    if (reviewerTitleDeterminedScore) {
+      const reviewerTitleSource = validatedReviewerTitles
+        .slice()
+        .sort((a, b) => overlapRatio(titleSpecialtyTokens(b.value), jobTitleSpecialtyTokens)
+          - overlapRatio(titleSpecialtyTokens(a.value), jobTitleSpecialtyTokens))[0];
+      if (reviewerTitleSource) {
+        evidenceTrace.push({
+          capability: "Validated role equivalency",
+          source: "reviewer_validated",
+          evidence: reviewerTitleSource.value,
+          reviewerSourceType: reviewerTitleSource.source_type,
+        });
+      }
+    } else if (candidate.formerJobTitle) {
+      evidenceTrace.push({
+        capability: "Title alignment",
+        source: "held_title",
+        evidence: candidate.formerJobTitle,
+      });
+    }
   }
 
   if (role && roleScore >= 24) {
@@ -865,7 +901,9 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
   if (roleScore === 30 && role) reasons.push(`Direct experience and capability evidence strongly support ${role.role_family}`);
   else if (roleScore === 24 && role) reasons.push(`Experience evidence supports ${role.role_family}`);
   else if (roleScore === 18 && role) reasons.push(`Related ${role.function_name} function`);
-  if (titleScore >= 13) reasons.push("Held job title strongly aligns with the role");
+  if (reviewerTitleDeterminedScore) {
+    reasons.push("Reviewer-validated role equivalency aligns with the role and is supported by core capability evidence");
+  } else if (titleScore >= 13) reasons.push("Held job title strongly aligns with the role");
   else if (titleScore >= 10) reasons.push("Held job title aligns with the role");
   if (matchedCore.length) reasons.push(`Core capabilities evidenced: ${matchedCore.map((unit) => unit.label).join(", ")}`);
   if (matchedPreferred.length) reasons.push(`Preferred capabilities evidenced (not core points): ${matchedPreferred.map((unit) => unit.label).join(", ")}`);
