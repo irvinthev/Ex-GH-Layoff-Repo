@@ -22,6 +22,13 @@ test("validated capability resolves a matching JD requirement without bonus", ()
   assert.equal(trace.reviewerSourceType, "linkedin");
 });
 
+
+test("reviewer-validated core capability is not also reported as a validation gap", () => {
+  const reviewed = scoreWith([record()]);
+  assert.ok(reviewed.coreCoverage.evidenced.includes("sql"));
+  assert.ok(!reviewed.gaps.some((gap) => /\bsql\b/i.test(gap)));
+});
+
 test("validated capability has no effect when the JD does not require it", () => {
   const target = prepareJobProfile({ title: "Data Analyst", description: "Responsibilities\nBuild dashboards and recurring reports.", location: "Remote", remoteType: "Remote" });
   const base = scoreWith([], target);
