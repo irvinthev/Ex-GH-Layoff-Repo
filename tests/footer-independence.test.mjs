@@ -11,7 +11,7 @@ const pages = [
 ];
 
 const independenceStatement =
-  "TalentBot HQ is independent and community-built. The Grubhub Alumni Directory is not affiliated with or operated by Grubhub.";
+  "Talent Network HQ is independent and community-built. The Grubhub Alumni Directory is not affiliated with or operated by Grubhub.";
 
 test("site footer includes the independence statement on every html page", () => {
   for (const page of pages) {
