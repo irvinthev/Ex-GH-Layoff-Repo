@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildCandidateProfile, includesPhrase, normalize, prepareJobProfile, prepareRole, scoreCandidate } from "../supabase/functions/evaluate-job/candidate-cache.ts";
+import { buildCandidateProfile, classifyRole, includesPhrase, normalize, prepareJobProfile, prepareRole, scoreCandidate, tokens } from "../supabase/functions/evaluate-job/candidate-cache.ts";
 import { attachEvidenceLayers } from "../supabase/functions/evaluate-job/evidence-layers.ts";
 import { extractJobPostingHtml } from "../supabase/functions/evaluate-job/job-import.ts";
 
@@ -132,6 +132,92 @@ test("direct reports are people-management evidence, not report-building evidenc
 test("coverage is explicitly unknown when no recognized requirements exist", () => {
   const target = prepareJobProfile({ title: "Coordinator", description: "Coordinate schedules and support the team with daily administrative work.", location: "", remoteType: "" });
   assert.equal(score({}, target).coreCoverage.ratio, null);
+  assert.equal(target.requirementsParsed, false);
+});
+
+test("common qualification headings resume parsing after context sections", () => {
+  const minimumQualifications = prepareJobProfile({
+    title: "Data Analyst",
+    description: "About Us\nWe build tools for customers.\nMinimum Qualifications\nUse SQL to analyze data.",
+    location: "",
+    remoteType: "",
+  });
+  const whoYouAre = prepareJobProfile({
+    title: "Data Analyst",
+    description: "Benefits\nHealth coverage and paid leave.\nWho You Are\nBuild dashboards and recurring reports.",
+    location: "",
+    remoteType: "",
+  });
+
+  assert.equal(minimumQualifications.requirementsParsed, true);
+  assert.deepEqual(minimumQualifications.coreRequirements.map((unit) => unit.label), ["sql", "Data analysis"]);
+  assert.equal(whoYouAre.requirementsParsed, true);
+  assert.deepEqual(whoYouAre.coreRequirements.map((unit) => unit.label), ["Reporting and dashboards"]);
+
+  for (const heading of [
+    "Basic Qualifications",
+    "What We're Looking For",
+    "What We’re Looking For",
+    "What You Will Do",
+    "Your Impact",
+  ]) {
+    const target = prepareJobProfile({
+      title: "Data Analyst",
+      description: `About Us\nCompany information.\n${heading}\nUse SQL for data analysis.`,
+      location: "",
+      remoteType: "",
+    });
+    assert.equal(target.requirementsParsed, true, `${heading} should resume core parsing`);
+  }
+});
+
+test("only approved two-character occupational tokens survive tokenization", () => {
+  assert.deepEqual(tokens("AI it HR Ux qA bi Pm are is in at zz"), ["ai", "it", "hr", "ux", "qa", "bi", "pm"]);
+});
+
+test("abbreviated and generic-manager job titles classify from specific role terms", () => {
+  const titles = [
+    "AI Product Manager",
+    "IT Audit Manager",
+    "HR Manager",
+    "UX Researcher",
+    "QA Manager",
+    "BI Analyst",
+    "Marketing Manager",
+    "Operations Manager",
+    "Customer Success Manager",
+    "Product Manager",
+  ];
+  const roles = titles.map((title, index) => prepareRole({
+    slug: `role-${index}`,
+    function_name: title,
+    role_family: title,
+    specialty: null,
+    aliases: [title],
+  }));
+
+  for (const [index, title] of titles.entries()) {
+    const job = prepareJobProfile({ title, description: "", location: "", remoteType: "" });
+    assert.equal(classifyRole(job, roles)?.slug, `role-${index}`, `${title} should classify to its specific role`);
+  }
+});
+
+test("generic manager and seniority overlap alone cannot determine a role family", () => {
+  const managerRole = prepareRole({
+    slug: "generic-manager",
+    function_name: "Management",
+    role_family: "Manager",
+    specialty: null,
+    aliases: ["Senior Manager", "Lead Manager"],
+  });
+  const job = prepareJobProfile({
+    title: "Marketing Manager",
+    description: "We are hiring a senior manager.",
+    location: "",
+    remoteType: "",
+  });
+
+  assert.equal(classifyRole(job, [managerRole]), null);
 });
 
 test("import to ranking preserves section boundaries and the five evidence patterns", () => {

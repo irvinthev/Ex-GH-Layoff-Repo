@@ -55,7 +55,7 @@ export function qualificationSections(description: string): { core: string; pref
       section = "context";
       continue;
     }
-    if (/^(about the role|the role|key responsibilities|responsibilities|what you.ll do|background & experience|qualifications|required qualifications|requirements|what you.ll bring)$/.test(heading)) {
+    if (/^(about the role|the role|key responsibilities|responsibilities|what you.ll do|what you will do|your impact|who you are|what (?:we[’']re|we are) looking for|background & experience|qualifications|required qualifications|minimum qualifications|basic qualifications|requirements|what you.ll bring)$/.test(heading)) {
       section = "core";
       continue;
     }
