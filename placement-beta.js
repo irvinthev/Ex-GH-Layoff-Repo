@@ -347,6 +347,62 @@ function renderList(items, emptyState = "None identified") {
     : `<p>${escapeHtml(emptyState)}</p>`;
 }
 
+const REVIEWER_SOURCE_LABELS = {
+  linkedin: "LinkedIn",
+  resume: "Resume",
+  portfolio: "Portfolio",
+  direct_knowledge: "Direct knowledge",
+  other: "Other",
+};
+
+function reviewerSourceOptions() {
+  return Object.entries(REVIEWER_SOURCE_LABELS)
+    .map(([value, label]) => `<option value="${value}">${label}</option>`).join("");
+}
+
+function renderReviewerBadges(match) {
+  const validated = (match.reviewerEvidence ?? []).filter((item) => item.status === "validated");
+  return validated.length
+    ? `<p class="reviewer-validated">${validated.map((item) => `<span class="summary-pill">Reviewer validated · ${escapeHtml(REVIEWER_SOURCE_LABELS[item.sourceType] ?? "Other")} — ${escapeHtml(item.value)}${item.evidenceType === "title" ? " (title)" : ""}</span>`).join(" ")}</p>`
+    : "";
+}
+
+function renderGapActions(match) {
+  const reviewed = new Map((match.reviewerEvidence ?? [])
+    .filter((item) => item.evidenceType === "capability")
+    .map((item) => [item.value.toLowerCase(), item.status]));
+  const items = (match.coreCoverage?.notEvidenced ?? []).filter((label) => reviewed.get(label.toLowerCase()) !== "rejected");
+  const confirmed = (match.reviewerEvidence ?? []).filter((item) => item.evidenceType === "capability" && item.status === "rejected");
+  return `<div class="reviewer-gap-actions">
+    ${items.map((label) => `<div class="reviewer-gap-item"><span>${escapeHtml(label)}</span>
+      <button type="button" class="summary-action" data-reviewer-action="validate" data-candidate-id="${escapeHtml(match.candidate?.id ?? "")}" data-value="${escapeHtml(label)}" data-evidence-type="capability">Validate</button>
+      <button type="button" class="summary-action" data-reviewer-action="reject" data-candidate-id="${escapeHtml(match.candidate?.id ?? "")}" data-value="${escapeHtml(label)}" data-evidence-type="capability">Confirm Gap</button></div>`).join("")}
+    ${confirmed.map((item) => `<div class="reviewer-gap-item"><span>${escapeHtml(item.value)}</span> <em>Gap confirmed</em></div>`).join("")}
+  </div>`;
+}
+
+function openReviewerForm(trigger) {
+  const existing = trigger.closest("article")?.querySelector(".reviewer-form");
+  if (existing) existing.remove();
+  const status = trigger.dataset.reviewerAction === "reject" ? "rejected" : "validated";
+  const isTitle = trigger.dataset.evidenceType === "title";
+  const form = document.createElement("form");
+  form.className = "reviewer-form";
+  form.dataset.candidateId = trigger.dataset.candidateId;
+  form.dataset.evidenceType = trigger.dataset.evidenceType;
+  form.dataset.status = status;
+  form.innerHTML = `
+    ${isTitle
+      ? `<label>Validated title <input name="value" type="text" maxlength="300" required></label>`
+      : `<input name="value" type="hidden" value="${escapeHtml(trigger.dataset.value ?? "")}"><strong>${status === "rejected" ? "Confirm gap" : "Validate"}: ${escapeHtml(trigger.dataset.value ?? "")}</strong>`}
+    <label>Source <select name="sourceType">${reviewerSourceOptions()}</select></label>
+    <label>Source URL (optional) <input name="sourceUrl" type="url" maxlength="2048"></label>
+    <label>Note (optional) <textarea name="note" rows="2" maxlength="2000"></textarea></label>
+    <button type="submit" class="summary-action">Save</button>
+    <button type="button" class="summary-action" data-reviewer-action="cancel">Cancel</button>`;
+  trigger.closest(".match-main").appendChild(form);
+}
+
 function toCsvValue(value) {
   return `"${String(value ?? "").replace(/[\r\n]+/g, " ").replace(/"/g, "\"\"")}"`;
 }
@@ -480,7 +536,8 @@ function renderMatches(data, { scrollToResults = true } = {}) {
         </div>
         <div class="match-main">
           <h3>${escapeHtml(match.candidate?.name ?? "Candidate name unavailable")}</h3>
-          <p class="candidate-meta">${escapeHtml(match.candidate?.formerJobTitle ?? "Role not recorded")} · ${escapeHtml(match.candidate?.location ?? "Location not recorded")}</p>
+          <p class="candidate-meta">${escapeHtml(match.candidate?.formerJobTitle ?? "Role not recorded")} · ${escapeHtml(match.candidate?.location ?? "Location not recorded")} <button type="button" class="summary-action" data-reviewer-action="validate" data-evidence-type="title" data-candidate-id="${escapeHtml(match.candidate?.id ?? "")}">Add validated title</button></p>
+          ${renderReviewerBadges(match)}
           ${(() => {
             const depth = getProfileDepth(match.candidate);
             const spotlightUrl = depth.spotlight
@@ -492,7 +549,7 @@ function renderMatches(data, { scrollToResults = true } = {}) {
           <div class="evidence-grid">${breakdown}</div>
           <div class="reason-columns">
             <div class="reason-panel evidence-panel"><h4><span aria-hidden="true">✓</span> Why this person surfaced</h4>${renderList(match.reasons)}</div>
-            <div class="reason-panel gap-panel"><h4><span aria-hidden="true">⚠</span> Potential gaps</h4>${renderList(match.gaps, "No immediate gaps identified")}</div>
+            <div class="reason-panel gap-panel"><h4><span aria-hidden="true">⚠</span> Potential gaps</h4>${renderList(match.gaps, "No immediate gaps identified")}${renderGapActions(match)}</div>
           </div>
           ${provenance}
           ${linkedin}
@@ -533,6 +590,47 @@ function renderMatches(data, { scrollToResults = true } = {}) {
     resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 }
+
+results.addEventListener("click", (event) => {
+  const trigger = event.target.closest("[data-reviewer-action]");
+  if (!trigger) return;
+  if (trigger.dataset.reviewerAction === "cancel") {
+    trigger.closest("form")?.remove();
+    return;
+  }
+  openReviewerForm(trigger);
+});
+
+results.addEventListener("submit", async (event) => {
+  const form = event.target.closest(".reviewer-form");
+  if (!form) return;
+  event.preventDefault();
+  const fields = new FormData(form);
+  const body = {
+    action: "save_reviewer_evidence",
+    candidateId: form.dataset.candidateId,
+    evidenceType: form.dataset.evidenceType,
+    status: form.dataset.status,
+    value: fields.get("value"),
+    sourceType: fields.get("sourceType"),
+    sourceUrl: fields.get("sourceUrl"),
+    note: fields.get("note"),
+  };
+  const { data, error } = await invokePlacement(body);
+  if (error || !data?.row) {
+    setStatus(evaluationStatus, "Reviewer evidence could not be saved.", "error");
+    return;
+  }
+  const match = latestPayload?.matches?.find((item) => item.candidate?.id === body.candidateId);
+  if (match) {
+    match.reviewerEvidence = [
+      ...(match.reviewerEvidence ?? []).filter((item) => !(item.evidenceType === body.evidenceType && item.value.toLowerCase() === String(body.value).toLowerCase())),
+      { evidenceType: body.evidenceType, value: String(body.value), status: body.status, sourceType: body.sourceType, sourceUrl: body.sourceUrl || null },
+    ];
+  }
+  setStatus(evaluationStatus, "Reviewer evidence saved. Re-run the evaluation to apply it to scores.", "success");
+  if (latestPayload) renderMatches(latestPayload, { scrollToResults: false });
+});
 
 wireResultControls({
   sortSelect: sortResults,

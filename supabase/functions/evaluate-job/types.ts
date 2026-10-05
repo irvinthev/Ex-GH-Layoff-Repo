@@ -39,6 +39,20 @@ export type PlacementCandidateCacheRow = {
   candidate_preferences: CandidatePreferenceRecord | null;
 };
 
+export type ReviewerEvidenceRecord = {
+  id?: string;
+  candidate_id: string;
+  evidence_type: "capability" | "title";
+  value: string;
+  status: "validated" | "rejected";
+  source_type: "linkedin" | "resume" | "portfolio" | "direct_knowledge" | "other";
+  source_url: string | null;
+  note: string | null;
+  reviewed_by: string;
+  reviewed_at: string;
+  active: boolean;
+};
+
 export type TokenizedLabel = {
   raw: string;
   normalized: string;
@@ -81,6 +95,7 @@ export type CandidateProfile = {
   evidenceNormalized: string;
   candidateConcepts: string[];
   candidateConceptSet: Set<string>;
+  reviewerEvidence: ReviewerEvidenceRecord[];
 };
 
 export type JobProfile = {
@@ -126,8 +141,9 @@ export type CandidateMatch = {
   };
   evidenceTrace: Array<{
     capability: string;
-    source: "held_title" | "directory_team" | "directory_description" | "public_skill" | "enriched_skill" | "enriched_evidence";
+    source: "held_title" | "directory_team" | "directory_description" | "public_skill" | "enriched_skill" | "enriched_evidence" | "reviewer_validated";
     evidence: string;
+    reviewerSourceType?: ReviewerEvidenceRecord["source_type"];
   }>;
   breakdown: {
     roleFamily: { score: number; max: 30 };
@@ -137,6 +153,13 @@ export type CandidateMatch = {
     seniority: { score: number; max: 10 };
     location: { score: number; max: 10 };
   };
+  reviewerEvidence: Array<{
+    evidenceType: ReviewerEvidenceRecord["evidence_type"];
+    value: string;
+    status: ReviewerEvidenceRecord["status"];
+    sourceType: ReviewerEvidenceRecord["source_type"];
+    sourceUrl: string | null;
+  }>;
   reasons: string[];
   gaps: string[];
 };

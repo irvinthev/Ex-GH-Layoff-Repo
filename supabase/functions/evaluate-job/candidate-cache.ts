@@ -609,6 +609,7 @@ export function buildCandidateProfile(row: PlacementCandidateCacheRow): Candidat
     evidenceNormalized,
     candidateConcepts,
     candidateConceptSet: new Set(candidateConcepts),
+    reviewerEvidence: [],
   };
 }
 
@@ -714,8 +715,20 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
           ? 6
           : Math.round(bestTitleRatio * 15);
 
-  const evidenced = (unit: { terms: readonly string[] }) =>
-    unit.terms.some((term) => includesPhrase(capabilityEvidenceNormalized, term));
+  // Reviewer-validated capabilities resolve evidence only for capabilities the
+  // JD requires. They are treated like any other evidenced capability and add
+  // no bonus. Rejected records never create evidence. Validated titles are
+  // display-only and never replace the held title.
+  const activeReviewer = candidate.reviewerEvidence.filter((record) => record.active);
+  const reviewerValidates = (unit: { label: string; terms: readonly string[] }) =>
+    activeReviewer.some((record) => {
+      if (record.evidence_type !== "capability" || record.status !== "validated") return false;
+      const value = normalize(record.value);
+      return value === normalize(unit.label) || unit.terms.some((term) => includesPhrase(value, term));
+    });
+  const evidenced = (unit: { label: string; terms: readonly string[] }) =>
+    unit.terms.some((term) => includesPhrase(capabilityEvidenceNormalized, term))
+    || (job.coreRequirements.some((core) => core.label === unit.label) && reviewerValidates(unit));
   const matchedCore = job.coreRequirements.filter(evidenced);
   const matchedPreferred = job.preferredRequirements.filter(evidenced);
   const matchedTechnicalRequirements = TECHNICAL_UNITS
@@ -783,8 +796,18 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
     const source = evidenceSources.find((entry) =>
       unit.terms.some((term) => includesPhrase(entry.evidence, term))
     );
-    return source
-      ? { capability: unit.label, source: source.source, evidence: source.evidence }
+    if (source) return { capability: unit.label, source: source.source, evidence: source.evidence };
+    const reviewed = activeReviewer.find((record) =>
+      record.evidence_type === "capability" && record.status === "validated"
+      && (normalize(record.value) === normalize(unit.label)
+        || unit.terms.some((term) => includesPhrase(normalize(record.value), term))));
+    return reviewed
+      ? {
+          capability: unit.label,
+          source: "reviewer_validated" as const,
+          evidence: reviewed.value,
+          reviewerSourceType: reviewed.source_type,
+        }
       : null;
   };
 
@@ -861,6 +884,13 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
       preferredEvidenced: matchedPreferred.map((unit) => unit.label),
     },
     evidenceTrace,
+    reviewerEvidence: activeReviewer.map((record) => ({
+      evidenceType: record.evidence_type,
+      value: record.value,
+      status: record.status,
+      sourceType: record.source_type,
+      sourceUrl: record.source_url,
+    })),
     breakdown: {
       roleFamily: { score: roleScore, max: 30 },
       titleSpecialty: { score: titleScore, max: 15 },

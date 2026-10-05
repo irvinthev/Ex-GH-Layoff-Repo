@@ -10,6 +10,7 @@ import {
 } from "./candidate-cache.ts";
 import { attachEvidenceLayers } from "./evidence-layers.ts";
 import { importJobFromUrl } from "./job-import.ts";
+import { getActiveReviewerEvidence, saveReviewerEvidence, withReviewerEvidence } from "./reviewer-evidence.ts";
 
 const ALLOWED_ORIGINS = new Set([
   "https://irvinthev.github.io",
@@ -223,6 +224,19 @@ Deno.serve(async (req: Request) => {
       return json(req, { rows: rows ?? [] });
     }
 
+    if (action === "save_reviewer_evidence") {
+      const result = await saveReviewerEvidence(admin, email, payload);
+      return json(req, result.body, result.status);
+    }
+
+    if (action === "reviewer_evidence") {
+      const candidateIds = Array.isArray(payload?.candidateIds)
+        ? payload.candidateIds.map((id) => String(id)).slice(0, 1000)
+        : [];
+      const evidence = await getActiveReviewerEvidence(admin, candidateIds);
+      return json(req, { evidence: Object.fromEntries(evidence) });
+    }
+
     if (action === "record_feedback") {
       const candidateId = String(payload?.candidateId ?? "").trim();
       const company = String(payload?.company ?? "").trim().slice(0, 300);
@@ -355,8 +369,9 @@ Deno.serve(async (req: Request) => {
     const job = prepareJobProfile({ title, description, location, remoteType });
     const role = classifyRole(job, cache.roles);
     const scoringStartedAt = performance.now();
+    const reviewerEvidence = await getActiveReviewerEvidence(admin, cache.candidates.map((candidate) => candidate.id));
     const scoredMatches = cache.candidates
-      .map((candidate) => scoreCandidate(candidate, role, job));
+      .map((candidate) => scoreCandidate(withReviewerEvidence(candidate, reviewerEvidence.get(candidate.id)), role, job));
 
     // Evidence depth is derived from the same canonical merged candidate
     // profiles used for scoring. Missing L3 remains metadata only and never
