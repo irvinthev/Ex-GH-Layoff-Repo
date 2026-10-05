@@ -334,3 +334,11 @@ button { border: 0; cursor: pointer; }
   .job-brief-card h3 { font-size: 17px; }
   .job-brief-card p { font-size: 13.5px; line-height: 1.55; }
 }
+
+.evidence-provenance{margin:14px 0;border:1px solid #dbe4ef;border-radius:14px;background:#f8fafc}
+.evidence-provenance summary{cursor:pointer;padding:12px 14px;font-weight:750;color:#0f172a}
+.evidence-provenance-list{padding:0 14px 12px;display:grid;gap:10px}
+.evidence-provenance-item{padding:10px 12px;border:1px solid #e2e8f0;border-radius:10px;background:#fff}
+.evidence-provenance-item strong{display:block;color:#0f172a;font-size:13px}
+.evidence-provenance-item span{display:block;margin-top:2px;color:#64748b;font-size:11px;text-transform:capitalize}
+.evidence-provenance-item p{margin:6px 0 0;color:#475569;font-size:12px;line-height:1.45}
