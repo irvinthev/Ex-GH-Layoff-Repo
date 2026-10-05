@@ -208,7 +208,7 @@ function renderPeopleStories(stories) {
       document.head.appendChild(robots);
     }
     robots.setAttribute("content", "noindex, nofollow, noarchive");
-    document.title = `Preview: ${previewStory.name} | TalentBot HQ`;
+    document.title = `Preview: ${previewStory.name} | Talent Network HQ`;
   }
 
   const published = stories
