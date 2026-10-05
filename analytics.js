@@ -1,5 +1,5 @@
 /**
- * TalentBot HQ analytics
+ * Talent Network HQ analytics
  *
  * Observational only. No site feature depends on this file or any analytics provider.
  * Provider failures are swallowed so directory/search/navigation/form flows continue.
