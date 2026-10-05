@@ -22,6 +22,24 @@ export const CAPABILITY_UNITS: RequirementUnit[] = [
   { label: "Data quality", terms: ["data quality", "data accuracy", "data validation"] },
   { label: "Data documentation", terms: ["document queries", "document reports", "data definitions", "data documentation"] },
   { label: "Communicating findings", terms: ["communicate findings", "communicating findings", "present findings", "presenting findings"] },
+
+  // Product-management capability units. These are qualification evidence, not
+  // title synonyms: they score only when the JD asks for the capability and the
+  // candidate's documented narrative/skills contain corresponding evidence.
+  { label: "Cross-functional leadership", terms: [
+    "cross functional", "stakeholder management", "multiple stakeholders",
+    "partnering across", "sales and engineering", "cross team collaboration",
+  ] },
+  { label: "Software product delivery", terms: [
+    "software delivery", "product delivery", "product development", "product launch",
+    "release planning", "product release", "roadmap execution", "agile", "scrum",
+    "sprint planning", "product backlog", "backlog prioritization", "user stories",
+    "acceptance criteria", "0 1 product", "0 1 products", "built product", "built products",
+  ] },
+  { label: "Product strategy", terms: [
+    "product strategy", "product roadmap", "roadmap", "product discovery",
+    "product lifecycle", "user research", "new verticals", "new revenue streams",
+  ] },
   ...["redash", "looker", "snowflake"].map((term) => ({ label: term, terms: [term] })),
 ];
 
