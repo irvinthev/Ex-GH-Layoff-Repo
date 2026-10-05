@@ -37,6 +37,13 @@ test("validated capability has no effect when the JD does not require it", () =>
   assert.deepEqual(reviewed.coreCoverage, base.coreCoverage);
 });
 
+test("validated title alone does not manufacture title points without substantive core evidence", () => {
+  const base = scoreWith([]);
+  const reviewed = scoreWith([record({ evidence_type: "title", value: "Data Analyst" })]);
+  assert.equal(reviewed.candidate.formerJobTitle, "Operations Associate");
+  assert.equal(reviewed.breakdown.titleSpecialty.score, base.breakdown.titleSpecialty.score);
+});
+
 test("rejected capability earns no points", () => {
   const base = scoreWith([]);
   const rejected = scoreWith([record({ status: "rejected" })]);
@@ -44,12 +51,23 @@ test("rejected capability earns no points", () => {
   assert.ok(!rejected.coreCoverage.evidenced.includes("sql"));
 });
 
-test("validated title does not overwrite the held title or title score", () => {
-  const base = scoreWith([]);
-  const reviewed = scoreWith([record({ evidence_type: "title", value: "Data Analyst" })]);
+test("validated title can earn bounded role-equivalency credit when core capability evidence supports it", () => {
+  const candidate = buildCandidateProfile(row({
+    public_description: "Used SQL for data analysis and built dashboards for recurring reports.",
+  }));
+  const base = scoreCandidate(candidate, role, job);
+  const reviewed = scoreCandidate(withReviewerEvidence(candidate, [
+    record({ evidence_type: "title", value: "Data Analyst" }),
+  ]), role, job);
+
   assert.equal(reviewed.candidate.formerJobTitle, "Operations Associate");
-  assert.equal(reviewed.breakdown.titleSpecialty.score, base.breakdown.titleSpecialty.score);
-  assert.equal(reviewed.reviewerEvidence[0].value, "Data Analyst");
+  assert.ok(reviewed.breakdown.titleSpecialty.score > base.breakdown.titleSpecialty.score);
+  assert.equal(reviewed.breakdown.titleSpecialty.score, 12);
+  assert.ok(reviewed.breakdown.titleSpecialty.score < 15);
+  const trace = reviewed.evidenceTrace.find((entry) => entry.capability === "Validated role equivalency");
+  assert.equal(trace.source, "reviewer_validated");
+  assert.equal(trace.reviewerSourceType, "linkedin");
+  assert.equal(trace.evidence, "Data Analyst");
 });
 
 test("validated title corroborates role family without changing held-title specialty scoring", () => {
@@ -67,9 +85,10 @@ test("validated title corroborates role family without changing held-title speci
   assert.ok(reviewed.breakdown.roleFamily.score > base.breakdown.roleFamily.score);
   assert.equal(reviewed.breakdown.roleFamily.score, 30);
   assert.equal(reviewed.candidate.formerJobTitle, "Operations Associate");
-  assert.equal(reviewed.breakdown.titleSpecialty.score, base.breakdown.titleSpecialty.score);
-  assert.equal(reviewed.breakdown.titleSpecialty.score, 0);
+  assert.ok(reviewed.breakdown.titleSpecialty.score > base.breakdown.titleSpecialty.score);
+  assert.equal(reviewed.breakdown.titleSpecialty.score, 12);
   assert.equal(rejected.breakdown.roleFamily.score, base.breakdown.roleFamily.score);
+  assert.equal(rejected.breakdown.titleSpecialty.score, base.breakdown.titleSpecialty.score);
   const roleTrace = reviewed.evidenceTrace.find((entry) => entry.capability === "Role family: Data Analytics");
   assert.equal(roleTrace.source, "reviewer_validated");
   assert.equal(roleTrace.reviewerSourceType, "linkedin");
