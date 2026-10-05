@@ -556,6 +556,7 @@ export function buildCandidateProfile(row: PlacementCandidateCacheRow): Candidat
   const publicSkills = coerceStringArray(row.public_skills);
   const featureSkills = coerceStringArray(row.skills);
   const domains = coerceStringArray(row.domains);
+  const enrichedEvidence = qualificationEvidence(row.evidence);
   const rolePreferences = new Map<string, RolePreferenceRecord>();
   for (const preference of coerceRolePreferenceArray(row.role_preferences)) {
     rolePreferences.set(preference.role_slug, preference);
@@ -573,7 +574,7 @@ export function buildCandidateProfile(row: PlacementCandidateCacheRow): Candidat
     row.public_description,
     ...publicSkills,
     ...featureSkills,
-    ...qualificationEvidence(row.evidence),
+    ...enrichedEvidence,
   ].map((value) => qualificationNarrative(String(value ?? ""))).join(" "));
   const candidateConcepts = conceptLabels(evidenceNormalized);
   const preferredLocations = uniqueValues([row.location_text, ...candidatePreference.preferred_locations]);
@@ -582,6 +583,7 @@ export function buildCandidateProfile(row: PlacementCandidateCacheRow): Candidat
     id: row.candidate_id,
     name: `${row.first_name} ${row.last_name}`.trim(),
     formerJobTitle: row.former_job_title,
+    formerTeam: row.former_team,
     functionName: row.function_name,
     functionNameNormalized: normalize(row.function_name),
     location: row.location_text,
@@ -594,6 +596,12 @@ export function buildCandidateProfile(row: PlacementCandidateCacheRow): Candidat
     preferredLocationTokens: preferredLocations.map((location) => tokens(location)),
     rolePreferences,
     candidateTitles,
+    publicDescription: row.public_description,
+    publicSkills,
+    enrichedSkills: featureSkills,
+    enrichedEvidence,
+    domains,
+    hasEnrichedEvidence: featureSkills.length > 0 || domains.length > 0 || enrichedEvidence.length > 0,
     allSkills,
     skillEntries,
     domainEntries,
@@ -665,23 +673,33 @@ export function classifyRole(job: JobProfile, roles: CachedRole[]): CachedRole |
 }
 
 export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | null, job: JobProfile): CandidateMatch {
-  const candidateEvidenceTokens = tokens(candidate.evidenceNormalized);
+  // Capability evidence intentionally excludes the held title. Title has its own
+  // scoring component and must not independently manufacture role-family or skill credit.
+  const capabilityEvidenceNormalized = normalize([
+    candidate.formerTeam,
+    candidate.publicDescription,
+    ...candidate.publicSkills,
+    ...candidate.enrichedSkills,
+    ...candidate.enrichedEvidence,
+  ].map((value) => qualificationNarrative(String(value ?? ""))).join(" "));
+  const capabilityEvidenceTokens = tokens(capabilityEvidenceNormalized);
+
   const exactEvidenceRoleMatch = role
-    ? role.phrases.some((phrase) => includesPhrase(candidate.evidenceNormalized, phrase))
+    ? role.phrases.some((phrase) => includesPhrase(capabilityEvidenceNormalized, phrase))
     : false;
   const semanticEvidenceRoleMatch = role
     ? role.phrases.some((phrase) => {
         const phraseTokens = tokens(phrase);
-        return phraseTokens.length >= 2 && overlapRatio(phraseTokens, candidateEvidenceTokens) >= 0.75;
+        return phraseTokens.length >= 2 && overlapRatio(phraseTokens, capabilityEvidenceTokens) >= 0.75;
       })
     : false;
+
   const jobTitleSpecialtyTokens = titleSpecialtyTokens(job.title);
   const bestTitleRatio = candidate.candidateTitles.reduce((best, candidateTitle) => {
     const candidateTitleSpecialtyTokens = titleSpecialtyTokens(candidateTitle.raw);
     if (!candidateTitleSpecialtyTokens.length || !jobTitleSpecialtyTokens.length) return best;
     return Math.max(best, overlapRatio(candidateTitleSpecialtyTokens, jobTitleSpecialtyTokens));
   }, 0);
-  const preferredTitleMatch = bestTitleRatio >= 0.5;
 
   const titleScore = bestTitleRatio >= 0.95
     ? 15
@@ -693,15 +711,14 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
           ? 6
           : Math.round(bestTitleRatio * 15);
 
-  const evidenced = (unit: { terms: readonly string[] }) => unit.terms.some((term) => includesPhrase(candidate.evidenceNormalized, term));
+  const evidenced = (unit: { terms: readonly string[] }) =>
+    unit.terms.some((term) => includesPhrase(capabilityEvidenceNormalized, term));
   const matchedCore = job.coreRequirements.filter(evidenced);
   const matchedPreferred = job.preferredRequirements.filter(evidenced);
   const matchedTechnicalRequirements = TECHNICAL_UNITS
     .filter((unit) => job.technicalRequirementTerms.includes(unit.label) && evidenced(unit))
     .map((unit) => unit.label);
 
-  // Context never becomes core merely because SQL (or another technology)
-  // occurs elsewhere in the profile. Optional capabilities cannot score here.
   const contextualSkillEntries = candidate.skillEntries.filter((skill) => (
     !CAPABILITY_UNITS.some((unit) => unit.terms.some((term) => includesPhrase(skill.normalized, term)))
     && includesPhrase(job.descriptionText, skill.normalized)
@@ -711,21 +728,20 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
   const contextualSkillPoints = Math.min(2, new Set(contextualSkillEntries.map((skill) => skill.normalized)).size);
   const skillScore = Math.min(20, coreSkillPoints + contextualSkillPoints);
 
-  // A generic concept or two contextual labels cannot establish a role family.
   const capabilityEvidenceMatch = matchedCore.length > 0 && (
     semanticEvidenceRoleMatch || matchedCore.length >= 2 || matchedConcepts.length >= 1
   );
   const evidenceRoleMatch = exactEvidenceRoleMatch || capabilityEvidenceMatch;
 
-  const roleScore = preferredTitleMatch && bestTitleRatio >= 0.75
-    ? 27
-    : preferredTitleMatch
+  // Role-family and title are intentionally independent. A matching held title
+  // cannot also award role-family points by itself.
+  const roleScore = role && exactEvidenceRoleMatch && matchedCore.length >= 2
+    ? 30
+    : role && evidenceRoleMatch
       ? 24
-      : role && evidenceRoleMatch
-        ? 24
-        : role && candidate.functionNameNormalized === role.normalizedFunctionName
-          ? 18
-          : 0;
+      : role && candidate.functionNameNormalized === role.normalizedFunctionName
+        ? 18
+        : 0;
 
   const matchedDomains = [...new Map(candidate.domainEntries.filter((domain) => (
     includesPhrase(job.descriptionText, domain.normalized)
@@ -741,17 +757,58 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
     job.locationTokens,
     job.remoteType,
   );
-  // Rank by demonstrated capability, not by validation conditions.
-  // Seniority and geography remain visible review signals but do not suppress
-  // an otherwise strong capability match.
+
   const capabilityRaw = roleScore + titleScore + skillScore + domainScore;
   const capabilityScore = Math.round((capabilityRaw / 80) * 100);
 
+  const evidenceSources = [
+    { source: "directory_description" as const, evidence: candidate.publicDescription ?? "" },
+    ...candidate.publicSkills.map((evidence) => ({ source: "public_skill" as const, evidence })),
+    ...candidate.enrichedSkills.map((evidence) => ({ source: "enriched_skill" as const, evidence })),
+    ...candidate.enrichedEvidence.map((evidence) => ({ source: "enriched_evidence" as const, evidence })),
+    { source: "directory_team" as const, evidence: candidate.formerTeam ?? "" },
+  ].filter((entry) => entry.evidence.trim());
+
+  const traceForUnit = (unit: { label: string; terms: readonly string[] }) => {
+    const source = evidenceSources.find((entry) =>
+      unit.terms.some((term) => includesPhrase(entry.evidence, term))
+    );
+    return source
+      ? { capability: unit.label, source: source.source, evidence: source.evidence }
+      : null;
+  };
+
+  const evidenceTrace = matchedCore
+    .map(traceForUnit)
+    .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
+
+  if (titleScore > 0 && candidate.formerJobTitle) {
+    evidenceTrace.push({
+      capability: "Title alignment",
+      source: "held_title",
+      evidence: candidate.formerJobTitle,
+    });
+  }
+
+  if (role && roleScore >= 24) {
+    const roleSource = evidenceSources.find((entry) =>
+      role.phrases.some((phrase) => includesPhrase(entry.evidence, phrase))
+    );
+    if (roleSource) {
+      evidenceTrace.push({
+        capability: `Role family: ${role.role_family}`,
+        source: roleSource.source,
+        evidence: roleSource.evidence,
+      });
+    }
+  }
+
   const reasons: string[] = [];
-  if (roleScore === 27) reasons.push("Held job title strongly aligns with the role");
-  else if (roleScore === 24 && preferredTitleMatch) reasons.push("Held job title aligns with the role");
+  if (roleScore === 30 && role) reasons.push(`Direct experience and capability evidence strongly support ${role.role_family}`);
   else if (roleScore === 24 && role) reasons.push(`Experience evidence supports ${role.role_family}`);
   else if (roleScore === 18 && role) reasons.push(`Related ${role.function_name} function`);
+  if (titleScore >= 13) reasons.push("Held job title strongly aligns with the role");
+  else if (titleScore >= 10) reasons.push("Held job title aligns with the role");
   if (matchedCore.length) reasons.push(`Core capabilities evidenced: ${matchedCore.map((unit) => unit.label).join(", ")}`);
   if (matchedPreferred.length) reasons.push(`Preferred capabilities evidenced (not core points): ${matchedPreferred.map((unit) => unit.label).join(", ")}`);
   if (contextualSkillEntries.length) reasons.push(`Contextual overlap: ${contextualSkillEntries.slice(0, 2).map((skill) => skill.raw).join(", ")}`);
@@ -763,9 +820,9 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
   if (geography.aligned) reasons.push(geography.note);
 
   const gaps: string[] = [];
-  if (!role && !preferredTitleMatch) gaps.push("Role family could not be classified confidently");
+  if (!role && titleScore === 0) gaps.push("Role family could not be classified confidently");
   else if (roleScore === 0 && role) gaps.push(`No direct evidence for ${role.role_family}`);
-  else if (roleScore < 24 && role) gaps.push(`Prior title is adjacent to, rather than directly within, ${role.role_family}`);
+  else if (roleScore < 24 && role) gaps.push(`Recorded capability evidence is adjacent to, rather than directly within, ${role.role_family}`);
   if (skillScore < 12) gaps.push("Limited responsibility and skill overlap found in the recorded evidence");
   else if (skillScore < 18) gaps.push("Some job responsibilities are not demonstrated explicitly in the recorded evidence");
   const missingConcepts = job.concepts.filter((label) => !candidate.candidateConceptSet.has(label));
@@ -793,6 +850,7 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
       ratio: job.coreRequirements.length ? matchedCore.length / job.coreRequirements.length : null,
       preferredEvidenced: matchedPreferred.map((unit) => unit.label),
     },
+    evidenceTrace,
     breakdown: {
       roleFamily: { score: roleScore, max: 30 },
       titleSpecialty: { score: titleScore, max: 15 },
