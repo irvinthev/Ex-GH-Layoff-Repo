@@ -883,8 +883,11 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
   else if (roleScore < 24 && role) gaps.push(`Recorded capability evidence is adjacent to, rather than directly within, ${role.role_family}`);
   if (skillScore < 12) gaps.push("Limited responsibility and skill overlap found in the recorded evidence");
   else if (skillScore < 18) gaps.push("Some job responsibilities are not demonstrated explicitly in the recorded evidence");
-  const missingConcepts = job.concepts.filter((label) => !candidate.candidateConceptSet.has(label));
-  if (missingConcepts.length) gaps.push(`Validate: ${missingConcepts.slice(0, 3).join(", ")}`);
+  // Validation gaps must use the same resolved core-requirement set as scoring.
+  // A capability already counted as evidenced (including reviewer validation)
+  // must never simultaneously appear as a gap.
+  const unresolvedCore = job.coreRequirements.filter((unit) => !matchedCore.includes(unit));
+  if (unresolvedCore.length) gaps.push(`Validate: ${unresolvedCore.slice(0, 3).map((unit) => unit.label).join(", ")}`);
   if (job.seniority && !seniority.aligned) gaps.push("Validate role level: capability may fit, but seniority is not aligned");
   if (!geography.aligned) gaps.push(`Validate location/work model: ${geography.note}`);
 
