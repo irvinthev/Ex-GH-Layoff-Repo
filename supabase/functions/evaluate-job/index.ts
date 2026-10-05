@@ -358,14 +358,10 @@ Deno.serve(async (req: Request) => {
     const scoredMatches = cache.candidates
       .map((candidate) => scoreCandidate(candidate, role, job));
 
-    // Evidence depth is intentionally separate from fit. Missing L3 must not
-    // penalize a candidate; it only lowers confidence in the assessment.
-    const { data: evidenceRows, error: evidenceError } = await admin
-      .from("placement_candidate_cache")
-      .select("candidate_id,former_job_title,former_team,function_name,location_text,public_description,public_skills,primary_role_slug,seniority,skills,domains,evidence,candidate_preferences");
-    if (evidenceError) throw evidenceError;
-
-    const matches = attachEvidenceLayers(scoredMatches, evidenceRows ?? [], {
+    // Evidence depth is derived from the same canonical merged candidate
+    // profiles used for scoring. Missing L3 remains metadata only and never
+    // reduces fit or rank.
+    const matches = attachEvidenceLayers(scoredMatches, cache.candidates, {
       requiresTechnicalSkillEvidence: job.requiresTechnicalSkillEvidence,
     })
       .sort((a, b) => b.score - a.score);
@@ -387,7 +383,7 @@ Deno.serve(async (req: Request) => {
       candidateCount: matches.length,
       evidenceSummary,
       evaluatedAt: new Date().toISOString(),
-      methodology: "Evidence-aware deterministic scoring v18; qualification points use distinct recognized JD capability units resolved from public skills and documented experience, not profile-label counts; recognized core coverage is reported separately and is not a complete JD assessment; explicit preferred sections and company/benefits sections do not supply core points; context cannot be promoted by unrelated technical evidence; domain points require an exact phrase in the core JD; intent metadata and evidence JSON keys are excluded; seniority, location and evidence depth remain validation signals; generic title words do not establish specialty alignment; manual review required",
+      methodology: "Evidence-aware deterministic scoring v19; one canonical merged candidate profile drives both scoring and evidence reporting; held-title specialty and role-family evidence are scored independently so title alone cannot create role-family credit; qualification points use distinct recognized JD capability units resolved from public narrative, public skills and approved enriched evidence; evidence provenance is retained for matched capabilities; profile depth is metadata only and never increases score or rank; explicit preferred sections and company/benefits sections do not supply core points; seniority and location remain validation signals; manual review required",
       sourceUrl,
       sourceMode,
       importWarning,
