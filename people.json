@@ -1,17 +1,17 @@
 [
   {
-    "Date Added": "#REF!",
+    "Date Added": "",
     "First Name": "Sean",
     "Last Name": "Zhang",
     "Former Job Title": "Software Engineer I",
     "Former Team": "Engineering",
     "Function": "Engineering",
     "Location": "Chicago, IL, USA",
-    "Work Preference": "#REF!",
-    "Open to Relocation": "#REF!",
+    "Work Preference": "",
+    "Open to Relocation": "",
     "LinkedIn URL": "www.linkedin.com/in/shaocheng-zhang-a03604220",
     "Description": "Software Engineer building scalable backend and web applications\nBackend systems, APIs, full-stack development",
-    "Years of Experience": "#REF!",
+    "Years of Experience": "",
     "Top 3 Skills": "Software Engineering, Technical Solutions, Customer Support",
     "Open to Work": ""
   },
@@ -32,7 +32,7 @@
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "19/05/2025",
     "First Name": "Jacqueline",
     "Last Name": "Wujec",
     "Former Job Title": "Instructional Designer",
@@ -160,7 +160,7 @@
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "05/03/2025",
     "First Name": "Samantha",
     "Last Name": "Roman",
     "Former Job Title": "Command Center Coordinator",
@@ -176,7 +176,7 @@
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "24/06/2025",
     "First Name": "Kate",
     "Last Name": "Richmond",
     "Former Job Title": "Sr. Director, Care Optimization",
@@ -208,7 +208,7 @@
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "10/03/2025",
     "First Name": "David",
     "Last Name": "Porosnicu",
     "Former Job Title": "Senior Software Engineer",
@@ -240,7 +240,7 @@
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "05/03/2025",
     "First Name": "Prem",
     "Last Name": "Patel",
     "Former Job Title": "Software Engineer II (BE)",
@@ -272,7 +272,7 @@
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "06/03/2026",
     "First Name": "Elena",
     "Last Name": "Moilan",
     "Former Job Title": "Operations Manager",
@@ -352,7 +352,7 @@
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "07/03/2025",
     "First Name": "Vlad",
     "Last Name": "Lintes",
     "Former Job Title": "Software Engineer ll FE",
@@ -400,7 +400,7 @@
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "09/05/2025",
     "First Name": "Nikole",
     "Last Name": "Kniffin",
     "Former Job Title": "Audit Coordinator",
@@ -480,7 +480,7 @@
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "12/03/2025",
     "First Name": "Karen",
     "Last Name": "He He",
     "Former Job Title": "Product Designer II",
@@ -496,7 +496,7 @@
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "16/12/2025",
     "First Name": "Roger",
     "Last Name": "Hannagan",
     "Former Job Title": "Software Engineer 2",
@@ -512,7 +512,7 @@
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "10/11/2025",
     "First Name": "Robert",
     "Last Name": "Garcia",
     "Former Job Title": "Command Center Coordinator",
@@ -560,7 +560,7 @@
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "10/03/2026",
     "First Name": "Ryan",
     "Last Name": "Eshleman",
     "Former Job Title": "Sr. Specialist, Content Integrity",
@@ -592,7 +592,7 @@
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "06/03/2025",
     "First Name": "Jason",
     "Last Name": "Elue",
     "Former Job Title": "Service Desk Analyst II",
@@ -608,7 +608,7 @@
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "19/02/2026",
     "First Name": "Dan",
     "Last Name": "DeFord",
     "Former Job Title": "Account Advisor",
@@ -624,7 +624,7 @@
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "07/03/2025",
     "First Name": "Matt",
     "Last Name": "Curnyn",
     "Former Job Title": "Operations Engineer I",
@@ -640,7 +640,7 @@
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "05/03/2025",
     "First Name": "James",
     "Last Name": "Corey",
     "Former Job Title": "Software Engineer",
@@ -688,7 +688,7 @@
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "05/03/2025",
     "First Name": "Ankita",
     "Last Name": "Ankita",
     "Former Job Title": "Software Engineer II - Android",
@@ -736,7 +736,7 @@
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "19/03/2026",
     "First Name": "Robert",
     "Last Name": "Holland",
     "Former Job Title": "Helpdesk Analyst II",
@@ -752,7 +752,7 @@
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "28/03/2026",
     "First Name": "Paul",
     "Last Name": "de Lucena",
     "Former Job Title": "Staff Decision Scientist",
@@ -763,12 +763,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/pdelucena",
     "Description": "Decision Scientist designing systems and models for data-driven strategy Machine learning, systems design, analytics",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "Machine Learning, Systems Design, Analytics",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "01/04/2026",
     "First Name": "Aubrey",
     "Last Name": "Langley",
     "Former Job Title": "Operations Program Manager",
@@ -779,12 +779,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/aubrey-langley-a46048150",
     "Description": "Operations leader with 8+ years improving workflows, client experience, and business performance\nProcess optimization, client success, strategy",
-    "Years of Experience": "",
+    "Years of Experience": "6-8 years",
     "Top 3 Skills": "Process optimization, client success, strategy",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "01/04/2026",
     "First Name": "Gerard",
     "Last Name": "Salerno",
     "Former Job Title": "Account Executive",
@@ -795,12 +795,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "www.linkedin.com/in/gerard-salerno-28825146",
     "Description": "Account Executive with 25+ years in hospitality, driving revenue and client growth in restaurant partnerships\nOutside sales, account management, hospitality",
-    "Years of Experience": "",
+    "Years of Experience": "0-2 years",
     "Top 3 Skills": "Outside sales, account management, hospitality",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "01/04/2026",
     "First Name": "Razvan",
     "Last Name": "Onica",
     "Former Job Title": "Senior Software Engineer [FE]",
@@ -811,12 +811,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/r%C4%83zvan-onica-984714124/",
     "Description": "Senior Frontend Engineer building high-performance web apps across fintech, EV, and SaaS platforms\nReact, Vue, Angular, Node.js",
-    "Years of Experience": "",
+    "Years of Experience": "9-12 years",
     "Top 3 Skills": "Frontend Engineering, React, Node.js",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "15/04/2026",
     "First Name": "Kritika",
     "Last Name": "Uma Shankar",
     "Former Job Title": "Software Engineer 2",
@@ -827,12 +827,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/kritikaumashankar",
     "Description": "Full-stack developer with recent hands-on experience (2022–2026) building applications using React, Node.js, and Java, focusing on modern, scalable solutions. Backed by earlier 3.5 years of Java development experience (2010–2014), I bring both refreshed skills and a solid foundation. Seeking an opportunity to contribute immediately while continuing to grow.",
-    "Years of Experience": "",
+    "Years of Experience": "6-8 years",
     "Top 3 Skills": "Full-Stack Development, React, Java",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "02/06/2026",
     "First Name": "Serena",
     "Last Name": "Maldonado",
     "Former Job Title": "Specialist",
@@ -843,12 +843,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "Linked.com/in/ssmaldonado",
     "Description": "Customer retention and operations professional with 9+ years of experience building strong client relationships, improving retention, and delivering exceptional customer experiences. Passionate about learning and eager to expand into technology-focused roles where strong communication, problem-solving, and operational expertise can drive business impact.",
-    "Years of Experience": "",
+    "Years of Experience": "9-12 years",
     "Top 3 Skills": "Customer Retention, Communication, Problem Solving",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "02/06/2026",
     "First Name": "Wanda",
     "Last Name": "Goldsmith",
     "Former Job Title": "Process Standardization Coordinator",
@@ -859,12 +859,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/wanda-goldsmith/",
     "Description": "Strategic operations professional specializing in process standardization, SOP development, and continuous improvement. Experienced in applying Six Sigma methodologies to streamline workflows, reduce waste, and improve quality. Passionate about partnering with cross-functional teams to build scalable processes, strengthen operational controls, and drive measurable business efficiency.",
-    "Years of Experience": "",
+    "Years of Experience": "0-2 years",
     "Top 3 Skills": "Process Standardization, SOP Development, Six Sigma Methodologies",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "03/08/2026",
     "First Name": "Michael",
     "Last Name": "Cognetti",
     "Former Job Title": "Senior Account Manager, Partnerships",
@@ -875,12 +875,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/michael-cognetti-3b926910b/",
     "Description": "Senior Partnerships Manager with 10+ years of experience in logistics and technology. Brings a background in partnership management and client relationships. Seeking an account management or customer success role focused on building strong client partnerships.",
-    "Years of Experience": "",
+    "Years of Experience": "9-12 years",
     "Top 3 Skills": "Account Management, Partnerships, Client Relationships",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "24/08/2026",
     "First Name": "Shemeal",
     "Last Name": "Abrams",
     "Former Job Title": "Communications Coordinator",
@@ -891,12 +891,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "www.linkedin.com/in/shemealdabrams",
     "Description": "Communications professional with 20+ years of customer and client-facing experience. Seeking remote opportunities in Communications, Employee Engagement, Culture & People, or Junior Graphic Design",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "Communications, Employee Engagement, Graphic Design",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "26/08/2026",
     "First Name": "Laura",
     "Last Name": "Pranckus",
     "Former Job Title": "Restaurant Care Specialist",
@@ -907,12 +907,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/laura-pranckus",
     "Description": "Background in enterprise account management and in-house creative agencies, with current experience spanning marketing, strategy, and vendor management on behalf of franchisees. Interested in roles that leverage account management, marketing strategy, creative operations, and cross-functional coordination.",
-    "Years of Experience": "",
+    "Years of Experience": "9-12 years",
     "Top 3 Skills": "Account Management, Marketing Strategy, Vendor Management",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "01/09/2026",
     "First Name": "Christine",
     "Last Name": "Quaderer",
     "Former Job Title": "Senior Analyst, Procurement Operations",
@@ -923,12 +923,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "www.linkedin.com/in/christine-quad-mba",
     "Description": "CLM Implementation and workflow expert. AI forward. Looking to being significant impact to an organization's procurement or legal operations function.",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "CLM Implementation, Workflow Optimization, Procurement Operations",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "01/09/2026",
     "First Name": "Roxanne",
     "Last Name": "Dean",
     "Former Job Title": "Sr associate- Corporate RevOps",
@@ -939,12 +939,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/roxanne-dean-856bb0216",
     "Description": "Revenue Operations professional with expertise in Salesforce, process improvement, data management, and cross-functional system implementations that improve efficiency and customer experience. Seeking a RevOps or project management role with ownership of strategic initiatives in a collaborative, technology-focused organization",
-    "Years of Experience": "",
+    "Years of Experience": "6-8 years",
     "Top 3 Skills": "",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "01/09/2026",
     "First Name": "Griffin",
     "Last Name": "Benko",
     "Former Job Title": "Strategic Partnership Manager",
@@ -955,12 +955,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "www.linkedin.com/in/griffin-benko",
     "Description": "Customer success professional with experience at Grubhub, seeking roles in customer success, solutions consulting, partnerships, account management, or onboarding and implementation. Interested in work centered on solving customer problems and building relationships, with a lighter sales focus and opportunities to support upselling where it meets customer needs.",
-    "Years of Experience": "",
+    "Years of Experience": "3-5 years",
     "Top 3 Skills": "",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "01/09/2026",
     "First Name": "Chirag",
     "Last Name": "Gandhi",
     "Former Job Title": "Staff QA Lead Engineering",
@@ -971,12 +971,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "www.linkedin.com/in/chirag-gandhi2047",
     "Description": "QA professional with 13+ years of software testing experience, including release management for Grubhub’s diner apps. Experienced in designing QA strategies for projects of varying scale, using agentic tools, performing API contract testing, and configuring GEO service overrides for corporate clients.",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "01/09/2026",
     "First Name": "Madeline",
     "Last Name": "Bliss",
     "Former Job Title": "Senior Account Specialist - Driver Accounting",
@@ -987,12 +987,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "Www.linkedin.com/in/madeline-bliss-41721713b",
     "Description": "Open to all work potential",
-    "Years of Experience": "",
+    "Years of Experience": "3-5 years",
     "Top 3 Skills": "Account Management, Accounting, Customer Support",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "01/09/2026",
     "First Name": "Dan",
     "Last Name": "Bridgens",
     "Former Job Title": "Senior Lead Associate",
@@ -1003,12 +1003,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "www.linkedin.com/in/dan-bridgens-aa5508423",
     "Description": "Data and reporting professional with several years of experience building SQL queries and metrics dashboards in Redash. Supported team analysis across vendor turnaround times, photo quality, and virtual restaurant quality, translating business questions into targeted queries and reports.",
-    "Years of Experience": "",
+    "Years of Experience": "9-12 years",
     "Top 3 Skills": "SQL Querying, Data Analysis, Dashboard Building",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "01/09/2026",
     "First Name": "Katie",
     "Last Name": "Logan",
     "Former Job Title": "Sr Manager of Finance Systems",
@@ -1019,12 +1019,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/katie-logan-5b67b676",
     "Description": "Sr Manager / Director of finance systems or ERP transformation or Solutions Architect",
-    "Years of Experience": "",
+    "Years of Experience": "9-12 years",
     "Top 3 Skills": "",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "01/09/2026",
     "First Name": "Eisha",
     "Last Name": "Kher",
     "Former Job Title": "Associate Director, QA",
@@ -1035,12 +1035,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "www.linkedin.com/in/eishakher",
     "Description": "Experience with leading Quality Assurance teams for manual and automated testing. Looking for role in similar areas",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "Quality Assurance, Manual Testing, Automated Testing",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "01/09/2026",
     "First Name": "Adam",
     "Last Name": "Krueger",
     "Former Job Title": "Director - Merchant Advertising and Promotions",
@@ -1051,12 +1051,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/kruegeradam",
     "Description": "Operations and strategy leader with 10+ years of leadership experience spanning logistics, business operations, strategic initiatives, marketing, and advertising. Seeking a Head of Business Operations, Senior Director of Operations or Strategy, or COO role with broad ownership of business strategy and execution.",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "Operations, Strategy, Marketing",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "01/09/2026",
     "First Name": "Daniel",
     "Last Name": "Saphire-Bernstein",
     "Former Job Title": "Lead Specialist/Senior Specialist",
@@ -1067,12 +1067,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/daniel-saphire-bernstein-184a908b",
     "Description": "Support professional with experience as a lead specialist and individual contributor. Helped develop SOPs, served as the primary escalation point for complex issues, and supported queue operations, floor support, and project management. Experienced in resolving payment and accounting issues involving banking, fraud, technical problems, wage garnishments, and taxes. Seeking individual contributor or lead roles in customer or back-office support.",
-    "Years of Experience": "",
+    "Years of Experience": "9-12 years",
     "Top 3 Skills": "Project Management, Process Improvement, Escalation Management",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "02/09/2026",
     "First Name": "Hayley",
     "Last Name": "Willian",
     "Former Job Title": "Assistant Counsel",
@@ -1083,12 +1083,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/hayley-mullen/",
     "Description": "I have been an attorney for 3.5 years and I am looking for another in house counsel role - I specialize in marketing/advertising, IP, and contract review",
-    "Years of Experience": "",
+    "Years of Experience": "3-5 years",
     "Top 3 Skills": "Marketing/Advertising, IP, Contract Review",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "02/09/2026",
     "First Name": "Amanda",
     "Last Name": "Seil",
     "Former Job Title": "Quality Coordinator",
@@ -1099,12 +1099,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/amanda-s-20272324b?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
     "Description": "I’m looking for a similar role to QA or something in data entry or analysis.",
-    "Years of Experience": "",
+    "Years of Experience": "6-8 years",
     "Top 3 Skills": "Quality Assurance, Data Entry, Data Analysis",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "02/09/2026",
     "First Name": "Blake",
     "Last Name": "McWhorter",
     "Former Job Title": "Quality Engineer II",
@@ -1115,12 +1115,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/blake-mcwhorter-2b8b8435/",
     "Description": "Looking to continue in a QA role, though I would like to see if I can get a position where I can grow my automation/coding skills",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "Quality Assurance, Test Automation, Coding",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "02/09/2026",
     "First Name": "Carnell",
     "Last Name": "Cross",
     "Former Job Title": "COE Specialist II",
@@ -1131,12 +1131,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/c-j-cross/",
     "Description": "Data analysis, Querying, troubleshooting & Problem solving. Specializing in cross-functional and cross-team collaboration, complex escalations and issue resolution. Customer Experience, Merchant or Manager support. Customer support. Looking to be an additional and exceptional team player in the Customer and data analytics field.",
-    "Years of Experience": "",
+    "Years of Experience": "9-12 years",
     "Top 3 Skills": "Data Analysis, Troubleshooting, Problem Solving",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "03/09/2026",
     "First Name": "Kelsey",
     "Last Name": "Peretti",
     "Former Job Title": "Manager- Care",
@@ -1147,12 +1147,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/me?trk=p_mwlite_feed-secondary_nav",
     "Description": "Streamlining operations, process efficiency and improvement. People Manager. Excited for what’s next",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "Operations Management, Process Improvement, People Management",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "02/09/2026",
     "First Name": "Erin",
     "Last Name": "Tatum",
     "Former Job Title": "Sales Director",
@@ -1163,12 +1163,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/erin-tatum-6b331a2b/",
     "Description": "After 11+ years in Ad Sales at Twitter (4 years) and Tastemade (7 years) I am looking for a new Ad Sales adventure in the Publisher, Tech, and/or Media Space. Preferably hybrid or remote. I have experience selling to Enterprise brands across Social, Display, Video, Branded Content, CTV (direct + programmatic), Experiential, Newsletter and Sponsorships.",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "Ad Sales, Enterprise Sales, Digital Advertising",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "03/09/2026",
     "First Name": "Andrew",
     "Last Name": "Amundson",
     "Former Job Title": "Senior Controls Associate",
@@ -1179,12 +1179,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/andrewamundson8a966297/",
     "Description": "I am hoping to get back into editing and document management. Otherwise I am willing to continue as a data analyst.",
-    "Years of Experience": "",
+    "Years of Experience": "9-12 years",
     "Top 3 Skills": "Editing, Document Management, Data Analysis",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "04/09/2026",
     "First Name": "Corey",
     "Last Name": "Laffel",
     "Former Job Title": "Associate Director",
@@ -1195,12 +1195,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/corey-laffel-solon/",
     "Description": "Growth and marketing leader with 15+ years of experience across retail, e-commerce, and consumer platforms. Led enterprise partner marketing at Grubhub and helped build and scale a $150M+ advertising business at Wayfair. Experienced in leading teams and complex cross-functional initiatives that grow revenue. Seeking a leadership role spanning growth, partnerships, monetization, and consumer marketing, with particular interest in food, wellness, and consumer products.",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "Partner Marketing, Growth Strategy, E-commerce Marketing",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "06/09/2026",
     "First Name": "Donyetta",
     "Last Name": "Conrod",
     "Former Job Title": "Onboarding Specialist",
@@ -1211,12 +1211,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/donyetta-conrod-85890795?utm_source=share_via&utm_content=profile&utm_medium=member_android",
     "Description": "Onboarding and implementation specialist with 4 years of experience in client implementation, marketplace management, and customer success. Helps clients get up and running faster, improves post-sale workflows, and partners with sales and product teams to support retention. Skilled in technical training and maintaining accurate client data across CRM and project management platforms.",
-    "Years of Experience": "",
+    "Years of Experience": "3-5 years",
     "Top 3 Skills": "Client Implementation, Customer Success, Technical Training",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "07/09/2026",
     "First Name": "Peter",
     "Last Name": "Foti",
     "Former Job Title": "Director, Engineering",
@@ -1227,12 +1227,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/peterjfoti/",
     "Description": "I have 6+ years of engineering management experience leading full-stack teams and delivering business-critical products. I’m exploring senior engineering and engineering management roles at consumer technology and SaaS companies.",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "Engineering Management, Full-Stack Development, Product Delivery",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "07/09/2026",
     "First Name": "Spencer",
     "Last Name": "Sanchez",
     "Former Job Title": "Associate Director, Engineering",
@@ -1243,12 +1243,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/spencersanchez/",
     "Description": "15+ years of progressive experience in web development and engineering leadership. Ideally looking to become a web platform leader at a smaller stage company.",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "Web Development, Engineering Leadership, Web Platform Management",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "08/09/2026",
     "First Name": "Jill",
     "Last Name": "Weinstein",
     "Former Job Title": "Associate Director, B2B Engagement and Product Marketing",
@@ -1259,12 +1259,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/jill-weinstein-0192b4a/",
     "Description": "Data-driven B2B Marketing executive with 15+ years of experience scaling global platforms at Grubhub, PayPal, and American Express. Proven track record of driving multi-million dollar growth, reducing churn by up to 58%, and leading high-performing teams to launch complex GTM strategies. Expert in translating customer insights (VoC) into high-converting lifecycle campaigns and scalable product-led growth initiatives.\n\nISO product marketing or B2B marketing role, preferably in fintech or financial services.",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "B2B Marketing, Product Marketing, GTM Strategy",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "08/09/2026",
     "First Name": "Connor",
     "Last Name": "Kaddatz",
     "Former Job Title": "Associate Director",
@@ -1275,12 +1275,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/connorkaddatz/",
     "Description": "I'm a product management leader, with experience building integrations, launching new APIs, and developing platform features. I've gone 0-1 multiple times and scaled my team to 15 people. I'm looking to either lead a product team or work on large scale product work myself.",
-    "Years of Experience": "",
+    "Years of Experience": "9-12 years",
     "Top 3 Skills": "Product Management, Integrations, API Development",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "09/09/2026",
     "First Name": "Stacey",
     "Last Name": "Leon",
     "Former Job Title": "Associate Director Brand Marketing",
@@ -1291,12 +1291,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/stacey-skulnik-leon-73419436/",
     "Description": "I'm looking for a Director of Marketing or Director of Brand Marketing role leading integrated marketing and full-funnel brand campaigns.",
-    "Years of Experience": "",
+    "Years of Experience": "9-12 years",
     "Top 3 Skills": "Brand Marketing, Integrated Marketing, Full-Funnel Marketing Strategy",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "09/09/2026",
     "First Name": "Elizabeth",
     "Last Name": "Doll",
     "Former Job Title": "Sr. Enterprise Partner Manager",
@@ -1307,12 +1307,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/elizabeth-doll-a45b10b0/",
     "Description": "Account management professional with 7+ years of experience, most recently managing Grubhub’s corporate relationship with McDonald’s. Helped onboard 10,000+ stores with minimal voluntary closures and grow national partner marketing investment from $0 to $10M+ annually. Seeking an account management or customer success role helping brands grow, with interest in industries beyond food delivery.",
-    "Years of Experience": "",
+    "Years of Experience": "6-8 years",
     "Top 3 Skills": "Account Management, Partnership Management, Customer Success",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "10/09/2026",
     "First Name": "Mathew",
     "Last Name": "Henry-Proost",
     "Former Job Title": "Associate Director",
@@ -1323,12 +1323,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/mat-henry-proost-9a3778a5/",
     "Description": "I’m an operations, logistics, and growth strategy leader with 15+ years experience across digital delivery, data analytics, marketplaces, corporate catering, and management. I’m looking for a director role where I can help lead, streamline, and grow a company that aligns with my values and interests.",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "Operations, Logistics, Growth Strategy",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "11/09/2026",
     "First Name": "Daniel",
     "Last Name": "Hara",
     "Former Job Title": "Associate Director",
@@ -1339,12 +1339,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/daniel-hara-0258234/",
     "Description": "13+ years at Grubhub building and leading the Driver App and Post-Purchase Experience: Tech Lead to Engineering Manager to Associate Director, growing cross-functional Android, iOS, and web teams as the platform scaled from a single Chicago restaurant to nationwide.\n\nAssociate Director/Engineering Manager",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "Engineering Leadership, Mobile Development, Cross-Functional Team Management",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "13/09/2026",
     "First Name": "Jonathan",
     "Last Name": "Spatz",
     "Former Job Title": "Strategic Operations and Analytics Manager",
@@ -1355,12 +1355,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/jonathan-spatz?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
     "Description": "Oversaw performance metrics for Indiana and developed a weather impact system to guide operational decisions and quantify weather-related effects across 300+ Grubhub markets.",
-    "Years of Experience": "",
+    "Years of Experience": "6-8 years",
     "Top 3 Skills": "Strategic Operations, Data Analytics, Performance Metrics",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "15/09/2026",
     "First Name": "Mike",
     "Last Name": "Jahn",
     "Former Job Title": "Director of Engineering",
@@ -1371,12 +1371,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/mike-jahn-372a2226/",
     "Description": "Engineering leader with 15 years of experience scaling consumer products, shared platforms, and distributed teams of up to 45 engineers. Led homepage, search, and discovery experiences across mobile and web, increasing conversion and engagement while helping teams deliver faster and build more reliable systems.",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "Engineering Leadership, Product Scaling, Platform Engineering",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "17/09/2026",
     "First Name": "Taisha",
     "Last Name": "Worlds",
     "Former Job Title": "Agency and DaaS Manager",
@@ -1387,12 +1387,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/tai-worlds-mba-pmp-csm-28b98a282/",
     "Description": "Program and Project Mnaagemenrt experience, 12+ years, PMP certified Operations and Customer Support Management Experience - 17+ years. Looking for a program or project management role",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "12+ years",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "18/09/2026",
     "First Name": "Chip",
     "Last Name": "Richards",
     "Former Job Title": "Enterprise Sales Executive",
@@ -1403,12 +1403,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/chip-richards/",
     "Description": "B2B sales professional with 19+ years of experience and multiple President’s Club awards, plus Rep of the Year recognition. Experienced in building pipeline, winning new business, and managing complex sales cycles with executive decision-makers. Seeking a senior sales role focused on new business and long-term customer growth.",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "12+ years",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "19/09/2026",
     "First Name": "Douglas",
     "Last Name": "Melniker",
     "Former Job Title": "VP, IT and Enterprise Systems",
@@ -1419,12 +1419,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "linkedin.com/in/melniker",
     "Description": "Originally from Blue Apron, I led the Enterprise Technology Group for the entire Wonder Group organization. I am looking for a VP IT / CIO position.",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "12+ years",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "19/09/2026",
     "First Name": "Corina",
     "Last Name": "Leatherman",
     "Former Job Title": "Operations Manager, Partner Operations",
@@ -1435,12 +1435,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "linkedin.com/in/corina-leatherman",
     "Description": "Customer service and fraud professional expert in escalation management, prevention, and operational efficiency. Track record of reducing costs, improving satisfaction, and training teams to mitigate risk across multiple channels. Seeking my next role in customer service, operations, or fraud; from Team Lead through Agent roles.",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "12+ years",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "22/09/2026",
     "First Name": "C.J",
     "Last Name": "Cross",
     "Former Job Title": "COE Specialist II",
@@ -1451,12 +1451,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/c-j-cross/",
     "Description": "I’m an experienced Data Analyst skilled in collecting, cleaning, and interpreting complex datasets to turn raw information into clear, actionable business insights.\nMy background also includes Customer Success and Team Leadership, where I’ve used data to identify trends, solve problems, improve processes, and help teams make better decisions.\nI’m looking for opportunities that combine data analysis, business insights, customer success, and team leadership.",
-    "Years of Experience": "",
+    "Years of Experience": "9-12 years",
     "Top 3 Skills": "9-12 years",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "23/09/2026",
     "First Name": "Francisco",
     "Last Name": "Izaguirre",
     "Former Job Title": "Senior Systems Engineer",
@@ -1467,12 +1467,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "www.linkedin.com/in/franciscoizaguirre",
     "Description": "Specialize in enterprise cloud, on-premise, and hybrid architectures across Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform (GCP).",
-    "Years of Experience": "",
+    "Years of Experience": "6-8 years",
     "Top 3 Skills": "6-8 years",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "25/09/2026",
     "First Name": "Arushi",
     "Last Name": "Tayal",
     "Former Job Title": "Sr Product Manager",
@@ -1483,12 +1483,12 @@
     "Open to Relocation": "",
     "LinkedIn URL": "linkedin.com/in/arushi-tayal",
     "Description": "As a Customer-obsessed, data-driven collaborator, I have built 0-1 products like DaaS which enabled us to fulfill restaurant orders placed outside Grubhub marketplace, another 0-1 shop n pay product which enabled new verticals and opened new revenue streams. I am looking for same culture as GrubHub in my next job.",
-    "Years of Experience": "",
+    "Years of Experience": "9-12 years",
     "Top 3 Skills": "9-12 years",
     "Open to Work": "Yes"
   },
   {
-    "Date Added": "",
+    "Date Added": "05/10/2026",
     "First Name": "Abhi",
     "Last Name": "Kapoor",
     "Former Job Title": "Director of Engineering",
@@ -1499,7 +1499,7 @@
     "Open to Relocation": "",
     "LinkedIn URL": "https://www.linkedin.com/in/abhinauv-kapoor/",
     "Description": "Engineering leader with 15+ years building and scaling distributed systems, most recently as a Director/Senior Engineering Manager at Grubhub, where I led multi-team orgs of around 25 engineers across subscriptions, payments and platform products. I specialize in cross-functional leadership — partnering with Product and Business on strategy — and in developing managers and senior engineers into stronger leaders. I'm looking for my next Engineering Manager, Senior EM, or Director role where I can own a meaningful set of systems long-term and keep building high-performing teams.",
-    "Years of Experience": "",
+    "Years of Experience": "12+ years",
     "Top 3 Skills": "12+ years",
     "Open to Work": "Yes"
   }
