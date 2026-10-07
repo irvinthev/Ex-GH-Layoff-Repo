@@ -161,6 +161,33 @@ async function loadDirectory() {
   }
 
 
+  function getWorkPreference(person) {
+    return getValue(person, [
+      "Work Preference",
+      "Work Preferences",
+      "workPreference"
+    ]);
+  }
+
+
+  function getRelocationPreference(person) {
+    return getValue(person, [
+      "Open to Relocation",
+      "Relocation",
+      "relocationPreference"
+    ]);
+  }
+
+
+  function getYearsExperience(person) {
+    return getValue(person, [
+      "Years of Experience",
+      "Years Experience",
+      "yearsExperience"
+    ]);
+  }
+
+
   function getLinkedIn(person) {
     return getValue(person, [
       "linkedin",
@@ -991,6 +1018,11 @@ async function loadDirectory() {
             person
           );
 
+        const workPreference =
+          getWorkPreference(
+            person
+          );
+
         const summary =
           getProfileSummary(
             person
@@ -1024,8 +1056,10 @@ async function loadDirectory() {
 
           <div class="candidate-context">
             ${fn ? `<span>${escapeHtml(fn)}</span>` : ""}
-            ${fn && rawLocation ? `<span aria-hidden="true">·</span>` : ""}
+            ${fn && (rawLocation || workPreference) ? `<span aria-hidden="true">·</span>` : ""}
             ${rawLocation ? `<span>📍 ${escapeHtml(rawLocation)}</span>` : ""}
+            ${rawLocation && workPreference ? `<span aria-hidden="true">·</span>` : ""}
+            ${workPreference ? `<span>${escapeHtml(workPreference.replace(/,/g, " /"))}</span>` : ""}
           </div>
 
           ${
@@ -1213,6 +1247,9 @@ async function loadDirectory() {
             getTeam(person),
             getFunction(person),
             getRawLocation(person),
+            getWorkPreference(person),
+            getRelocationPreference(person),
+            getYearsExperience(person),
             getDescription(person),
             getSkills(person),
             getCompany(person),
