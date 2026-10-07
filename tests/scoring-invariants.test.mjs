@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildCandidateProfile, classifyRole, includesPhrase, normalize, prepareJobProfile, prepareRole, scoreCandidate, tokens } from "../supabase/functions/evaluate-job/candidate-cache.ts";
+import { buildCandidateProfile, classifyRole, includesPhrase, normalize, normalizeExperienceBand, normalizeRelocationPreference, normalizeWorkPreferences, prepareJobProfile, prepareRole, scoreCandidate, tokens } from "../supabase/functions/evaluate-job/candidate-cache.ts";
 import { attachEvidenceLayers } from "../supabase/functions/evaluate-job/evidence-layers.ts";
 import { extractJobPostingHtml } from "../supabase/functions/evaluate-job/job-import.ts";
 
@@ -116,9 +116,33 @@ test("approved resume evidence resolves real skills while evidence depth remains
   assert.equal(rich.evidenceConfidence.layers.l3, true);
 });
 
+test("directory preference fields normalize into candidate profile without becoming qualification evidence", () => {
+  assert.deepEqual(normalizeWorkPreferences("Remote, On - Site, Hybrid"), ["remote", "onsite", "hybrid"]);
+  assert.equal(normalizeRelocationPreference("It Depends"), "conditional");
+  assert.equal(normalizeExperienceBand("9 – 12 years"), "9-12 years");
+
+  const profile = buildCandidateProfile(row({
+    work_preferences: ["remote", "onsite", "hybrid"],
+    open_to_relocation: "conditional",
+    years_experience_band: "9-12 years",
+  }));
+
+  assert.deepEqual(profile.workPreferences, ["remote", "onsite", "hybrid"]);
+  assert.equal(profile.openToRelocation, "conditional");
+  assert.equal(profile.yearsExperienceBand, "9-12 years");
+  assert.equal(profile.evidenceNormalized.includes("9 12 years"), false);
+});
+
 test("validation changes do not alter score, coverage or band", () => {
   const baseline = score({});
-  const changed = score({ seniority: "entry", location_text: "Far away", candidate_preferences: { target_titles: ["Data Analyst"], preferred_locations: [], remote_preference: "onsite" } });
+  const changed = score({
+    seniority: "entry",
+    location_text: "Far away",
+    candidate_preferences: { target_titles: ["Data Analyst"], preferred_locations: [], remote_preference: "onsite" },
+    work_preferences: ["remote", "hybrid"],
+    open_to_relocation: "yes",
+    years_experience_band: "12+ years",
+  });
   assert.equal(changed.score, baseline.score);
   assert.equal(changed.fitBand, baseline.fitBand);
   assert.deepEqual(changed.coreCoverage, baseline.coreCoverage);
