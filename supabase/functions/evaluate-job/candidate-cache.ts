@@ -27,10 +27,46 @@ type DirectoryPerson = {
   "Description"?: string;
   "Top 3 Skills"?: string;
   "Open to Work"?: string;
+  "Work Preference"?: string;
+  "Open to Relocation"?: string;
+  "Years of Experience"?: string;
 };
 
 function clean(value: unknown): string {
   return String(value ?? "").trim();
+}
+
+export function normalizeWorkPreferences(value: unknown): string[] {
+  const values = clean(value)
+    .split(/[,;\n]/)
+    .map((item) => item.trim().toLowerCase())
+    .filter(Boolean)
+    .map((item) => {
+      if (item === "remote") return "remote";
+      if (/^on\s*-?\s*site$/.test(item) || item === "onsite") return "onsite";
+      if (item === "hybrid") return "hybrid";
+      return item.replace(/\s+/g, " ");
+    });
+  return [...new Set(values)];
+}
+
+export function normalizeRelocationPreference(value: unknown): string | null {
+  const normalized = clean(value).toLowerCase().replace(/\s+/g, " ");
+  if (!normalized) return null;
+  if (["yes", "y", "true"].includes(normalized)) return "yes";
+  if (["no", "n", "false"].includes(normalized)) return "no";
+  if (normalized === "it depends" || normalized.includes("depend")) return "conditional";
+  return normalized;
+}
+
+export function normalizeExperienceBand(value: unknown): string | null {
+  const normalized = clean(value).toLowerCase().replace(/[–—]/g, "-").replace(/\s+/g, " ");
+  if (!normalized) return null;
+  const range = normalized.match(/^(\d+)\s*-\s*(\d+)\s*years?$/);
+  if (range) return `${range[1]}-${range[2]} years`;
+  const plus = normalized.match(/^(\d+)\s*\+\s*years?$/);
+  if (plus) return `${plus[1]}+ years`;
+  return normalized;
 }
 
 export function normalizeLinkedInIdentity(value: unknown): string | null {
@@ -90,6 +126,9 @@ function directoryToCandidateRow(person: DirectoryPerson): PlacementCandidateCac
       : null,
     public_description: clean(person["Description"]) || null,
     public_skills: directorySkills(person["Top 3 Skills"]),
+    work_preferences: normalizeWorkPreferences(person["Work Preference"]),
+    open_to_relocation: normalizeRelocationPreference(person["Open to Relocation"]),
+    years_experience_band: normalizeExperienceBand(person["Years of Experience"]),
     primary_role_slug: null,
     seniority: title ? inferSeniority(title, "") : null,
     skills: [],
@@ -225,6 +264,11 @@ function resolveDirectoryCandidates(
       linkedin_url: linkedIn ? base.linkedin_url : enriched.linkedin_url,
       public_description: base.public_description || enriched.public_description,
       public_skills: base.public_skills?.length ? base.public_skills : enriched.public_skills,
+      work_preferences: base.work_preferences?.length
+        ? base.work_preferences
+        : (enriched.work_preferences ?? []),
+      open_to_relocation: base.open_to_relocation || enriched.open_to_relocation || null,
+      years_experience_band: base.years_experience_band || enriched.years_experience_band || null,
       primary_role_slug: enriched.primary_role_slug,
       seniority: enriched.seniority || base.seniority,
       skills: enriched.skills,
@@ -563,6 +607,9 @@ export function buildCandidateProfile(row: PlacementCandidateCacheRow): Candidat
     rolePreferences.set(preference.role_slug, preference);
   }
   const candidatePreference = coerceCandidatePreference(row.candidate_preferences);
+  const workPreferences = coerceStringArray(row.work_preferences);
+  const openToRelocation = clean(row.open_to_relocation) || null;
+  const yearsExperienceBand = clean(row.years_experience_band) || null;
   // Qualification scoring uses demonstrated/held titles only. Target titles are
   // candidate intent and must not increase qualification fit.
   const candidateTitles = uniqueValues([row.former_job_title]).map(tokenizeLabel);
@@ -593,6 +640,9 @@ export function buildCandidateProfile(row: PlacementCandidateCacheRow): Candidat
     candidateRole: row.primary_role_slug,
     seniority: row.seniority,
     remotePreference: candidatePreference.remote_preference,
+    workPreferences,
+    openToRelocation,
+    yearsExperienceBand,
     preferredLocations,
     preferredLocationTokens: preferredLocations.map((location) => tokens(location)),
     rolePreferences,
