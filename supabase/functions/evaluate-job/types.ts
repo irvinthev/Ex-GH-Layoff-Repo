@@ -30,6 +30,9 @@ export type PlacementCandidateCacheRow = {
   linkedin_url: string | null;
   public_description: string | null;
   public_skills: string[] | null;
+  work_preferences?: string[] | null;
+  open_to_relocation?: string | null;
+  years_experience_band?: string | null;
   primary_role_slug: string | null;
   seniority: string | null;
   skills: string[] | null;
@@ -79,6 +82,9 @@ export type CandidateProfile = {
   candidateRole: string | null;
   seniority: string | null;
   remotePreference: string | null;
+  workPreferences: string[];
+  openToRelocation: string | null;
+  yearsExperienceBand: string | null;
   preferredLocations: string[];
   preferredLocationTokens: string[][];
   rolePreferences: Map<string, RolePreferenceRecord>;
