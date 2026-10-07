@@ -3,7 +3,11 @@ name: Update Directory Data
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 6 * * *"
+    - cron: "17 * * * *"
+
+concurrency:
+  group: directory-data-refresh
+  cancel-in-progress: false
 
 jobs:
   update-data:
@@ -74,6 +78,32 @@ jobs:
               )
               return value.strip()
 
+          PUBLIC_FIELDS = [
+              "Date Added",
+              "First Name",
+              "Last Name",
+              "Former Job Title",
+              "Former Team",
+              "Function",
+              "Location",
+              "Work Preference",
+              "Open to Relocation",
+              "LinkedIn URL",
+              "Description",
+              "Years of Experience",
+              "Top 3 Skills",
+              "Open to Work",
+          ]
+
+          REQUIRED_HEADERS = {
+              "First Name",
+              "Last Name",
+              "Former Job Title",
+              "Function",
+              "Location",
+              "LinkedIn URL",
+          }
+
           with open("people.csv", newline="", encoding="utf-8-sig") as f:
               reader = csv.DictReader(f)
 
@@ -83,16 +113,35 @@ jobs:
                       for header in reader.fieldnames
                   ]
 
-              rows = [
+              headers = set(reader.fieldnames or [])
+              missing = sorted(REQUIRED_HEADERS - headers)
+              if missing:
+                  raise SystemExit(
+                      "ERROR: people.csv is missing required headers: "
+                      + ", ".join(missing)
+                  )
+
+              source_rows = [
                   row
                   for row in reader
                   if any(str(value or "").strip() for value in row.values())
               ]
 
+          rows = [
+              {
+                  field: str(row.get(field) or "").strip()
+                  for field in PUBLIC_FIELDS
+              }
+              for row in source_rows
+          ]
+
           with open("people.json", "w", encoding="utf-8") as output:
               json.dump(rows, output, ensure_ascii=False, indent=2)
 
-          print(f"Converted {len(rows)} people records")
+          print(
+              f"Converted {len(rows)} people records "
+              f"using {len(PUBLIC_FIELDS)} approved public fields"
+          )
           PY
 
       # -------------------------
