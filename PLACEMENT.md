@@ -23,10 +23,10 @@ Primary qualification score is normalized from four merit components:
 | --- | ---: |
 | Role family | 30 |
 | Title / specialty | 15 |
-| Skills / recognized JD capabilities | 20 |
+| Capabilities / recognized JD requirements | 20 |
 | Domain | 15 |
 
-Seniority and location/work model are retained as **validation signals** (10 points each in the breakdown UI) but are excluded from the normalized capability score.
+Seniority and the legacy location calculation remain **validation signals** and are excluded from the normalized qualification score. Recruiter-facing work arrangement, location, relocation, and experience are reported separately through the compatibility layer.
 
 Current controls:
 
