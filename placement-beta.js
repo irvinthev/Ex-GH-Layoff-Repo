@@ -533,7 +533,7 @@ function renderMatches(data, { scrollToResults = true } = {}) {
   const labels = {
     roleFamily: "Role",
     titleSpecialty: "Title",
-    skills: "Skills",
+    skills: "Capabilities",
     domain: "Domain",
     seniority: "Level",
     location: "Location",
