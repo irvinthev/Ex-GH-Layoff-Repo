@@ -549,7 +549,8 @@ function renderMatches(data, { scrollToResults = true } = {}) {
   }
   results.innerHTML = visibleMatches.map((match, index) => {
     const fitTone = getFitTone(match);
-    const breakdown = Object.entries(match.breakdown ?? {}).map(([key, value]) => `
+    const qualificationKeys = new Set(["roleFamily", "titleSpecialty", "skills", "domain"]);
+    const breakdown = Object.entries(match.breakdown ?? {}).filter(([key]) => qualificationKeys.has(key)).map(([key, value]) => `
       <div class="evidence-item ${value.score === 0 ? "is-zero" : ""}">
         <span>${escapeHtml(labels[key] ?? key)} <em>${value.max}pts</em></span>
         <strong>${value.score}/${value.max}</strong>
