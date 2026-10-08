@@ -409,11 +409,12 @@ function toCsvValue(value) {
 
 function downloadCsv(data) {
   const rows = [
-    ["Name", "Score", "Fit Band", "Former Title", "Location", "LinkedIn URL", "Reasons", "Gaps"],
+    ["Name", "Score", "Fit Band", "Evidence Sufficiency", "Former Title", "Location", "LinkedIn URL", "Reasons", "Gaps"],
     ...data.map((match) => [
       match.candidate?.name ?? "",
       match.score ?? "",
       match.fitBand ?? "",
+      match.evidenceSufficiency?.sufficiency ?? match.evidenceConfidence?.confidence ?? "",
       match.candidate?.formerJobTitle ?? "",
       match.candidate?.location ?? "",
       match.candidate?.linkedinUrl ?? "",
@@ -473,13 +474,15 @@ function renderMatches(data, { scrollToResults = true } = {}) {
     ? `<a class="summary-pill summary-link" href="${escapeHtml(data.evaluation.sourceUrl)}" target="_blank" rel="noopener noreferrer">Open source job ↗</a>`
     : `<span class="summary-pill">Pasted description</span>`;
   const summaryStats = getSummaryStats(data.matches ?? []);
+  const evidenceSummary = data.evaluation?.evidenceSummary ?? {};
   evaluationSummary.innerHTML = [
     `<span class="summary-pill"><strong>${escapeHtml(role?.roleFamily ?? "Unclassified")}</strong> role family</span>`,
     `<span class="summary-pill"><strong>${escapeHtml(data.evaluation.seniority ?? "Not detected")}</strong> seniority</span>`,
     `<span class="summary-pill"><strong>${data.evaluation.candidateCount}</strong> candidates evaluated</span>`,
     `<span class="summary-pill"><strong>${summaryStats.strong}</strong> Strong Fits | <strong>${summaryStats.moderate}</strong> Moderate | <strong>${summaryStats.review}</strong> Need Review</span>`,
-    `<span class="summary-pill"><strong>${summaryStats.averageScore}</strong> average score</span>`,
-    `<span class="summary-pill summary-legend" title="Qualification score: Role Family 30pts, Title/Specialty 15pts, Skills 20pts, Domain 15pts. Seniority and location are validation signals only.">Qualification: 30 / 15 / 20 / 15 · Level/location validate</span>`,
+    `<span class="summary-pill"><strong>${summaryStats.averageScore}</strong> average qualification score</span>`,
+    `<span class="summary-pill" title="Evidence sufficiency describes how much candidate evidence is available. It does not change qualification score or fit band.">Evidence: <strong>${evidenceSummary.high ?? 0}</strong> High · <strong>${evidenceSummary.moderate ?? 0}</strong> Moderate · <strong>${evidenceSummary.limited ?? 0}</strong> Limited</span>`,
+    `<span class="summary-pill summary-legend" title="Qualification score: Role Family 30pts, Title/Specialty 15pts, Skills 20pts, Domain 15pts. Seniority and location are validation signals only. Evidence sufficiency is reported separately and never changes fit.">Qualification: 30 / 15 / 20 / 15 · Evidence sufficiency separate</span>`,
     `<span class="summary-pill">Manual review required</span>`,
     source,
     `<button id="exportResults" class="summary-action" type="button">Export Results</button>`,
@@ -543,13 +546,16 @@ function renderMatches(data, { scrollToResults = true } = {}) {
             const spotlightUrl = depth.spotlight
               ? `resources.html?story=${encodeURIComponent(depth.spotlight.slug || "")}`
               : "";
-            return `<div class="profile-depth-row"><span class="profile-depth-badge">${escapeHtml(depth.label)}</span>${spotlightUrl ? `<a class="spotlight-link" href="${spotlightUrl}">Read Spotlight →</a>` : ""}</div>`;
+            const sufficiency = match.evidenceSufficiency?.sufficiency
+              ?? (match.evidenceConfidence?.confidence === "Medium" ? "Moderate" : match.evidenceConfidence?.confidence)
+              ?? "Limited";
+            return `<div class="profile-depth-row"><span class="profile-depth-badge">${escapeHtml(depth.label)}</span><span class="profile-depth-badge">Evidence: ${escapeHtml(sufficiency)}</span>${spotlightUrl ? `<a class="spotlight-link" href="${spotlightUrl}">Read Spotlight →</a>` : ""}</div>`;
           })()}
           ${buildWhySummary(match) ? `<p class="why-summary"><strong>${escapeHtml(buildWhySummary(match).split(":")[0])}:</strong>${escapeHtml(buildWhySummary(match).slice(buildWhySummary(match).indexOf(":") + 1))}</p>` : ""}
           <div class="evidence-grid">${breakdown}</div>
           <div class="reason-columns">
             <div class="reason-panel evidence-panel"><h4><span aria-hidden="true">✓</span> Why this person surfaced</h4>${renderList(match.reasons)}</div>
-            <div class="reason-panel gap-panel"><h4><span aria-hidden="true">⚠</span> Potential gaps</h4>${renderList(match.gaps, "No immediate gaps identified")}${renderGapActions(match)}</div>
+            <div class="reason-panel gap-panel"><h4><span aria-hidden="true">⚠</span> Not evidenced / needs validation</h4>${renderList(match.gaps, "No immediate evidence gaps identified")}${renderGapActions(match)}</div>
           </div>
           ${provenance}
           ${linkedin}
