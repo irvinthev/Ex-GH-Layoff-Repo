@@ -8,8 +8,8 @@ This MVP provides a private, role-first matching workflow for the Talent Network
 2. The administrator provides a public job URL, a pasted description, or both. Public pages are imported when readable; the paste workflow remains available when a job board blocks automated access.
 3. The `evaluate-job` Edge Function validates the beta session (or supported legacy JWT path) and checks the server-only admin allowlist.
 4. The candidate population is built from public `people.json` directory records, then merged with optional Supabase enrichment using LinkedIn-first identity resolution and conservative name fallback.
-5. One canonical merged candidate profile drives both qualification scoring and evidence-depth reporting.
-6. The page displays the score breakdown, evidence provenance, and gaps requiring review.
+5. One canonical merged candidate profile drives both qualification scoring and evidence-sufficiency reporting.
+6. The page displays qualification fit and evidence sufficiency as separate axes, alongside evidence provenance and items requiring validation.
    - Results can be sorted and filtered by fit.
    - Current fit bands are Strong ≥ 75, Possible ≥ 55, otherwise Exploratory.
 
@@ -39,17 +39,21 @@ Current controls:
 - Candidate intent, target titles, Spotlight status, profile depth, and enrichment breadth do not add qualification points.
 - Missing enrichment is not negative evidence.
 
-### Evidence layers
+### Evidence sufficiency
 
-The same canonical candidate used by `scoreCandidate()` is also used for evidence-depth reporting:
+The same canonical candidate used by `scoreCandidate()` is also used to report how much evidence is available:
 
 - **L1** — structured public profile facts: held title, team, function, location.
 - **L2** — public candidate narrative and public skills from the directory.
 - **L3** — approved enriched qualification evidence such as structured enriched skills/domains and resume-derived evidence.
 
+Evidence sufficiency is reported as **Limited**, **Moderate**, or **High**. It is a separate axis from qualification fit.
+
+A sparse directory profile is not downgraded merely because it contains less evidence. Missing evidence means a capability is **not established from the available profile**, not that the candidate lacks it. Evidence sufficiency never changes qualification score, fit band, or rank.
+
 Profile depth is metadata, not merit. A Directory Profile can outrank an Enriched or Spotlight Profile.
 
-Matched capabilities also include provenance identifying the supporting source (for example directory description, public skill, enriched skill, or enriched evidence).
+Matched capabilities include provenance identifying the supporting source (for example directory description, public skill, enriched skill, or enriched evidence).
 
 Scores are deterministic comparative signals, not qualification percentages or hiring probabilities. Human review remains required.
 

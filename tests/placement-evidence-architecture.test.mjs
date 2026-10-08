@@ -114,6 +114,8 @@ test("directory-only L1 plus L2 evidence is reported from the same canonical pro
 
   assert.deepEqual(attached.evidenceConfidence.layers, { l1: true, l2: true, l3: false });
   assert.equal(attached.evidenceConfidence.confidence, "Medium");
+  assert.equal(attached.evidenceSufficiency.sufficiency, "Moderate");
+  assert.equal(attached.fitBand, match.fitBand);
 });
 
 test("enrichment changes evidence depth, not score, when it adds no new capability", () => {
@@ -135,6 +137,10 @@ test("enrichment changes evidence depth, not score, when it adds no new capabili
   assert.equal(enrichedMatch.score, publicMatch.score);
   assert.equal(richAttached.evidenceConfidence.layers.l3, true);
   assert.equal(plainAttached.evidenceConfidence.layers.l3, false);
+  assert.equal(richAttached.evidenceSufficiency.sufficiency, "High");
+  assert.equal(plainAttached.evidenceSufficiency.sufficiency, "Moderate");
+  assert.equal(richAttached.fitBand, enrichedMatch.fitBand);
+  assert.equal(plainAttached.fitBand, publicMatch.fitBand);
 });
 
 test("irrelevant directory narrative does not create capability credit", () => {
