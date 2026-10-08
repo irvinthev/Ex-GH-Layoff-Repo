@@ -64,6 +64,7 @@ test("directory description participates in scoring and evidence depth", () => {
   assert.equal(attached.evidenceConfidence.layers.l2, true);
   assert.equal(attached.evidenceConfidence.layers.l3, false);
   assert.equal(attached.evidenceConfidence.confidence, "Medium");
+  assert.equal(attached.evidenceSufficiency.sufficiency, "Moderate");
   assert.ok(match.evidenceTrace.some((entry) => entry.source === "directory_description"));
 });
 
@@ -111,7 +112,11 @@ test("enrichment depth is metadata and cannot change score when evidence is dupl
   );
   assert.equal(directoryAttached.evidenceConfidence.layers.l3, false);
   assert.equal(enrichedAttached.evidenceConfidence.layers.l3, true);
+  assert.equal(directoryAttached.evidenceSufficiency.sufficiency, "Moderate");
+  assert.equal(enrichedAttached.evidenceSufficiency.sufficiency, "High");
   assert.equal(directoryAttached.score, enrichedAttached.score);
+  assert.equal(directoryAttached.fitBand, directoryMatch.fitBand);
+  assert.equal(enrichedAttached.fitBand, enrichedMatch.fitBand);
 });
 
 test("canonical merged profile exposes directory and enrichment layers together", () => {
@@ -134,4 +139,23 @@ test("canonical merged profile exposes directory and enrichment layers together"
     entry.source === "enriched_skill" ||
     entry.source === "enriched_evidence"
   ));
+});
+
+
+test("sparse profile evidence does not downgrade qualification fit band", () => {
+  const sparseProfile = buildCandidateProfile(baseRow({
+    candidate_id: "directory:sparse",
+    public_description: "",
+    public_skills: [],
+    skills: [],
+    domains: [],
+    evidence: {},
+  }));
+  const sparseMatch = scoreCandidate(sparseProfile, productRole, cambiumLikeJob);
+  const [attached] = attachEvidenceLayers([sparseMatch], [sparseProfile]);
+
+  assert.equal(attached.fitBand, sparseMatch.fitBand);
+  assert.equal(attached.evidenceSufficiency.sufficiency, "Limited");
+  assert.equal(attached.evidenceAssessment.bandAdjusted, false);
+  assert.match(attached.evidenceSufficiency.note, /unknown, not absent/i);
 });
