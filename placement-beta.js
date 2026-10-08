@@ -475,13 +475,15 @@ function renderMatches(data, { scrollToResults = true } = {}) {
     : `<span class="summary-pill">Pasted description</span>`;
   const summaryStats = getSummaryStats(data.matches ?? []);
   const evidenceSummary = data.evaluation?.evidenceSummary ?? {};
+  const moderateEvidence = evidenceSummary.moderate ?? evidenceSummary.medium ?? 0;
+  const limitedEvidence = evidenceSummary.limited ?? evidenceSummary.low ?? 0;
   evaluationSummary.innerHTML = [
     `<span class="summary-pill"><strong>${escapeHtml(role?.roleFamily ?? "Unclassified")}</strong> role family</span>`,
     `<span class="summary-pill"><strong>${escapeHtml(data.evaluation.seniority ?? "Not detected")}</strong> seniority</span>`,
     `<span class="summary-pill"><strong>${data.evaluation.candidateCount}</strong> candidates evaluated</span>`,
     `<span class="summary-pill"><strong>${summaryStats.strong}</strong> Strong Fits | <strong>${summaryStats.moderate}</strong> Moderate | <strong>${summaryStats.review}</strong> Need Review</span>`,
     `<span class="summary-pill"><strong>${summaryStats.averageScore}</strong> average qualification score</span>`,
-    `<span class="summary-pill" title="Evidence sufficiency describes how much candidate evidence is available. It does not change qualification score or fit band.">Evidence: <strong>${evidenceSummary.high ?? 0}</strong> High · <strong>${evidenceSummary.moderate ?? 0}</strong> Moderate · <strong>${evidenceSummary.limited ?? 0}</strong> Limited</span>`,
+    `<span class="summary-pill" title="Evidence sufficiency describes how much candidate evidence is available. It does not change qualification score or fit band.">Evidence: <strong>${evidenceSummary.high ?? 0}</strong> High · <strong>${moderateEvidence}</strong> Moderate · <strong>${limitedEvidence}</strong> Limited</span>`,
     `<span class="summary-pill summary-legend" title="Qualification score: Role Family 30pts, Title/Specialty 15pts, Skills 20pts, Domain 15pts. Seniority and location are validation signals only. Evidence sufficiency is reported separately and never changes fit.">Qualification: 30 / 15 / 20 / 15 · Evidence sufficiency separate</span>`,
     `<span class="summary-pill">Manual review required</span>`,
     source,
