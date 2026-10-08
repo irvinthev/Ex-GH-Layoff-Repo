@@ -20,18 +20,33 @@ function normalizeWorkModel(value: unknown): "remote" | "hybrid" | "onsite" | nu
   return null;
 }
 
-function locationTokens(value: unknown): string[] {
+function locationPart(value: unknown): string {
   return normalize(value)
+    .split(",")[0]
     .replace(/[^a-z0-9 ]/g, " ")
-    .split(/\s+/)
-    .filter((token) => token.length >= 2 && !["the", "and", "usa", "united", "states", "america"].includes(token));
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function locationsAppearAligned(candidateLocation: string | null, jobLocation: string): boolean | null {
-  const candidateTokens = locationTokens(candidateLocation);
-  const jobTokens = locationTokens(jobLocation);
-  if (!candidateTokens.length || !jobTokens.length) return null;
-  return candidateTokens.some((token) => jobTokens.includes(token));
+  const candidate = normalize(candidateLocation);
+  const job = normalize(jobLocation);
+  if (!candidate || !job) return null;
+  if (candidate === job) return true;
+
+  const candidatePrimary = locationPart(candidateLocation);
+  const jobPrimary = locationPart(jobLocation);
+  if (!candidatePrimary || !jobPrimary) return null;
+  if (candidatePrimary === jobPrimary) return true;
+
+  // When both inputs are city-style values (for example "Chicago, IL"), a
+  // different primary place is a meaningful mismatch. Avoid state-token
+  // overlap such as Cincinnati, OH vs Columbus, OH being treated as aligned.
+  if (candidate.includes(",") && job.includes(",")) return false;
+
+  // Free-form regions such as "Bay Area" vs "San Francisco" are ambiguous.
+  // Unknown is safer than manufacturing a mismatch.
+  return null;
 }
 
 type ExperienceBand = { min: number; max: number | null };
