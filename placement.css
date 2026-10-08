@@ -164,3 +164,20 @@ button { border: 0; cursor: pointer; }
 .history-meta { display: grid; justify-items: end; gap: 4px; flex: 0 0 auto; }
 .history-source { display: inline-flex; padding: 3px 7px; border-radius: 999px; background: var(--primary-light); color: var(--primary); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
 @media (max-width: 640px) { .history-row { align-items: flex-start; } .history-meta { justify-items: start; } }
+
+
+/* Compatibility is a separate decision layer from qualification. */
+.compatibility-panel { margin: 14px 0; padding: 12px; border: 1px solid #dbe4ef; border-radius: 12px; background: #f8fafc; }
+.compatibility-heading { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 9px; }
+.compatibility-heading h4 { margin: 0; font-size: 13px; }
+.compatibility-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.compatibility-item { display: grid; grid-template-columns: 1fr auto; gap: 4px 8px; padding: 9px; border: 1px solid #e2e8f0; border-radius: 9px; background: #fff; }
+.compatibility-item small { grid-column: 1 / -1; color: var(--text-muted); line-height: 1.35; }
+.compatibility-status { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; font-weight: 750; }
+.compatibility-compatible { border-color: #bbf7d0; background: #f0fdf4; }
+.compatibility-conditional { border-color: #fde68a; background: #fffbeb; }
+.compatibility-mismatch { border-color: #fecaca; background: #fef2f2; }
+.compatibility-unknown { border-color: #e2e8f0; background: #f8fafc; }
+@media (max-width: 720px) {
+  .compatibility-grid { grid-template-columns: 1fr; }
+}

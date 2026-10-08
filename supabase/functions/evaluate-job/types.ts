@@ -125,6 +125,21 @@ export type JobProfile = {
   technicalRequirementTerms: string[];
 };
 
+export type CompatibilityStatus = "compatible" | "conditional" | "mismatch" | "unknown";
+
+export type CompatibilitySignal = {
+  status: CompatibilityStatus;
+  note: string;
+};
+
+export type CompatibilityAssessment = {
+  overall: CompatibilityStatus;
+  workModel: CompatibilitySignal;
+  location: CompatibilitySignal;
+  relocation: CompatibilitySignal;
+  experience: CompatibilitySignal;
+};
+
 export type CandidateMatch = {
   candidate: {
     id: string;

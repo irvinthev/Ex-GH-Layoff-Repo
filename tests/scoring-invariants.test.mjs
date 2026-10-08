@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { buildCandidateProfile, classifyRole, includesPhrase, normalize, normalizeExperienceBand, normalizeRelocationPreference, normalizeWorkPreferences, prepareJobProfile, prepareRole, scoreCandidate, tokens } from "../supabase/functions/evaluate-job/candidate-cache.ts";
 import { attachEvidenceLayers } from "../supabase/functions/evaluate-job/evidence-layers.ts";
+import { evaluateCompatibility } from "../supabase/functions/evaluate-job/compatibility.ts";
 import { extractJobPostingHtml } from "../supabase/functions/evaluate-job/job-import.ts";
 
 // Run the existing Deno-compatible pure-function suites in the Node test gate.
@@ -260,4 +261,110 @@ test("import to ranking preserves section boundaries and the five evidence patte
   assert.ok(byName.get("operator").coreCoverage.evidenced.length >= 2);
   assert.ok(byName.get("scientist").evidenceTrace.some((entry) => entry.source === "enriched_evidence"));
   assert.equal(byName.get("manager").coreCoverage.preferredEvidenced.includes("tableau"), true);
+});
+
+
+test("compatibility is a separate axis and cannot change qualification", () => {
+  const profile = buildCandidateProfile(row({
+    location_text: "Monroe, Ohio",
+    work_preferences: ["remote"],
+    open_to_relocation: "no",
+    years_experience_band: "9-12 years",
+  }));
+  const remoteJob = prepareJobProfile({
+    title: "Data Analyst",
+    description: "Requirements\n5+ years of experience. Use SQL for data analysis.",
+    location: "Remote",
+    remoteType: "Remote",
+  });
+  const onsiteJob = prepareJobProfile({
+    title: "Data Analyst",
+    description: "Requirements\n5+ years of experience. Use SQL for data analysis.",
+    location: "Chicago, IL",
+    remoteType: "On-site",
+  });
+
+  const remoteScore = scoreCandidate(profile, role, remoteJob);
+  const remoteCompatibility = evaluateCompatibility(profile, remoteJob);
+  assert.equal(remoteCompatibility.workModel.status, "compatible");
+  assert.equal(remoteCompatibility.location.status, "compatible");
+  assert.equal(remoteCompatibility.relocation.status, "compatible");
+  assert.equal(remoteCompatibility.experience.status, "compatible");
+
+  const onsiteScore = scoreCandidate(profile, role, onsiteJob);
+  const onsiteCompatibility = evaluateCompatibility(profile, onsiteJob);
+  assert.equal(onsiteCompatibility.workModel.status, "mismatch");
+  assert.equal(onsiteCompatibility.location.status, "mismatch");
+  assert.equal(onsiteCompatibility.relocation.status, "mismatch");
+  assert.equal(onsiteCompatibility.overall, "mismatch");
+
+  assert.equal(onsiteScore.score, remoteScore.score);
+  assert.equal(onsiteScore.fitBand, remoteScore.fitBand);
+  assert.deepEqual(onsiteScore.coreCoverage, remoteScore.coreCoverage);
+});
+
+test("relocation converts geographic mismatch to conditional compatibility, not qualification points", () => {
+  const profile = buildCandidateProfile(row({
+    location_text: "Cincinnati, Ohio",
+    work_preferences: ["hybrid"],
+    open_to_relocation: "conditional",
+    years_experience_band: "9-12 years",
+  }));
+  const target = prepareJobProfile({
+    title: "Data Analyst",
+    description: "Requirements\n5+ years of experience. Use SQL for data analysis.",
+    location: "Chicago, IL",
+    remoteType: "Hybrid",
+  });
+  const baseline = scoreCandidate(profile, role, target);
+  const compatibility = evaluateCompatibility(profile, target);
+
+  assert.equal(compatibility.workModel.status, "compatible");
+  assert.equal(compatibility.location.status, "conditional");
+  assert.equal(compatibility.relocation.status, "conditional");
+  assert.equal(compatibility.overall, "conditional");
+  assert.equal(scoreCandidate(profile, role, target).score, baseline.score);
+  assert.equal(scoreCandidate(profile, role, target).fitBand, baseline.fitBand);
+});
+
+test("unknown compatibility data stays unknown rather than becoming a mismatch", () => {
+  const profile = buildCandidateProfile(row({
+    location_text: null,
+    work_preferences: [],
+    open_to_relocation: null,
+    years_experience_band: null,
+  }));
+  const target = prepareJobProfile({
+    title: "Data Analyst",
+    description: "Requirements\nUse SQL for data analysis.",
+    location: "Chicago, IL",
+    remoteType: "Hybrid",
+  });
+  const compatibility = evaluateCompatibility(profile, target);
+
+  assert.equal(compatibility.workModel.status, "unknown");
+  assert.equal(compatibility.location.status, "unknown");
+  assert.equal(compatibility.relocation.status, "unknown");
+  assert.equal(compatibility.experience.status, "unknown");
+  assert.equal(compatibility.overall, "unknown");
+});
+
+test("experience mismatch is a review condition, not a hard incompatibility", () => {
+  const profile = buildCandidateProfile(row({
+    location_text: "Chicago, IL",
+    work_preferences: ["hybrid"],
+    open_to_relocation: "no",
+    years_experience_band: "0-2 years",
+  }));
+  const target = prepareJobProfile({
+    title: "Data Analyst",
+    description: "Minimum Qualifications\n5+ years of experience using SQL for data analysis.",
+    location: "Chicago, IL",
+    remoteType: "Hybrid",
+  });
+  const compatibility = evaluateCompatibility(profile, target);
+
+  assert.equal(compatibility.experience.status, "conditional");
+  assert.equal(compatibility.overall, "conditional");
+  assert.match(compatibility.experience.note, /validate actual experience/i);
 });

@@ -9,6 +9,7 @@ import {
   scoreCandidate,
 } from "./candidate-cache.ts";
 import { attachEvidenceLayers } from "./evidence-layers.ts";
+import { evaluateCompatibility } from "./compatibility.ts";
 import { importJobFromUrl } from "./job-import.ts";
 import { getActiveReviewerEvidence, saveReviewerEvidence, withReviewerEvidence } from "./reviewer-evidence.ts";
 
@@ -376,9 +377,14 @@ Deno.serve(async (req: Request) => {
     // Evidence depth is derived from the same canonical merged candidate
     // profiles used for scoring. Missing L3 remains metadata only and never
     // reduces fit or rank.
+    const candidateById = new Map(cache.candidates.map((candidate) => [candidate.id, candidate]));
     const matches = attachEvidenceLayers(scoredMatches, cache.candidates, {
       requiresTechnicalSkillEvidence: job.requiresTechnicalSkillEvidence,
     })
+      .map((match) => ({
+        ...match,
+        compatibility: evaluateCompatibility(candidateById.get(match.candidate.id)!, job),
+      }))
       .sort((a, b) => b.score - a.score);
     const scoringMs = roundMs(performance.now() - scoringStartedAt);
 
@@ -400,7 +406,7 @@ Deno.serve(async (req: Request) => {
       candidateCount: matches.length,
       evidenceSummary,
       evaluatedAt: new Date().toISOString(),
-      methodology: "Evidence-aware deterministic scoring v21; qualification fit and evidence sufficiency are separate axes; one canonical merged candidate profile drives both scoring and evidence reporting; sparse profiles are not downgraded merely because evidence is missing, and unobserved capabilities remain unknown rather than absent; held-title specialty and role-family evidence are independent, and title-derived concepts cannot create role-family credit; higher role-family credit requires exact role evidence or corroborated evidence across multiple distinct core JD capabilities, while function alignment remains a lower-strength signal; qualification points use distinct recognized JD capability units resolved from public narrative, public skills and approved enriched evidence; evidence provenance is retained for matched capabilities; profile depth is metadata only and never increases score or rank; explicit preferred sections and company/benefits sections do not supply core points; seniority and location remain validation signals; manual review required",
+      methodology: "Evidence-aware deterministic scoring v22; qualification fit, evidence sufficiency, and compatibility are separate axes; one canonical merged candidate profile drives both scoring and evidence reporting; sparse profiles are not downgraded merely because evidence is missing, unobserved capabilities remain unknown rather than absent, and compatibility signals never alter qualification score or fit band; held-title specialty and role-family evidence are independent, and title-derived concepts cannot create role-family credit; higher role-family credit requires exact role evidence or corroborated evidence across multiple distinct core JD capabilities, while function alignment remains a lower-strength signal; qualification points use distinct recognized JD capability units resolved from public narrative, public skills and approved enriched evidence; evidence provenance is retained for matched capabilities; profile depth is metadata only and never increases score or rank; explicit preferred sections and company/benefits sections do not supply core points; legacy seniority/location calculations remain diagnostic only while structured compatibility is reported separately; manual review required",
       sourceUrl,
       sourceMode,
       importWarning,

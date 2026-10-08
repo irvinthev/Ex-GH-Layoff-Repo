@@ -367,6 +367,40 @@ function renderReviewerBadges(match) {
     : "";
 }
 
+function renderCompatibility(match) {
+  const compatibility = match?.compatibility;
+  if (!compatibility) return "";
+  const labels = {
+    workModel: "Work arrangement",
+    location: "Location",
+    relocation: "Relocation",
+    experience: "Experience",
+  };
+  const icon = {
+    compatible: "✓",
+    conditional: "⚠",
+    mismatch: "✕",
+    unknown: "?",
+  };
+  const signals = ["workModel", "location", "relocation", "experience"]
+    .map((key) => {
+      const signal = compatibility[key] ?? { status: "unknown", note: "Not evaluated." };
+      return `<div class="compatibility-item compatibility-${escapeHtml(signal.status)}">
+        <span><strong>${escapeHtml(icon[signal.status] ?? "?")} ${escapeHtml(labels[key])}</strong></span>
+        <span class="compatibility-status">${escapeHtml(signal.status)}</span>
+        <small>${escapeHtml(signal.note)}</small>
+      </div>`;
+    }).join("");
+
+  return `<section class="compatibility-panel" aria-label="Compatibility">
+    <div class="compatibility-heading">
+      <h4>Compatibility</h4>
+      <span class="summary-pill">Overall: ${escapeHtml(compatibility.overall ?? "unknown")}</span>
+    </div>
+    <div class="compatibility-grid">${signals}</div>
+  </section>`;
+}
+
 function renderGapActions(match) {
   const reviewed = new Map((match.reviewerEvidence ?? [])
     .filter((item) => item.evidenceType === "capability")
@@ -409,12 +443,17 @@ function toCsvValue(value) {
 
 function downloadCsv(data) {
   const rows = [
-    ["Name", "Score", "Fit Band", "Evidence Sufficiency", "Former Title", "Location", "LinkedIn URL", "Reasons", "Gaps"],
+    ["Name", "Score", "Fit Band", "Evidence Sufficiency", "Compatibility", "Work Arrangement", "Location Compatibility", "Relocation", "Experience Compatibility", "Former Title", "Location", "LinkedIn URL", "Reasons", "Gaps"],
     ...data.map((match) => [
       match.candidate?.name ?? "",
       match.score ?? "",
       match.fitBand ?? "",
       match.evidenceSufficiency?.sufficiency ?? match.evidenceConfidence?.confidence ?? "",
+      match.compatibility?.overall ?? "",
+      match.compatibility?.workModel?.status ?? "",
+      match.compatibility?.location?.status ?? "",
+      match.compatibility?.relocation?.status ?? "",
+      match.compatibility?.experience?.status ?? "",
       match.candidate?.formerJobTitle ?? "",
       match.candidate?.location ?? "",
       match.candidate?.linkedinUrl ?? "",
@@ -494,7 +533,7 @@ function renderMatches(data, { scrollToResults = true } = {}) {
   const labels = {
     roleFamily: "Role",
     titleSpecialty: "Title",
-    skills: "Skills",
+    skills: "Capabilities",
     domain: "Domain",
     seniority: "Level",
     location: "Location",
@@ -510,7 +549,8 @@ function renderMatches(data, { scrollToResults = true } = {}) {
   }
   results.innerHTML = visibleMatches.map((match, index) => {
     const fitTone = getFitTone(match);
-    const breakdown = Object.entries(match.breakdown ?? {}).map(([key, value]) => `
+    const qualificationKeys = new Set(["roleFamily", "titleSpecialty", "skills", "domain"]);
+    const breakdown = Object.entries(match.breakdown ?? {}).filter(([key]) => qualificationKeys.has(key)).map(([key, value]) => `
       <div class="evidence-item ${value.score === 0 ? "is-zero" : ""}">
         <span>${escapeHtml(labels[key] ?? key)} <em>${value.max}pts</em></span>
         <strong>${value.score}/${value.max}</strong>
@@ -555,6 +595,7 @@ function renderMatches(data, { scrollToResults = true } = {}) {
           })()}
           ${buildWhySummary(match) ? `<p class="why-summary"><strong>${escapeHtml(buildWhySummary(match).split(":")[0])}:</strong>${escapeHtml(buildWhySummary(match).slice(buildWhySummary(match).indexOf(":") + 1))}</p>` : ""}
           <div class="evidence-grid">${breakdown}</div>
+          ${renderCompatibility(match)}
           <div class="reason-columns">
             <div class="reason-panel evidence-panel"><h4><span aria-hidden="true">✓</span> Why this person surfaced</h4>${renderList(match.reasons)}</div>
             <div class="reason-panel gap-panel"><h4><span aria-hidden="true">⚠</span> Not evidenced / needs validation</h4>${renderList(match.gaps, "No immediate evidence gaps identified")}${renderGapActions(match)}</div>

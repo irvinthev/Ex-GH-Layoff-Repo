@@ -5,7 +5,7 @@
 const SIGNAL_LABELS = {
   Role: "Role",
   Title: "Title",
-  Skills: "Skills",
+  Capabilities: "Capabilities",
   Domain: "Domain",
   Level: "Level",
   Location: "Location",
@@ -96,7 +96,7 @@ function classifyReason(text) {
   if (value.includes("seniority") || value.includes("level")) return "Level";
   if (value.includes("domain") || value.includes("industry") || value.includes("market")) return "Domain";
   if (value.includes("title")) return "Title";
-  if (value.includes("skill") || value.includes("responsibility") || value.includes("capabilit")) return "Skills";
+  if (value.includes("skill") || value.includes("responsibility") || value.includes("capabilit")) return "Capabilities";
   if (value.includes("role-family") || value.includes("role family")) return "Role";
   if (value.includes("evidence depth") || value.includes("confidence")) return "Evidence";
   return "Evidence";

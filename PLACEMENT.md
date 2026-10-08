@@ -9,7 +9,7 @@ This MVP provides a private, role-first matching workflow for the Talent Network
 3. The `evaluate-job` Edge Function validates the beta session (or supported legacy JWT path) and checks the server-only admin allowlist.
 4. The candidate population is built from public `people.json` directory records, then merged with optional Supabase enrichment using LinkedIn-first identity resolution and conservative name fallback.
 5. One canonical merged candidate profile drives both qualification scoring and evidence-sufficiency reporting.
-6. The page displays qualification fit and evidence sufficiency as separate axes, alongside evidence provenance and items requiring validation.
+6. The page displays qualification fit, evidence sufficiency, and compatibility as separate axes, alongside evidence provenance and items requiring validation.
    - Results can be sorted and filtered by fit.
    - Current fit bands are Strong ≥ 75, Possible ≥ 55, otherwise Exploratory.
 
@@ -23,10 +23,10 @@ Primary qualification score is normalized from four merit components:
 | --- | ---: |
 | Role family | 30 |
 | Title / specialty | 15 |
-| Skills / recognized JD capabilities | 20 |
+| Capabilities / recognized JD requirements | 20 |
 | Domain | 15 |
 
-Seniority and location/work model are retained as **validation signals** (10 points each in the breakdown UI) but are excluded from the normalized capability score.
+Seniority and the legacy location calculation remain **validation signals** and are excluded from the normalized qualification score. Recruiter-facing work arrangement, location, relocation, and experience are reported separately through the compatibility layer.
 
 Current controls:
 
@@ -56,6 +56,23 @@ Profile depth is metadata, not merit. A Directory Profile can outrank an Enriche
 Matched capabilities include provenance identifying the supporting source (for example directory description, public skill, enriched skill, or enriched evidence).
 
 Scores are deterministic comparative signals, not qualification percentages or hiring probabilities. Human review remains required.
+
+### Compatibility
+
+Compatibility is evaluated separately from qualification and never changes qualification score, fit band, core coverage, or ranking.
+
+Current compatibility signals are:
+
+- **Work arrangement** — compares the job's remote / hybrid / onsite model with the candidate's recorded work preferences.
+- **Location** — checks clear local alignment; ambiguous geography returns Unknown rather than inventing a mismatch.
+- **Relocation** — uses the candidate's recorded Yes / No / Conditional relocation preference when geography differs.
+- **Experience** — compares a structured candidate experience band with an explicit years-of-experience requirement detected in the JD. Potential under-level or over-level cases are review conditions, not automatic disqualification.
+
+Statuses are **Compatible**, **Conditional**, **Mismatch**, or **Unknown**. Unknown means the available data is insufficient to establish compatibility.
+
+Overall compatibility uses the most material known condition: Mismatch takes precedence, then Conditional, then Unknown; only fully known compatible signals produce Compatible.
+
+Compatibility is intended to answer "would this specific role work for this candidate?" while qualification continues to answer "does the available evidence support that this candidate can do the work?"
 
 ## Deployment
 
