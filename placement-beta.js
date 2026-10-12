@@ -695,7 +695,7 @@ function renderRequirementReview(requirements) {
   requirementReviewContent.innerHTML = groups.map(([category, title]) => {
     const items = requirements.filter((requirement) => requirement.category === category);
     if (!items.length) return "";
-    return `<section class="requirement-review-group"><h3>${title}</h3>${items.map((requirement) => `
+    return `<details class="requirement-review-group" ${category === "core" || category === "ambiguous" ? "open" : ""}><summary>${title} (${items.length})</summary>${items.map((requirement) => `
       <article class="requirement-review-item" data-requirement-id="${escapeHtml(requirement.requirementId)}">
         <p class="requirement-review-original">${escapeHtml(requirement.originalText)}</p>
         <div class="requirement-review-meta">Parsed label: ${escapeHtml(requirement.label)} · Source: ${escapeHtml(requirement.sourceSection)}${requirement.ambiguityFlags?.length ? ` · Flags: ${escapeHtml(requirement.ambiguityFlags.join(", "))}` : ""}</div>
@@ -714,7 +714,7 @@ function renderRequirementReview(requirements) {
           <label class="review-confirm"><input type="checkbox" data-requirement-reviewed /> Confirm this requirement</label>
           <label class="review-adjacent"><input type="checkbox" data-requirement-adjacent /> Accept equivalent experience from adjacent roles for this requirement</label>
         </div>
-      </article>`).join("")}</section>`;
+      </article>`).join("")}</details>`;
   }).join("") || `<p>No structured requirements were identified. You can still answer the hiring-intent questions or skip review.</p>`;
 }
 
