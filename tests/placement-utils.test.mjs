@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   getFitTone,
+  getEvidenceCategory,
   getSummaryStats,
   sortAndFilterMatches,
 } from "../placement-utils.js";
@@ -35,12 +36,23 @@ test("sorts scores ascending when requested", () => {
 
 test("calculates fit-tone and summary distribution", () => {
   assert.equal(getFitTone(matches[0]), "strong");
-  assert.equal(getFitTone(matches[1]), "review");
+  assert.equal(getFitTone(matches[1]), "moderate");
   assert.equal(getFitTone(matches[3]), "review");
 
   const summary = getSummaryStats(matches);
   assert.equal(summary.strong, 1);
-  assert.equal(summary.moderate, 1);
-  assert.equal(summary.review, 2);
+  assert.equal(summary.moderate, 2);
+  assert.equal(summary.review, 1);
   assert.equal(summary.averageScore, 64);
+});
+
+test("evidence categories require demonstrated support and do not use score or compatibility", () => {
+  const candidates = [
+    { score: 95, fitBand: "Strong", evidenceAssessment: { strength: "Thin" } },
+    { score: 61, fitBand: "Possible", evidenceAssessment: { strength: "Supported" }, compatibility: { overall: "mismatch" } },
+    { score: 80, fitBand: "Strong" },
+  ];
+
+  assert.deepEqual(candidates.map(getEvidenceCategory), ["validation", "ranked", "validation"]);
+  assert.equal(candidates.length, 3);
 });

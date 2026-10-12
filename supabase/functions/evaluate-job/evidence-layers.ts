@@ -17,6 +17,7 @@ export type EvidenceLayerSummary = {
    * New code should use sufficiency.
    */
   confidence: "High" | "Medium" | "Low";
+  jobRelevantCapabilities: number;
   note: string;
 };
 
@@ -38,7 +39,10 @@ export type MatchEvidenceAssessment = {
  * Evidence sufficiency is metadata, not merit. Missing evidence means "not
  * established from the available profile", not "candidate does not have it".
  */
-export function summarizeEvidenceLayers(profile: CandidateProfile | null | undefined): EvidenceLayerSummary {
+export function summarizeEvidenceLayers(
+  profile: CandidateProfile | null | undefined,
+  jobRelevantCapabilities = 0,
+): EvidenceLayerSummary {
   const l1 = Boolean(profile && [
     profile.formerJobTitle,
     profile.formerTeam,
@@ -51,11 +55,11 @@ export function summarizeEvidenceLayers(profile: CandidateProfile | null | undef
   const l3 = Boolean(profile?.hasEnrichedEvidence);
   const available = [l1 ? "L1" : "", l2 ? "L2" : "", l3 ? "L3" : ""].filter(Boolean);
 
-  const sufficiency: EvidenceLayerSummary["sufficiency"] = l1 && l2 && l3
-    ? "High"
-    : l1 && l2
-      ? "Moderate"
-      : "Limited";
+  const sufficiency: EvidenceLayerSummary["sufficiency"] = jobRelevantCapabilities === 0
+    ? "Limited"
+    : jobRelevantCapabilities >= 2 && l1 && l2 && l3
+      ? "High"
+      : "Moderate";
 
   const confidence: EvidenceLayerSummary["confidence"] = sufficiency === "High"
     ? "High"
@@ -65,14 +69,15 @@ export function summarizeEvidenceLayers(profile: CandidateProfile | null | undef
 
   const layerText = available.length ? available.join(" + ") : "limited source data";
   const note = sufficiency === "Limited"
-    ? `Evidence sufficiency: Limited · ${layerText}. Missing profile evidence is not treated as evidence that the candidate lacks a capability.`
-    : `Evidence sufficiency: ${sufficiency} · ${layerText}.`;
+    ? `Evidence sufficiency: Limited · ${layerText}; no job-relevant capability is established. Missing profile evidence is not treated as evidence that the candidate lacks a capability (unknown, not absent).`
+    : `Evidence sufficiency: ${sufficiency} · ${layerText}; ${jobRelevantCapabilities} distinct job-relevant ${jobRelevantCapabilities === 1 ? "capability is" : "capabilities are"} established.`;
 
   return {
     layers: { l1, l2, l3 },
     available,
     sufficiency,
     confidence,
+    jobRelevantCapabilities,
     note,
   };
 }
@@ -83,6 +88,9 @@ export function attachEvidenceLayers<T extends {
   };
   fitBand?: "Strong" | "Possible" | "Exploratory";
   technicalSkillEvidence?: boolean;
+  coreCoverage?: {
+    evidenced?: string[];
+  };
   breakdown?: {
     roleFamily?: { score: number; max: number };
     titleSpecialty?: { score: number; max: number };
@@ -105,30 +113,28 @@ export function attachEvidenceLayers<T extends {
 
   return matches.map((match) => {
     const id = String(match.candidate?.id ?? "").trim();
-    const evidenceSufficiency = summarizeEvidenceLayers(candidateById.get(id));
+    const jobRelevantCapabilities = match.coreCoverage?.evidenced?.length ?? 0;
+    const evidenceSufficiency = summarizeEvidenceLayers(candidateById.get(id), jobRelevantCapabilities);
     const breakdown = match.breakdown;
     const roleScore = breakdown?.roleFamily?.score ?? 0;
     const titleScore = breakdown?.titleSpecialty?.score ?? 0;
     const skillScore = breakdown?.skills?.score ?? 0;
-    const domainScore = breakdown?.domain?.score ?? 0;
 
     // Recommendation support describes the evidence observed for this specific
     // job. It does not change qualification score or fit band.
     const roleSupported = roleScore >= 24;
     const titleSupported = titleScore >= 10;
-    const capabilitySupported = skillScore >= 6 || domainScore >= 8;
-    const identityOrCapabilitySupported = titleSupported || capabilitySupported;
-    const substantiveSupport = skillScore > 0 || domainScore > 0;
+    const capabilitySupported = skillScore >= 6 && jobRelevantCapabilities > 0;
     const technicalSkillRequired = Boolean(options.requiresTechnicalSkillEvidence);
     const directTechnicalEvidence = Boolean(match.technicalSkillEvidence);
     const corroborationSupported = technicalSkillRequired
       ? directTechnicalEvidence
-      : substantiveSupport;
-    const recommendationSupported = roleSupported && identityOrCapabilitySupported && corroborationSupported;
+      : capabilitySupported;
+    const recommendationSupported = roleSupported && capabilitySupported && corroborationSupported;
 
     const strength: MatchEvidenceAssessment["strength"] = recommendationSupported
       ? "Supported"
-      : roleSupported && identityOrCapabilitySupported
+      : roleSupported && (titleSupported || capabilitySupported)
         ? "Partial"
         : "Thin";
 
@@ -139,10 +145,10 @@ export function attachEvidenceLayers<T extends {
         ? technicalSkillRequired
           ? "Observed evidence supports role/title alignment plus a technical skill explicitly required by this role."
           : "Observed evidence supports role/title alignment plus corroborating capability or domain evidence."
-        : roleSupported && identityOrCapabilitySupported
+        : roleSupported && (titleSupported || capabilitySupported)
           ? technicalSkillRequired
             ? "Role-family relevance is present, but the available profile does not currently evidence a technical skill explicitly required by this role."
-            : "Role-family relevance is present, but the available profile contains limited corroborating capability or domain evidence."
+            : "Role-family relevance is present, but the available profile does not establish a core job-relevant capability."
           : roleSupported
             ? "Role-family relevance is present, but the available profile does not currently establish enough title or capability evidence for a stronger evidence assessment."
             : "The available profile contains limited evidence for this role. Treat unobserved capabilities as unknown, not absent.",

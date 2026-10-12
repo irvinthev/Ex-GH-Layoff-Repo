@@ -622,7 +622,7 @@ export function buildCandidateProfile(row: PlacementCandidateCacheRow): Candidat
     row.public_description,
     ...publicSkills,
     ...featureSkills,
-    ...enrichedEvidence,
+    ...enrichedEvidence.map((entry) => entry.text),
   ].map((value) => qualificationNarrative(String(value ?? ""))).join(" "));
   const candidateConcepts = conceptLabels(evidenceNormalized);
   const preferredLocations = uniqueValues([row.location_text, ...candidatePreference.preferred_locations]);
@@ -738,9 +738,14 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
     candidate.publicDescription,
     ...candidate.publicSkills,
     ...candidate.enrichedSkills,
-    ...candidate.enrichedEvidence,
+    ...candidate.enrichedEvidence.map((entry) => entry.text),
   ].map((value) => qualificationNarrative(String(value ?? ""))).join(" "));
-  const capabilityEvidenceTokens = tokens(capabilityEvidenceNormalized);
+  const roleEvidenceNormalized = normalize([
+    candidate.formerTeam,
+    candidate.publicDescription,
+    ...candidate.enrichedEvidence.map((entry) => entry.text),
+  ].map((value) => qualificationNarrative(String(value ?? ""))).join(" "));
+  const roleEvidenceTokens = tokens(roleEvidenceNormalized);
 
   const reviewerRoleEvidence = role
     ? validatedReviewerTitles.filter((record) =>
@@ -752,7 +757,7 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
       )
     : [];
   const exactEvidenceRoleMatch = role
-    ? role.phrases.some((phrase) => includesPhrase(capabilityEvidenceNormalized, phrase))
+      ? role.phrases.some((phrase) => includesPhrase(roleEvidenceNormalized, phrase))
       || reviewerRoleEvidence.some((record) =>
         role.phrases.some((phrase) => includesPhrase(normalize(record.value), phrase))
       )
@@ -760,7 +765,7 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
   const semanticEvidenceRoleMatch = role
     ? role.phrases.some((phrase) => {
         const phraseTokens = tokens(phrase);
-        return phraseTokens.length >= 2 && overlapRatio(phraseTokens, capabilityEvidenceTokens) >= 0.75;
+        return phraseTokens.length >= 2 && overlapRatio(phraseTokens, roleEvidenceTokens) >= 0.75;
       })
       || reviewerRoleEvidence.length > 0
     : false;
@@ -876,7 +881,7 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
     { source: "directory_description" as const, evidence: candidate.publicDescription ?? "" },
     ...candidate.publicSkills.map((evidence) => ({ source: "public_skill" as const, evidence })),
     ...candidate.enrichedSkills.map((evidence) => ({ source: "enriched_skill" as const, evidence })),
-    ...candidate.enrichedEvidence.map((evidence) => ({ source: "enriched_evidence" as const, evidence })),
+    ...candidate.enrichedEvidence.map((entry) => ({ source: entry.source, evidence: entry.text })),
     { source: "directory_team" as const, evidence: candidate.formerTeam ?? "" },
   ].filter((entry) => entry.evidence.trim());
 

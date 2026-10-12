@@ -259,7 +259,7 @@ test("import to ranking preserves section boundaries and the five evidence patte
   const byName = new Map(ranked.map((result) => [result.name, result]));
   assert.ok(byName.get("analytics_support").score > byName.get("onboarding").score);
   assert.ok(byName.get("operator").coreCoverage.evidenced.length >= 2);
-  assert.ok(byName.get("scientist").evidenceTrace.some((entry) => entry.source === "enriched_evidence"));
+  assert.ok(byName.get("scientist").evidenceTrace.some((entry) => entry.source === "resume_derived"));
   assert.equal(byName.get("manager").coreCoverage.preferredEvidenced.includes("tableau"), true);
 });
 
