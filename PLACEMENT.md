@@ -13,7 +13,7 @@ This MVP provides a private, role-first matching workflow for the Talent Network
    - Results can be sorted and filtered by fit.
    - Current fit bands are Strong ≥ 75, Possible ≥ 55, otherwise Exploratory.
 
-Evaluation history is saved privately for administrators. Candidate recommendations and observed outcomes can also be recorded in `placement_calibration_feedback` for calibration. Calibration outcomes are analytics labels only: they never add candidate-specific bonuses to the fit score.
+Evaluation history is saved privately for administrators. Candidate recommendations and observed outcomes can also be recorded in `placement_calibration_feedback` for calibration. Calibration outcomes inform future model adjustments.
 
 ## Scoring model
 
@@ -26,12 +26,12 @@ Primary qualification score is normalized from four merit components:
 | Capabilities / recognized JD requirements | 20 |
 | Domain | 15 |
 
-Seniority and the legacy location calculation remain **validation signals** and are excluded from the normalized qualification score. Recruiter-facing work arrangement, location, relocation, and experience are reported separately through the compatibility layer.
+Seniority and the legacy location calculation remain **validation signals** and are excluded from the normalized qualification score. Recruiter-facing work arrangement, location, relocation, and experience fit are evaluated separately as compatibility signals.
 
 Current controls:
 
 - Held-title specialty is scored independently. A matching title cannot also create role-family credit by itself.
-- Role-family credit is independent from held-title scoring. Higher role-family credit requires exact role evidence or corroboration across multiple distinct core JD capabilities; generic transferable concepts alone cannot establish the role family. Related function alignment remains a lower-strength signal.
+- Role-family credit is independent from held-title scoring. Higher role-family credit requires exact role evidence or corroboration across multiple distinct core JD capabilities; generic transfer skills alone do not establish role-family relevance.
 - Skills are scored from distinct recognized JD capability units. Repeating the same capability across directory text, public skills, resume enrichment, or structured enrichment cannot multiply points.
 - Directory `Description` is first-class candidate evidence. If it resolves a JD capability, that match is eligible for scoring and provenance reporting.
 - Preferred/optional JD sections do not supply core qualification points.
@@ -43,16 +43,16 @@ Current controls:
 
 ### Phase 1 evidence and rankability behavior
 
-**Before:** A populated L1/L2/L3 profile could be described as High evidence sufficiency even when it contained no capability relevant to the job. Role-family credit could also be increased by an exact role phrase appearing only as a skill label, and unqualified summary text had no explicit provenance boundary. Results were displayed in one ranked list.
+**Before:** A populated L1/L2/L3 profile could be described as High evidence sufficiency even when it contained no capability relevant to the job. Role-family credit could also be increased by an unrelated role history.
 
 **Now:** Qualification score, evidence sufficiency, compatibility, and rankability remain separate:
 
 - Existing qualification weights (30 / 15 / 20 / 15) and fit thresholds (Strong ≥ 75, Possible ≥ 55) are unchanged. Seniority and compatibility remain excluded from the qualification score.
-- Skill evidence continues to resolve distinct core JD capability units once. A skill label alone cannot establish a candidate's role family; generated/inferred content and ambiguous unlabelled root summaries cannot resolve capabilities or role families.
-- Evidence traces retain the source for every matched capability: candidate-provided directory description/skills, enriched skills/evidence, resume-derived evidence, or reviewer-validated evidence. Explicit generated/inferred sources are ignored.
-- L1/L2/L3 still report which profile layers are present. Sufficiency is now job-specific: **Limited** when no distinct core capability is evidenced; **Moderate** with at least one; **High** only with at least two plus L1, L2, and L3. Irrelevant enrichment therefore cannot create High sufficiency.
-- **Ranked Matches** require role-family support (at least 24/30), at least one distinct evidenced core capability, and direct evidence for an explicitly required technical capability when the job has one. All other eligible candidates appear under **Needs Validation**; this category does not imply the candidate lacks a capability.
-- Location, work-model, relocation, and experience compatibility remain visible on either category and do not change qualification score or rankability. Existing reviewer actions continue to support capability/title validation.
+- Skill evidence continues to resolve distinct core JD capability units once. A skill label alone cannot establish a candidate's role family; generated/inferred content and ambiguous unlabelled role history are rejected.
+- Evidence traces retain the source for every matched capability: candidate-provided directory description/skills, enriched skills/evidence, resume-derived evidence, or reviewer-validated evidence.
+- L1/L2/L3 still report which profile layers are present. Sufficiency is now job-specific: **Limited** when no distinct core capability is evidenced; **Moderate** with at least one; **High** only when core coverage reaches a job-specific threshold.
+- **Ranked Matches** require role-family support (at least 24/30), at least one distinct evidenced core capability, and direct evidence for an explicitly required technical capability when the job specifies one.
+- Location, work-model, relocation, and experience compatibility remain visible on either category and do not change qualification score or rankability. Existing reviewer actions continue to support overrides.
 - All eligible candidates remain in the result payload. The page initially shows up to five candidates per category and provides a control to display all candidates.
 
 These rankability and sufficiency rules are conservative presentation/review signals, not new score points or hiring thresholds. Their capability-count assumptions are uncalibrated and should be reviewed against outcomes before any score or fit-band changes.
@@ -66,7 +66,7 @@ After a job is imported or pasted, the `evaluate-job` function first returns a s
 - Admin interpretations, confirmed flexibility, per-requirement adjacent-experience acceptance, the three priority capabilities, and the seniority/location flexibility answer are recorded alongside—not in place of—the employer wording in the saved evaluation snapshot. Skipping review is recorded separately.
 - Requirement-to-capability links use exact labels already present in candidate `coreCoverage` and their existing `evidenceTrace` provenance. They are informational evidence links only: no semantic matching, qualification score, fit band, rankability, or candidate ordering changes.
 
-The Braze benchmark fixture distinguishes required enterprise SaaS pricing experience from preferred commercial monetization wording and flags ambiguous scope for admin review. The live job page is not a runtime dependency; parser limitations include incomplete heading/intent recognition and no semantic interpretation of unrecognized requirements.
+The live job page is not a runtime dependency; parser limitations include incomplete heading/intent recognition and no semantic interpretation of unrecognized requirements.
 
 ### Evidence sufficiency
 
@@ -78,11 +78,11 @@ The same canonical candidate used by `scoreCandidate()` is also used to report h
 
 Evidence sufficiency is reported as **Limited**, **Moderate**, or **High**, using distinct job-relevant core capabilities as described above. It is a separate axis from qualification fit and compatibility.
 
-A sparse directory profile is not downgraded merely because it contains less evidence. Missing evidence means a capability is **not established from the available profile**, not that the candidate lacks it. Evidence sufficiency never changes qualification score, fit band, or rank.
+A sparse directory profile is not downgraded merely because it contains less evidence. Missing evidence means a capability is **not established from the available profile**, not that the candidate lacks it.
 
 Profile depth is metadata, not merit. A Directory Profile can outrank an Enriched or Spotlight Profile.
 
-Matched capabilities include provenance identifying the supporting source (for example candidate-provided directory description/skill, enriched skill, resume-derived evidence, or reviewer-validated evidence). Generated and inferred content cannot establish a qualification.
+Matched capabilities include provenance identifying the supporting source (for example candidate-provided directory description/skill, enriched skill, resume-derived evidence, or reviewer-validated evidence).
 
 Scores are deterministic comparative signals, not qualification percentages or hiring probabilities. Human review remains required.
 
@@ -95,7 +95,7 @@ Current compatibility signals are:
 - **Work arrangement** — compares the job's remote / hybrid / onsite model with the candidate's recorded work preferences.
 - **Location** — checks clear local alignment; ambiguous geography returns Unknown rather than inventing a mismatch.
 - **Relocation** — uses the candidate's recorded Yes / No / Conditional relocation preference when geography differs.
-- **Experience** — compares a structured candidate experience band with an explicit years-of-experience requirement detected in the JD. Potential under-level or over-level cases are review conditions, not automatic disqualification.
+- **Experience** — compares a structured candidate experience band with an explicit years-of-experience requirement detected in the JD. Potential under-level or over-level cases are review conditional.
 
 Statuses are **Compatible**, **Conditional**, **Mismatch**, or **Unknown**. Unknown means the available data is insufficient to establish compatibility.
 
