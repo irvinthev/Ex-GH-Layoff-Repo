@@ -4,6 +4,7 @@ import { buildCandidateProfile, classifyRole, includesPhrase, normalize, normali
 import { attachEvidenceLayers } from "../supabase/functions/evaluate-job/evidence-layers.ts";
 import { evaluateCompatibility } from "../supabase/functions/evaluate-job/compatibility.ts";
 import { extractJobPostingHtml } from "../supabase/functions/evaluate-job/job-import.ts";
+import { getEvidenceCategory } from "../placement-utils.js";
 
 // Run the existing Deno-compatible pure-function suites in the Node test gate.
 globalThis.Deno = { test };
@@ -301,6 +302,32 @@ test("compatibility is a separate axis and cannot change qualification", () => {
   assert.equal(onsiteScore.score, remoteScore.score);
   assert.equal(onsiteScore.fitBand, remoteScore.fitBand);
   assert.deepEqual(onsiteScore.coreCoverage, remoteScore.coreCoverage);
+});
+
+test("strong capability evidence remains ranked when location compatibility mismatches", () => {
+  const profile = buildCandidateProfile(row({
+    former_job_title: "Operations Lead",
+    former_team: "Data Analytics",
+    function_name: "Data & Analytics",
+    location_text: "Cincinnati, Ohio",
+    work_preferences: ["remote"],
+    open_to_relocation: "no",
+    public_description: "Data Analyst experienced in SQL data analysis, dashboards, and recurring reporting.",
+    public_skills: ["SQL", "Data Analysis", "Dashboard Building"],
+  }));
+  const job = prepareJobProfile({
+    title: "Data Analyst",
+    description: "Requirements\nUse SQL for data analysis. Build dashboards and recurring reports.",
+    location: "Chicago, IL",
+    remoteType: "On-site",
+  });
+  const match = scoreCandidate(profile, role, job);
+  const [attached] = attachEvidenceLayers([match], [profile], { requiresTechnicalSkillEvidence: true });
+  const compatibility = evaluateCompatibility(profile, job);
+
+  assert.equal(attached.evidenceAssessment.strength, "Supported");
+  assert.equal(compatibility.overall, "mismatch");
+  assert.equal(getEvidenceCategory(attached), "ranked");
 });
 
 test("relocation converts geographic mismatch to conditional compatibility, not qualification points", () => {

@@ -143,11 +143,11 @@ export function attachEvidenceLayers<T extends {
       bandAdjusted: false,
       note: recommendationSupported
         ? technicalSkillRequired
-          ? "Observed evidence supports role/title alignment plus a technical skill explicitly required by this role."
-          : "Observed evidence supports role/title alignment plus corroborating capability or domain evidence."
+          ? "Observed evidence supports role-family relevance, at least one core job capability, and a technical skill explicitly required by this role."
+          : "Observed evidence supports role-family relevance and distinct core job-relevant capabilities."
         : roleSupported && (titleSupported || capabilitySupported)
           ? technicalSkillRequired
-            ? "Role-family relevance is present, but the available profile does not currently evidence a technical skill explicitly required by this role."
+            ? "Role-family relevance is present, but the available profile does not currently establish a technical skill explicitly required by this role."
             : "Role-family relevance is present, but the available profile does not establish a core job-relevant capability."
           : roleSupported
             ? "Role-family relevance is present, but the available profile does not currently establish enough title or capability evidence for a stronger evidence assessment."

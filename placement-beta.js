@@ -356,6 +356,17 @@ const REVIEWER_SOURCE_LABELS = {
   other: "Other",
 };
 
+const EVIDENCE_SOURCE_LABELS = {
+  held_title: "Held title",
+  directory_team: "Directory team",
+  directory_description: "Candidate-provided directory description",
+  public_skill: "Candidate-provided skill",
+  enriched_skill: "Enriched skill",
+  enriched_evidence: "Approved enriched evidence",
+  resume_derived: "Resume-derived evidence",
+  reviewer_validated: "Reviewer-validated evidence",
+};
+
 function reviewerSourceOptions() {
   return Object.entries(REVIEWER_SOURCE_LABELS)
     .map(([value, label]) => `<option value="${value}">${label}</option>`).join("");
@@ -573,12 +584,14 @@ function renderMatches(data, { scrollToResults = true } = {}) {
             ${match.evidenceTrace.map((trace) => `
               <div class="evidence-provenance-item">
                 <strong>${escapeHtml(trace.capability ?? "Evidence")}</strong>
-                <span>${escapeHtml(String(trace.source ?? "").replaceAll("_", " "))}</span>
+                <span>${escapeHtml(EVIDENCE_SOURCE_LABELS[trace.source] ?? "Recorded evidence")}</span>
                 <p>${escapeHtml(trace.evidence ?? "")}</p>
               </div>`).join("")}
           </div>
         </details>`
       : "";
+    const evidenceCategory = getEvidenceCategory(match);
+    const evidenceAssessment = String(match.evidenceAssessment?.note ?? "This saved result has no detailed evidence assessment; validate job-relevant capabilities before relying on it.");
     return `
       <article class="match-card fit-${fitTone}" style="--stagger-delay:${index * 60}ms">
         <div class="score-column">
@@ -599,6 +612,10 @@ function renderMatches(data, { scrollToResults = true } = {}) {
               ?? "Limited";
             return `<div class="profile-depth-row"><span class="profile-depth-badge">${escapeHtml(depth.label)}</span><span class="profile-depth-badge">Evidence: ${escapeHtml(sufficiency)}</span>${spotlightUrl ? `<a class="spotlight-link" href="${spotlightUrl}">Read Spotlight →</a>` : ""}</div>`;
           })()}
+          <p class="evidence-assessment evidence-assessment-${evidenceCategory}">
+            <strong>${evidenceCategory === "ranked" ? "Ranked match" : "Needs validation"}:</strong>
+            ${escapeHtml(evidenceAssessment)}
+          </p>
           ${buildWhySummary(match) ? `<p class="why-summary"><strong>${escapeHtml(buildWhySummary(match).split(":")[0])}:</strong>${escapeHtml(buildWhySummary(match).slice(buildWhySummary(match).indexOf(":") + 1))}</p>` : ""}
           <div class="evidence-grid">${breakdown}</div>
           ${renderCompatibility(match)}
