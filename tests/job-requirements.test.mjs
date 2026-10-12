@@ -51,19 +51,20 @@ function buildCandidate() {
   });
 }
 
-test("parses Braze-style core and preferred hiring intent without promoting monetization", () => {
+test("preserves explicit employer requirement strength even when capability vocabulary is incomplete", () => {
   const job = buildJob();
   const pricing = job.requirementsStructured.find((item) => /enterprise saas pricing/i.test(item.originalText));
   const monetization = job.requirementsStructured.find((item) => /commercial monetization/i.test(item.originalText));
 
   assert.ok(pricing);
   assert.equal(pricing.category, "core");
+  assert.ok(pricing.ambiguityFlags.includes("unrecognized_requirement"));
   assert.equal(pricing.sourceSection, "Requirements");
   assert.match(pricing.originalText, /enterprise SaaS pricing experience is required/);
   assert.ok(monetization);
   assert.equal(monetization.category, "preferred");
   assert.equal(monetization.flexibility, undefined);
-  assert.ok(monetization.ambiguityFlags.includes("multiple_interpretations"));
+  assert.ok(monetization.ambiguityFlags.includes("unrecognized_requirement"));
   assert.equal(parseJobRequirementUnits(job).find((unit) => unit.requirementId === monetization.requirementId).parseStatus, "unparsed");
   assert.ok(job.requirementsStructured.some((item) => item.sourceSection === "Job title"));
   assert.ok(job.requirementsStructured.some((item) => item.sourceSection === "Job location"));
@@ -77,7 +78,7 @@ test("keeps unrecognized requirements and marks parsed capability units explicit
   const sql = requirements.find((item) => item.label.toLowerCase() === "sql");
 
   assert.ok(unrecognized);
-  assert.equal(unrecognized.category, "ambiguous");
+  assert.equal(unrecognized.category, "core");
   assert.ok(unrecognized.ambiguityFlags.includes("unrecognized_requirement"));
   const units = parseJobRequirementUnits(buildJob(`Requirements:
 - Experience with SQL.`));
@@ -154,4 +155,19 @@ test("evidence mapping is informational and requirement review leaves scoring un
   assert.equal(links.some((link) => link.capabilityLabel.toLowerCase() === "sql"), true);
   assert.equal(links.some((link) => link.capabilityLabel.toLowerCase() === "data analysis"), true);
   assert.equal(links.some((link) => link.candidateEvidenceText.length > 0), true);
+});
+
+test("unrecognized mandatory engineering and finance requirements remain core", () => {
+  for (const description of [
+    "Minimum Qualifications:\n- Must have hands-on experience with distributed tracing in complex production systems.\nPreferred Qualifications:\n- Familiarity with observability dashboards preferred.",
+    "Required Qualifications:\n- Must have experience with purchase price allocation and post-acquisition integration.\nNice to Have:\n- Public company reporting exposure is a plus.",
+  ]) {
+    const job = buildJob(description);
+    const first = job.requirementsStructured.find((item) => item.originalText.includes("Must have"));
+    const preferred = job.requirementsStructured.find((item) => /preferred|a plus/i.test(item.originalText));
+    assert.ok(first);
+    assert.equal(first.category, "core");
+    assert.ok(preferred);
+    assert.equal(preferred.category, "preferred");
+  }
 });
