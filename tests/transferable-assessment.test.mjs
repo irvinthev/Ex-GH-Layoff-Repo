@@ -4,7 +4,7 @@ import { assessCandidateRequirements } from "../supabase/functions/evaluate-job/
 const requirement = (text, options = {}) => ({requirementId:"r1", category:"core", originalText:text, label:text, sourceSection:"Requirements", ambiguityFlags:[], markedReviewed:false, ...options});
 const candidate = (evidence = [], title = "Operations Director") => ({candidate:{id:"synthetic-1",formerJobTitle:title},coreCoverage:{evidenced:evidence.map(x=>x.capability)},evidenceTrace:evidence,score:72,fitBand:"Possible"});
 test("direct evidence is demonstrated with provenance",()=>{
- const rows=assessCandidateRequirements([requirement("Experience with data analysis.")],[candidate([{capability:"Data analysis",source:"resume_derived",evidence:"Analyzed transaction trends."}])],false);
+ const rows=assessCandidateRequirements([requirement("Experience with data analysis.",{label:"Data analysis"})],[candidate([{capability:"Data analysis",source:"resume_derived",evidence:"Analyzed transaction trends."}])],false);
  assert.equal(rows[0].status,"demonstrated");
  assert.equal(rows[0].evidenceSource,"resume");
 });
