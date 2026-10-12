@@ -38,6 +38,24 @@ Current controls:
 - Domain points require explicit job-description relevance; broad semantic context alone is insufficient.
 - Candidate intent, target titles, Spotlight status, profile depth, and enrichment breadth do not add qualification points.
 - Missing enrichment is not negative evidence.
+- Generic skill labels cannot establish role-family relevance; role evidence is drawn from candidate narrative, structured team information, resume-derived experience, or reviewer validation.
+- Generated or inferred fields are not qualification sources. Resume summaries are accepted only within the explicit `evidence.resume` source; ambiguous root-level `evidence.summary` text is not scored.
+
+### Phase 1 evidence and rankability behavior
+
+**Before:** A populated L1/L2/L3 profile could be described as High evidence sufficiency even when it contained no capability relevant to the job. Role-family credit could also be increased by an exact role phrase appearing only as a skill label, and unqualified summary text had no explicit provenance boundary. Results were displayed in one ranked list.
+
+**Now:** Qualification score, evidence sufficiency, compatibility, and rankability remain separate:
+
+- Existing qualification weights (30 / 15 / 20 / 15) and fit thresholds (Strong ≥ 75, Possible ≥ 55) are unchanged. Seniority and compatibility remain excluded from the qualification score.
+- Skill evidence continues to resolve distinct core JD capability units once. A skill label alone cannot establish a candidate's role family; generated/inferred content and ambiguous unlabelled root summaries cannot resolve capabilities or role families.
+- Evidence traces retain the source for every matched capability: candidate-provided directory description/skills, enriched skills/evidence, resume-derived evidence, or reviewer-validated evidence. Explicit generated/inferred sources are ignored.
+- L1/L2/L3 still report which profile layers are present. Sufficiency is now job-specific: **Limited** when no distinct core capability is evidenced; **Moderate** with at least one; **High** only with at least two plus L1, L2, and L3. Irrelevant enrichment therefore cannot create High sufficiency.
+- **Ranked Matches** require role-family support (at least 24/30), at least one distinct evidenced core capability, and direct evidence for an explicitly required technical capability when the job has one. All other eligible candidates appear under **Needs Validation**; this category does not imply the candidate lacks a capability.
+- Location, work-model, relocation, and experience compatibility remain visible on either category and do not change qualification score or rankability. Existing reviewer actions continue to support capability/title validation.
+- All eligible candidates remain in the result payload. The page initially shows up to five candidates per category and provides a control to display all candidates.
+
+These rankability and sufficiency rules are conservative presentation/review signals, not new score points or hiring thresholds. Their capability-count assumptions are uncalibrated and should be reviewed against outcomes before any score or fit-band changes.
 
 ### Evidence sufficiency
 
@@ -47,13 +65,13 @@ The same canonical candidate used by `scoreCandidate()` is also used to report h
 - **L2** — public candidate narrative and public skills from the directory.
 - **L3** — approved enriched qualification evidence such as structured enriched skills/domains and resume-derived evidence.
 
-Evidence sufficiency is reported as **Limited**, **Moderate**, or **High**. It is a separate axis from qualification fit.
+Evidence sufficiency is reported as **Limited**, **Moderate**, or **High**, using distinct job-relevant core capabilities as described above. It is a separate axis from qualification fit and compatibility.
 
 A sparse directory profile is not downgraded merely because it contains less evidence. Missing evidence means a capability is **not established from the available profile**, not that the candidate lacks it. Evidence sufficiency never changes qualification score, fit band, or rank.
 
 Profile depth is metadata, not merit. A Directory Profile can outrank an Enriched or Spotlight Profile.
 
-Matched capabilities include provenance identifying the supporting source (for example directory description, public skill, enriched skill, or enriched evidence).
+Matched capabilities include provenance identifying the supporting source (for example candidate-provided directory description/skill, enriched skill, resume-derived evidence, or reviewer-validated evidence). Generated and inferred content cannot establish a qualification.
 
 Scores are deterministic comparative signals, not qualification percentages or hiring probabilities. Human review remains required.
 
@@ -120,4 +138,4 @@ Outcome strength is an analysis field, not a scoring input:
 
 The initial calibration dataset contains validated feedback from Jill Weinstein, Kelsey Peretti, and Elena Moilan. Paul de Lucena's two recommendations are retained as pending feedback and must not be counted as validated outcomes.
 
-Regression tests cover canonical directory evidence, enrichment invariance, title/role-family separation, provenance, higher-education/EdTech equivalence, and transferable logistics/operations evidence.
+Regression tests cover canonical directory evidence, enrichment invariance, title/role-family separation, generated/inferred evidence rejection, provenance, higher-education/EdTech equivalence, transferable capabilities versus title-only evidence, L1-only and irrelevant enriched profiles, location incompatibility, and reviewer validation.

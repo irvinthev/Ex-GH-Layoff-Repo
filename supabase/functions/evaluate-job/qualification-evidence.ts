@@ -1,6 +1,10 @@
 // Qualification units are job-defined, not candidate-label counts. The vocabulary
 // is deliberately bounded; coverage is of recognized units, not the entire JD.
 export type RequirementUnit = { label: string; terms: readonly string[] };
+export type QualificationEvidenceItem = {
+  text: string;
+  source: "enriched_evidence" | "resume_derived";
+};
 
 export const TECHNICAL_UNITS: RequirementUnit[] = [
   ...["java", "python", "javascript", "typescript", "react", "angular", "c#", ".net",
@@ -74,25 +78,44 @@ export function qualificationSections(description: string): { core: string; pref
 }
 
 /** Only documented experience fields can resolve capability evidence. Arbitrary
- * JSON keys, interests, recommendations, file names and intent cannot score. */
-export function qualificationEvidence(value: unknown): string[] {
+ * JSON keys, generated/inferred content, interests, file names and intent cannot score. */
+export function qualificationEvidence(value: unknown): QualificationEvidenceItem[] {
   if (!value || typeof value !== "object" || Array.isArray(value)) return [];
-  const accepted = new Set(["summary", "resume_summary", "career_summary", "technical_skills",
+  const accepted = new Set(["resume_summary", "career_summary", "technical_skills",
     "core_tools", "verified_signals", "quantified_outcomes"]);
-  const result: string[] = [];
+  const result: QualificationEvidenceItem[] = [];
   const strings = (entry: unknown): string[] => typeof entry === "string"
     ? [entry] : Array.isArray(entry) ? entry.flatMap(strings) : [];
-  for (const [key, entry] of Object.entries(value)) {
-    if (accepted.has(key)) result.push(...strings(entry));
-    else if (key === "resume") result.push(...qualificationEvidence(entry));
-    // Existing employment records carry a held title and dated evidence.
-    else if (entry && typeof entry === "object" && !Array.isArray(entry)) {
-      const record = entry as Record<string, unknown>;
-      if (typeof record.title === "string" && typeof record.dates === "string") {
-        result.push(record.title, ...strings(record.evidence));
+  const isUntrusted = (record: Record<string, unknown>) => {
+    const provenance = [record.source, record.source_type, record.origin, record.provenance, record.evidence_type]
+      .map((item) => String(item ?? "").toLowerCase());
+    return provenance.some((item) => /generated|inferred|inference|ai[-_ ]?generated/.test(item));
+  };
+  const visit = (
+    record: Record<string, unknown>,
+    source: QualificationEvidenceItem["source"],
+    insideResume = false,
+  ) => {
+    if (isUntrusted(record)) return;
+    for (const [key, entry] of Object.entries(record)) {
+      if (/^(generated|inferred|inference|ai_generated|generated_|inferred_)/i.test(key)) continue;
+      if (key === "resume" && entry && typeof entry === "object" && !Array.isArray(entry)) {
+        visit(entry as Record<string, unknown>, "resume_derived", true);
+      } else if ((accepted.has(key) || (insideResume && key === "summary"))) {
+        result.push(...strings(entry).map((text) => ({ text, source })));
+      } else if (entry && typeof entry === "object" && !Array.isArray(entry)) {
+        // Existing employment records carry a held title and dated evidence.
+        const nested = entry as Record<string, unknown>;
+        if (typeof nested.title === "string" && typeof nested.dates === "string" && !isUntrusted(nested)) {
+          result.push({ text: nested.title, source });
+          result.push(...strings(nested.evidence).map((text) => ({ text, source })));
+        } else {
+          visit(nested, source, insideResume);
+        }
       }
     }
-  }
+  };
+  visit(value as Record<string, unknown>, "enriched_evidence");
   return result;
 }
 

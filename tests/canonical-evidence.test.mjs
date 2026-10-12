@@ -126,7 +126,7 @@ test("canonical merged profile exposes directory and enrichment layers together"
     public_skills: ["Product Strategy"],
     skills: ["Technical Product Management"],
     domains: ["Software"],
-    evidence: { verified_signals: ["Led product delivery with engineering"] },
+    evidence: { verified_signals: ["Led cross-functional teams with engineering and stakeholders."] },
   }));
 
   const summary = summarizeEvidenceLayers(profile);

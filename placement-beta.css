@@ -45,6 +45,14 @@ button { border: 0; cursor: pointer; }
 .summary-action:hover { border-color: #cbd5e1; }
 .summary-legend { background: #f8fafc; }
 .match-list { display: grid; gap: 16px; }
+.match-category { display: grid; gap: 14px; }
+.match-category-heading { display: grid; gap: 4px; }
+.match-category-heading h3 { margin: 8px 0 0; color: var(--text); font-size: 20px; }
+.match-category-heading h3 span { display: inline-grid; min-width: 26px; height: 26px; place-items: center; margin-left: 5px; border-radius: 999px; background: #eef2f7; color: var(--text-muted); font-size: 13px; vertical-align: 2px; }
+.match-category-heading p,.match-category-empty { margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.5; }
+.evidence-assessment { margin: 10px 0; padding: 10px 12px; border-radius: 10px; background: #f8fafc; color: #475569; font-size: 13px; line-height: 1.5; }
+.evidence-assessment-ranked { border-left: 3px solid #16a34a; }
+.evidence-assessment-validation { border-left: 3px solid #d97706; }
 .match-card { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 22px; background: #fff; border: 1px solid var(--border); border-left-width: 6px; border-radius: 18px; padding: 22px; box-shadow: var(--shadow-card); animation: cardFade .35s ease both; animation-delay: var(--stagger-delay, 0ms); }
 .match-card.fit-strong { border-left-color: #16a34a; }
 .match-card.fit-moderate { border-left-color: #d97706; }

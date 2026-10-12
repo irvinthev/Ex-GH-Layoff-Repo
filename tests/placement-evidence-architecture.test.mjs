@@ -7,6 +7,7 @@ import {
   scoreCandidate,
 } from "../supabase/functions/evaluate-job/candidate-cache.ts";
 import { attachEvidenceLayers } from "../supabase/functions/evaluate-job/evidence-layers.ts";
+import { getEvidenceCategory } from "../placement-utils.js";
 
 const productRole = prepareRole({
   slug: "product_management",
@@ -126,7 +127,7 @@ test("enrichment changes evidence depth, not score, when it adds no new capabili
   const enrichedCandidate = buildCandidateProfile(row({
     candidate_id: "enriched:duplicate",
     public_description: "Led cross-functional teams and product strategy.",
-    evidence: { summary: "Led cross-functional teams and product strategy." },
+    evidence: { resume: { summary: "Led cross-functional teams and product strategy." } },
   }));
 
   const publicMatch = scoreCandidate(publicCandidate, productRole, cambiumLikeJob);
@@ -173,4 +174,119 @@ test("Paul-style enrichment can supply capability evidence without title credit"
   assert.equal(match.breakdown.titleSpecialty.score, 0);
   assert.ok(match.breakdown.skills.score > 0);
   assert.ok(match.breakdown.roleFamily.score <= 24);
+});
+
+test("exact held title without demonstrated capabilities requires validation", () => {
+  const candidate = buildCandidateProfile(row({
+    former_job_title: "Technical Product Manager",
+    former_team: "General",
+    function_name: "General",
+    public_description: "",
+    public_skills: [],
+  }));
+  const match = scoreCandidate(candidate, productRole, cambiumLikeJob);
+  const [attached] = attachEvidenceLayers([match], [candidate]);
+
+  assert.equal(match.breakdown.titleSpecialty.score, 15);
+  assert.equal(match.coreCoverage.evidenced.length, 0);
+  assert.equal(attached.evidenceAssessment.strength, "Thin");
+  assert.equal(getEvidenceCategory(attached), "validation");
+});
+
+test("strong transferable capabilities outrank an exact title without capability evidence", () => {
+  const titleOnly = buildCandidateProfile(row({
+    candidate_id: "directory:title-only",
+    former_job_title: "Technical Product Manager",
+    former_team: "General",
+    function_name: "General",
+    public_description: "",
+    public_skills: [],
+  }));
+  const transferable = buildCandidateProfile(row({
+    candidate_id: "directory:transferable",
+    former_job_title: "Operations Lead",
+    former_team: "Operations",
+    function_name: "Operations",
+    public_description: "As a product management lead, led cross-functional teams through product delivery and owned product strategy and roadmap execution.",
+  }));
+  const titleMatch = scoreCandidate(titleOnly, productRole, cambiumLikeJob);
+  const transferableMatch = scoreCandidate(transferable, productRole, cambiumLikeJob);
+  const attached = attachEvidenceLayers([titleMatch, transferableMatch], [titleOnly, transferable]);
+  const transferableResult = attached.find((match) => match.candidate.id === transferable.id);
+
+  assert.ok(transferableMatch.score > titleMatch.score);
+  assert.equal(transferableResult.evidenceAssessment.strength, "Supported");
+  assert.equal(getEvidenceCategory(transferableResult), "ranked");
+});
+
+test("an L1-only candidate remains eligible and is categorized for validation", () => {
+  const candidate = buildCandidateProfile(row({
+    candidate_id: "directory:l1-only",
+    public_description: "",
+    public_skills: [],
+    skills: [],
+    domains: [],
+    evidence: {},
+  }));
+  const match = scoreCandidate(candidate, productRole, cambiumLikeJob);
+  const [attached] = attachEvidenceLayers([match], [candidate]);
+
+  assert.deepEqual(attached.evidenceSufficiency.layers, { l1: true, l2: false, l3: false });
+  assert.equal(attached.evidenceSufficiency.sufficiency, "Limited");
+  assert.equal(attached.evidenceAssessment.strength, "Thin");
+  assert.equal(getEvidenceCategory(attached), "validation");
+});
+
+test("generated and inferred descriptions cannot establish capabilities", () => {
+  const candidateRow = {
+    public_description: "",
+    public_skills: [],
+    skills: [],
+    domains: [],
+    evidence: {
+      source_type: "generated",
+      verified_signals: ["Led cross-functional teams through product delivery and owned product strategy."],
+      generated_description: "Product manager with extensive strategy and delivery experience.",
+      inferred_capabilities: ["Cross-functional leadership"],
+    },
+  };
+  const generatedMatch = scoreCandidate(buildCandidateProfile(row(candidateRow)), productRole, cambiumLikeJob);
+  const baselineMatch = scoreCandidate(buildCandidateProfile(row({
+    ...candidateRow,
+    evidence: {},
+  })), productRole, cambiumLikeJob);
+
+  assert.equal(generatedMatch.score, baselineMatch.score);
+  assert.deepEqual(generatedMatch.coreCoverage.evidenced, []);
+  assert.equal(generatedMatch.evidenceTrace.some((entry) =>
+    entry.source === "enriched_evidence" || entry.source === "resume_derived"
+  ), false);
+});
+
+test("role-family provenance uses narrative/team sources, not matching skill labels", () => {
+  const candidate = buildCandidateProfile(row({
+    former_team: "Product Management",
+    public_description: "Led cross-functional teams through software product delivery and owned product strategy.",
+    public_skills: ["Product Management"],
+  }));
+  const match = scoreCandidate(candidate, productRole, cambiumLikeJob);
+  const roleTrace = match.evidenceTrace.find((entry) => entry.capability === "Role family: Product Management");
+
+  assert.equal(roleTrace.source, "directory_team");
+});
+
+test("irrelevant enriched fields do not improve job evidence sufficiency", () => {
+  const candidate = buildCandidateProfile(row({
+    public_description: "Managed scheduling, staffing, and vendor relationships across office operations.",
+    skills: ["Event Coordination", "Vendor Management"],
+    domains: ["Healthcare Operations"],
+    evidence: { generated_description: "Experienced product manager with strong product strategy." },
+  }));
+  const match = scoreCandidate(candidate, productRole, cambiumLikeJob);
+  const [attached] = attachEvidenceLayers([match], [candidate]);
+
+  assert.equal(attached.evidenceSufficiency.layers.l3, true);
+  assert.equal(attached.evidenceSufficiency.sufficiency, "Limited");
+  assert.equal(attached.evidenceSufficiency.jobRelevantCapabilities, 0);
+  assert.equal(getEvidenceCategory(attached), "validation");
 });

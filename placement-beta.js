@@ -1,9 +1,10 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.0/+esm";
 import {
   getFitTone,
+  getEvidenceCategory,
   getSummaryStats,
   sortAndFilterMatches,
-} from "./placement-utils.js?v=scoring-4";
+} from "./placement-utils.js?v=scoring-5";
 import { applyFilterButtonState, wireResultControls } from "./placement-controls.js";
 
 const SUPABASE_URL = "https://ulzlkewtarzajseepbvj.supabase.co";
@@ -355,6 +356,17 @@ const REVIEWER_SOURCE_LABELS = {
   other: "Other",
 };
 
+const EVIDENCE_SOURCE_LABELS = {
+  held_title: "Held title",
+  directory_team: "Directory team",
+  directory_description: "Candidate-provided directory description",
+  public_skill: "Candidate-provided skill",
+  enriched_skill: "Enriched skill",
+  enriched_evidence: "Approved enriched evidence",
+  resume_derived: "Resume-derived evidence",
+  reviewer_validated: "Reviewer-validated evidence",
+};
+
 function reviewerSourceOptions() {
   return Object.entries(REVIEWER_SOURCE_LABELS)
     .map(([value, label]) => `<option value="${value}">${label}</option>`).join("");
@@ -514,6 +526,8 @@ function renderMatches(data, { scrollToResults = true } = {}) {
     : `<span class="summary-pill">Pasted description</span>`;
   const summaryStats = getSummaryStats(data.matches ?? []);
   const evidenceSummary = data.evaluation?.evidenceSummary ?? {};
+  const rankedCount = (data.matches ?? []).filter((match) => getEvidenceCategory(match) === "ranked").length;
+  const validationCount = (data.matches ?? []).length - rankedCount;
   const moderateEvidence = evidenceSummary.moderate ?? evidenceSummary.medium ?? 0;
   const limitedEvidence = evidenceSummary.limited ?? evidenceSummary.low ?? 0;
   evaluationSummary.innerHTML = [
@@ -521,6 +535,7 @@ function renderMatches(data, { scrollToResults = true } = {}) {
     `<span class="summary-pill"><strong>${escapeHtml(data.evaluation.seniority ?? "Not detected")}</strong> seniority</span>`,
     `<span class="summary-pill"><strong>${data.evaluation.candidateCount}</strong> candidates evaluated</span>`,
     `<span class="summary-pill"><strong>${summaryStats.strong}</strong> Strong Fits | <strong>${summaryStats.moderate}</strong> Moderate | <strong>${summaryStats.review}</strong> Need Review</span>`,
+    `<span class="summary-pill"><strong>${rankedCount}</strong> Ranked Matches · <strong>${validationCount}</strong> Needs Validation</span>`,
     `<span class="summary-pill"><strong>${summaryStats.averageScore}</strong> average qualification score</span>`,
     `<span class="summary-pill" title="Evidence sufficiency describes how much candidate evidence is available. It does not change qualification score or fit band.">Evidence: <strong>${evidenceSummary.high ?? 0}</strong> High · <strong>${moderateEvidence}</strong> Moderate · <strong>${limitedEvidence}</strong> Limited</span>`,
     `<span class="summary-pill summary-legend" title="Qualification score: Role Family 30pts, Title/Specialty 15pts, Skills 20pts, Domain 15pts. Seniority and location are validation signals only. Evidence sufficiency is reported separately and never changes fit.">Qualification: 30 / 15 / 20 / 15 · Evidence sufficiency separate</span>`,
@@ -540,14 +555,16 @@ function renderMatches(data, { scrollToResults = true } = {}) {
   };
 
   const filteredMatches = sortAndFilterMatches(data.matches ?? [], activeSort, activeFilter);
-  const visibleMatches = showAllMatches ? filteredMatches : filteredMatches.slice(0, DEFAULT_RESULT_LIMIT);
-  const hiddenMatchCount = Math.max(0, filteredMatches.length - visibleMatches.length);
+  const rankedMatches = filteredMatches.filter((match) => getEvidenceCategory(match) === "ranked");
+  const needsValidationMatches = filteredMatches.filter((match) => getEvidenceCategory(match) === "validation");
+  const visibleRankedMatches = showAllMatches ? rankedMatches : rankedMatches.slice(0, DEFAULT_RESULT_LIMIT);
+  const visibleNeedsValidationMatches = showAllMatches ? needsValidationMatches : needsValidationMatches.slice(0, DEFAULT_RESULT_LIMIT);
   if (filteredMatches.length > DEFAULT_RESULT_LIMIT) {
     evaluationSummary.insertAdjacentHTML("beforeend",
-      `<button id="toggleAllMatches" class="summary-action result-count-action" type="button">${showAllMatches ? "Show Top 5" : `View All ${filteredMatches.length} Matches`}</button>`
+      `<button id="toggleAllMatches" class="summary-action result-count-action" type="button">${showAllMatches ? "Show Top 5 per category" : `View All ${filteredMatches.length} Candidates`}</button>`
     );
   }
-  results.innerHTML = visibleMatches.map((match, index) => {
+  const renderMatchCard = (match, index) => {
     const fitTone = getFitTone(match);
     const qualificationKeys = new Set(["roleFamily", "titleSpecialty", "skills", "domain"]);
     const breakdown = Object.entries(match.breakdown ?? {}).filter(([key]) => qualificationKeys.has(key)).map(([key, value]) => `
@@ -567,12 +584,14 @@ function renderMatches(data, { scrollToResults = true } = {}) {
             ${match.evidenceTrace.map((trace) => `
               <div class="evidence-provenance-item">
                 <strong>${escapeHtml(trace.capability ?? "Evidence")}</strong>
-                <span>${escapeHtml(String(trace.source ?? "").replaceAll("_", " "))}</span>
+                <span>${escapeHtml(EVIDENCE_SOURCE_LABELS[trace.source] ?? "Recorded evidence")}</span>
                 <p>${escapeHtml(trace.evidence ?? "")}</p>
               </div>`).join("")}
           </div>
         </details>`
       : "";
+    const evidenceCategory = getEvidenceCategory(match);
+    const evidenceAssessment = String(match.evidenceAssessment?.note ?? "This saved result has no detailed evidence assessment; validate job-relevant capabilities before relying on it.");
     return `
       <article class="match-card fit-${fitTone}" style="--stagger-delay:${index * 60}ms">
         <div class="score-column">
@@ -593,6 +612,10 @@ function renderMatches(data, { scrollToResults = true } = {}) {
               ?? "Limited";
             return `<div class="profile-depth-row"><span class="profile-depth-badge">${escapeHtml(depth.label)}</span><span class="profile-depth-badge">Evidence: ${escapeHtml(sufficiency)}</span>${spotlightUrl ? `<a class="spotlight-link" href="${spotlightUrl}">Read Spotlight →</a>` : ""}</div>`;
           })()}
+          <p class="evidence-assessment evidence-assessment-${evidenceCategory}">
+            <strong>${evidenceCategory === "ranked" ? "Ranked match" : "Needs validation"}:</strong>
+            ${escapeHtml(evidenceAssessment)}
+          </p>
           ${buildWhySummary(match) ? `<p class="why-summary"><strong>${escapeHtml(buildWhySummary(match).split(":")[0])}:</strong>${escapeHtml(buildWhySummary(match).slice(buildWhySummary(match).indexOf(":") + 1))}</p>` : ""}
           <div class="evidence-grid">${breakdown}</div>
           ${renderCompatibility(match)}
@@ -604,7 +627,23 @@ function renderMatches(data, { scrollToResults = true } = {}) {
           ${linkedin}
         </div>
       </article>`;
-  }).join("");
+  };
+  const renderCategory = (title, id, matches, emptyMessage) => `
+    <section class="match-category" aria-labelledby="${id}">
+      <header class="match-category-heading">
+        <h3 id="${id}">${title} <span>${matches.length}</span></h3>
+        <p>${title === "Ranked Matches"
+          ? "Job-relevant capabilities are supported by recorded evidence. Compatibility remains a separate signal."
+          : "Eligible candidates whose job-relevant evidence needs review. Missing evidence is unknown, not proof of absence."}</p>
+      </header>
+      ${matches.length ? matches.map(renderMatchCard).join("") : `<p class="match-category-empty">${emptyMessage}</p>`}
+    </section>`;
+  results.innerHTML = [
+    renderCategory("Ranked Matches", "rankedMatchesHeading", visibleRankedMatches,
+      "No candidates currently meet the evidence-supported ranking criteria."),
+    renderCategory("Needs Validation", "needsValidationHeading", visibleNeedsValidationMatches,
+      "No candidates currently need additional evidence validation."),
+  ].join("");
 
   const toggleAllMatches = document.querySelector("#toggleAllMatches");
   if (toggleAllMatches) {
@@ -629,7 +668,7 @@ function renderMatches(data, { scrollToResults = true } = {}) {
     });
   }
 
-  if (!visibleMatches.length) {
+  if (!filteredMatches.length) {
     results.innerHTML = `<p class="summary-pill">No matches met the selected filter. Try viewing all results.</p>`;
   }
 

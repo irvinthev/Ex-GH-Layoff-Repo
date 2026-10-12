@@ -5,6 +5,12 @@ export function getFitTone(match) {
   return "review";
 }
 
+export function getEvidenceCategory(match) {
+  return match?.evidenceAssessment?.strength === "Supported"
+    ? "ranked"
+    : "validation";
+}
+
 export function sortAndFilterMatches(matches = [], sortMode = "score_desc", filterMode = "all") {
   const filtered = matches.filter((match) => filterMode !== "strong" || getFitTone(match) === "strong");
   const sorted = [...filtered];

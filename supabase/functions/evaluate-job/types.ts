@@ -1,4 +1,4 @@
-import type { RequirementUnit } from "./qualification-evidence.ts";
+import type { QualificationEvidenceItem, RequirementUnit } from "./qualification-evidence.ts";
 export type Role = {
   slug: string;
   function_name: string;
@@ -92,7 +92,7 @@ export type CandidateProfile = {
   publicDescription: string | null;
   publicSkills: string[];
   enrichedSkills: string[];
-  enrichedEvidence: string[];
+  enrichedEvidence: QualificationEvidenceItem[];
   domains: string[];
   hasEnrichedEvidence: boolean;
   allSkills: string[];
@@ -162,7 +162,7 @@ export type CandidateMatch = {
   };
   evidenceTrace: Array<{
     capability: string;
-    source: "held_title" | "directory_team" | "directory_description" | "public_skill" | "enriched_skill" | "enriched_evidence" | "reviewer_validated";
+    source: "held_title" | "directory_team" | "directory_description" | "public_skill" | "enriched_skill" | "enriched_evidence" | "resume_derived" | "reviewer_validated";
     evidence: string;
     reviewerSourceType?: ReviewerEvidenceRecord["source_type"];
   }>;
