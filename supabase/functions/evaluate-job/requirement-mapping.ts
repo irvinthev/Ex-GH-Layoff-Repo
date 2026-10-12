@@ -2,113 +2,106 @@ import type { CandidateMatch, JobRequirement } from "./types.ts";
 import { CAPABILITY_UNITS } from "./qualification-evidence.ts";
 
 export type RequirementAssessment = {
-  requirementId: string;
-  candidateId: string;
-  status: "demonstrated" | "transferable" | "needs_validation" | "not_evidenced";
-  requirementText: string;
-  candidateEvidenceText: string | null;
-  capabilityLabel: string | null;
+  requirementId: string; candidateId: string;
+  status: "demonstrated" | "reported" | "transferable" | "needs_validation" | "not_evidenced";
+  requirementText: string; reviewedInterpretation: string | null;
+  candidateEvidenceText: string | null; capabilityLabel: string | null;
   evidenceSource: "directory" | "enriched" | "resume" | "reviewer" | null;
-  rationale: string;
-  validationQuestion: string | null;
+  evidenceType: string | null; rationale: string; validationQuestion: string | null;
 };
-
 export type RequirementEvidenceLink = {
-  requirementId: string;
-  candidateId: string;
-  capabilityLabel: string;
+  requirementId: string; candidateId: string; capabilityLabel: string;
   evidenceSource: "directory" | "enriched" | "resume" | "reviewer";
   matchStrength: "exact" | "adjacent" | "interpretable" | "contextual" | undefined;
-  candidateEvidenceText: string;
-  requirementInterpretation: string;
+  candidateEvidenceText: string; requirementInterpretation: string;
   reviewStatus: "supported" | "gaps" | "adjacent_field" | "unvalidated";
 };
-
-const ADJACENCIES: ReadonlyArray<{ target: string; evidence: string[]; explanation: string }> = [
-  { target: "product strategy", evidence: ["software product delivery", "cross-functional leadership"], explanation: "Related product delivery or coordination experience; ownership of product strategy is unverified." },
-  { target: "reporting and dashboards", evidence: ["data analysis"], explanation: "Data analysis may transfer to reporting; dashboard ownership is unverified." },
-  { target: "data analysis", evidence: ["reporting and dashboards"], explanation: "Reporting experience may transfer to analysis; analytical depth is unverified." },
-  { target: "cross-functional leadership", evidence: ["software product delivery"], explanation: "Product delivery may involve cross-functional coordination; leadership scope is unverified." },
-  { target: "software product delivery", evidence: ["product strategy"], explanation: "Product strategy is related to product delivery; execution ownership is unverified." },
-];
-function normalize(s: string): string { return s.toLowerCase().replace(/[^a-z0-9+#.]+/g, " ").trim(); }
-function sourceOf(source: CandidateMatch["evidenceTrace"][number]["source"]): NonNullable<RequirementAssessment["evidenceSource"]> {
-  if (source === "resume_derived") return "resume";
-  if (source === "enriched_skill" || source === "enriched_evidence") return "enriched";
-  if (source === "reviewer_validated") return "reviewer";
-  return "directory";
+const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9+#.]+/g, " ").trim();
+const clean = (s: string) => normalize(s).replace(/\s+/g, " ");
+const sources = (source: string): NonNullable<RequirementAssessment["evidenceSource"]> =>
+  source === "resume_derived" ? "resume" : source === "reviewer_validated" ? "reviewer"
+    : source.startsWith("enriched") ? "enriched" : "directory";
+const isReported = (source: string) => source === "public_skill" || source === "enriched_skill";
+const containsPhrase = (haystack: string, phrase: string) => (" " + clean(haystack) + " ").includes(" " + clean(phrase) + " ");
+const recognized = (s: string) => CAPABILITY_UNITS.filter(unit =>
+  unit.terms.some(term => containsPhrase(s, term)) || clean(unit.label) === clean(s)).map(u => u.label);
+function capability(r: JobRequirement): string | null {
+  // Parser emits a distinct label per capability even when the source sentence mentions several.
+  const fromLabel = CAPABILITY_UNITS.find(u => clean(u.label) === clean(r.label));
+  if (fromLabel) return fromLabel.label;
+  // A confirmed interpretation may clarify an unknown requirement; never rewrite employer wording.
+  if (r.markedReviewed && r.interpretedAs) {
+    const interpretation = recognized(r.interpretedAs);
+    if (interpretation.length === 1) return interpretation[0];
+  }
+  const matches = recognized(r.originalText);
+  return matches.length === 1 ? matches[0] : null;
 }
-/** A conservative capability vocabulary: no title, industry, or generative inference is proof. */
-function recognizedCapability(requirement: JobRequirement): string | null {
-  const text = normalize(requirement.originalText);
-  const direct = CAPABILITY_UNITS.filter(unit => unit.terms.some(term => {
-    const pattern = normalize(term);
-    return pattern.length > 2 && (" " + text + " ").includes(" " + pattern + " ");
-  }));
-  if (direct.length !== 1) return null; // Multi-capability requirements need individual review.
-  return direct[0].label;
-}
-function question(requirement: JobRequirement): string {
-  return `Can the candidate describe a specific example demonstrating: ${requirement.originalText.slice(0, 180)}?`;
-}
-/** Informational, not a qualification score or permission to relax employer requirements. */
-export function assessCandidateRequirements(
-  requirements: JobRequirement[],
-  matches: CandidateMatch[],
-  adjacentExperienceAllowed: boolean,
-): RequirementAssessment[] {
+const question = (r: JobRequirement) => `Can you give a specific work example supporting "${(r.interpretedAs && r.markedReviewed ? r.interpretedAs : r.originalText).slice(0,160)}", including your role and outcome?`;
+const traceFor = (m: CandidateMatch, cap: string, preferred: boolean) => {
+  const evidenced = preferred ? [...m.coreCoverage.evidenced, ...m.coreCoverage.preferredEvidenced] : m.coreCoverage.evidenced;
+  if (!evidenced.some(x => clean(x) === clean(cap))) return undefined;
+  return m.evidenceTrace.find(t => clean(t.capability) === clean(cap));
+};
+const documented = (source: string) => !isReported(source) && source !== "held_title" && source !== "directory_team";
+/**
+ * Shadow-only assessment: conservative exact evidence, no speculative industry equivalence.
+ * Adjacent hypotheses require an individually reviewed admin interpretation identifying an
+ * evidenced capability distinct from the requirement, plus global and per-requirement consent.
+ */
+export function assessCandidateRequirements(requirements: JobRequirement[], matches: CandidateMatch[], adjacentAllowed: boolean): RequirementAssessment[] {
   const relevant = requirements.filter(r => r.category === "core" || r.category === "preferred");
-  const assessments: RequirementAssessment[] = [];
-  for (const match of matches) {
-    for (const requirement of relevant) {
-      const capability = recognizedCapability(requirement);
-      const normalized = normalize(capability ?? "");
-      const direct = capability ? match.evidenceTrace.find(t => normalize(t.capability) === normalized && match.coreCoverage.evidenced.some(e => normalize(e) === normalized)) : undefined;
-      if (direct) {
-        assessments.push({
-          requirementId: requirement.requirementId, candidateId: match.candidate.id,
-          status: "demonstrated", requirementText: requirement.originalText,
-          candidateEvidenceText: direct.evidence, capabilityLabel: direct.capability,
-          evidenceSource: sourceOf(direct.source),
-          rationale: "Documented evidence supports a recognized capability. Confirm scope and depth before referral.",
-          validationQuestion: null,
-        });
-        continue;
+  const output: RequirementAssessment[] = [];
+  for (const m of matches) for (const r of relevant) {
+    const cap = capability(r);
+    const direct = cap ? traceFor(m, cap, r.category === "preferred") : undefined;
+    const reviewed = r.markedReviewed && r.interpretedAs ? r.interpretedAs : null;
+    let status: RequirementAssessment["status"] = "not_evidenced";
+    let evidence = direct;
+    let rationale = "No supporting evidence identified in the available candidate record; absence is not established.";
+    if (direct) {
+      status = documented(direct.source) ? "demonstrated" : "reported";
+      rationale = status === "reported" ? "Capability is listed or title-derived; execution and depth require verification."
+        : "Documented capability evidence exists; verify responsibility and depth.";
+    } else if (adjacentAllowed && r.markedReviewed && r.acceptsAdjacentExperience === true && reviewed) {
+      // Explicit admin interpretation of adjacent experience is a hypothesis, not equivalence.
+      const other = recognized(reviewed).filter(x => !cap || clean(x) !== clean(cap));
+      if (other.length === 1) {
+        const candidateTrace = traceFor(m, other[0], r.category === "preferred");
+        if (candidateTrace) {
+          evidence = candidateTrace;
+          status = documented(candidateTrace.source) ? "transferable" : "needs_validation";
+          rationale = "Admin-authorized adjacent capability hypothesis; direct requirement ownership is not established.";
+        }
       }
-      const adjacency = capability && ADJACENCIES.find(a => normalize(a.target) === normalized);
-      const adjacentTrace = adjacency && adjacentExperienceAllowed && requirement.acceptsAdjacentExperience === true && requirement.markedReviewed
-        ? match.evidenceTrace.find(t => adjacency.evidence.some(c => normalize(c) === normalize(t.capability)) && match.coreCoverage.evidenced.some(e => normalize(e) === normalize(t.capability)))
-        : undefined;
-      // Do not infer equivalence from broad job titles, aspirational goals, or domain membership.
-      const hasContext = match.candidate.formerJobTitle && requirement.category === "core"
-        && normalize(match.candidate.formerJobTitle).split(" ").some(word => word.length >= 6 && normalize(requirement.originalText).split(" ").includes(word));
-      const status: RequirementAssessment["status"] = adjacentTrace ? "transferable" : hasContext ? "needs_validation" : "not_evidenced";
-      assessments.push({
-        requirementId: requirement.requirementId, candidateId: match.candidate.id,
-        status, requirementText: requirement.originalText,
-        candidateEvidenceText: adjacentTrace?.evidence ?? null,
-        capabilityLabel: adjacentTrace?.capability ?? null,
-        evidenceSource: adjacentTrace ? sourceOf(adjacentTrace.source) : null,
-        rationale: adjacentTrace ? adjacency!.explanation
-          : hasContext ? "Overlapping role terminology is a lead for verification, not qualification evidence."
-          : "No supporting evidence identified in the available candidate record; this does not establish absence of experience.",
-        validationQuestion: status === "not_evidenced" ? null : question(requirement),
-      });
+    }
+    output.push({
+      requirementId:r.requirementId, candidateId:m.candidate.id, status,
+      requirementText:r.originalText, reviewedInterpretation:reviewed,
+      candidateEvidenceText:evidence?.evidence ?? null,
+      capabilityLabel:evidence?.capability ?? cap,
+      evidenceSource:evidence ? sources(evidence.source) : null,
+      evidenceType:evidence?.source ?? null, rationale,
+      validationQuestion:status === "demonstrated" ? null : question(r),
+    });
+  }
+  return output;
+}
+/** Preserve the Phase 2 PR1 legacy contract: core only, literal label-to-core evidence. */
+export function mapCandidateToCoreRequirements(requirements: JobRequirement[], matches: CandidateMatch[]): RequirementEvidenceLink[] {
+  const links: RequirementEvidenceLink[] = [];
+  for (const r of requirements) {
+    if (r.category !== "core") continue;
+    for (const m of matches) {
+      const cap = m.coreCoverage.evidenced.find(label => clean(label) === clean(r.label));
+      if (!cap) continue;
+      const trace = m.evidenceTrace.find(t => clean(t.capability) === clean(cap));
+      if (!trace) continue;
+      links.push({ requirementId:r.requirementId, candidateId:m.candidate.id,
+        capabilityLabel:cap, evidenceSource:sources(trace.source), matchStrength:"exact",
+        candidateEvidenceText:trace.evidence, requirementInterpretation:r.interpretedAs ?? r.label,
+        reviewStatus:"supported" });
     }
   }
-  return assessments;
-}
-/** Compatibility adapter for existing response consumers. */
-export function mapCandidateToCoreRequirements(
-  requirements: JobRequirement[], matches: CandidateMatch[],
-): RequirementEvidenceLink[] {
-  return assessCandidateRequirements(requirements, matches, false)
-    .filter(a => a.status === "demonstrated" && a.requirementId && a.capabilityLabel && a.candidateEvidenceText && a.evidenceSource)
-    .map(a => ({
-      requirementId: a.requirementId, candidateId: a.candidateId,
-      capabilityLabel: a.capabilityLabel!, evidenceSource: a.evidenceSource!,
-      matchStrength: "exact" as const, candidateEvidenceText: a.candidateEvidenceText!,
-      requirementInterpretation: requirements.find(r => r.requirementId === a.requirementId)?.interpretedAs ?? a.capabilityLabel!,
-      reviewStatus: "supported" as const,
-    }));
+  return links;
 }
