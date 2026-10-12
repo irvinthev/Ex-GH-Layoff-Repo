@@ -60,8 +60,10 @@ export function assessCandidateRequirements(requirements: JobRequirement[], matc
     let evidence = direct;
     let rationale = "No supporting evidence identified in the available candidate record; absence is not established.";
     if (direct) {
-      status = documented(direct.source) ? "demonstrated" : "reported";
-      rationale = status === "reported" ? "Capability is listed or title-derived; execution and depth require verification."
+      const interpretedMapping = Boolean(reviewed && cap && !recognized(r.originalText).some(x => clean(x) === clean(cap)));
+      status = interpretedMapping ? "needs_validation" : documented(direct.source) ? "demonstrated" : "reported";
+      rationale = interpretedMapping ? "Reviewer interpretation identifies a related capability, but does not establish the employer requirement."
+        : status === "reported" ? "Capability is listed or title-derived; execution and depth require verification."
         : "Documented capability evidence exists; verify responsibility and depth.";
     } else if (adjacentAllowed && r.markedReviewed && r.acceptsAdjacentExperience === true && reviewed) {
       // Explicit admin interpretation of adjacent experience is a hypothesis, not equivalence.
