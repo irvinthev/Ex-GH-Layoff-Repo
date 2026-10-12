@@ -18,17 +18,10 @@ function sectionHeading(line: string): string {
 
 function requirementLabels(originalText: string): string[] {
   const text = normalize(originalText);
-  const specializedLabels = [
-    /\benterprise saas pricing(?: experience)?\b/i,
-    /\bcommercial monetization\b/i,
-  ].flatMap((pattern) => {
-    const match = originalText.match(pattern)?.[0]?.trim();
-    return match ? [match] : [];
-  });
+  // Domain-specific examples belong in test fixtures, not in production parsing.
   const labels = [
     ...CAPABILITY_UNITS.filter((unit) => unit.terms.some((term) => text.includes(normalize(term))))
       .map((unit) => unit.label.toLowerCase() === "sql" ? "SQL" : unit.label),
-    ...specializedLabels,
   ];
 
   const experience = originalText.match(/\b\d+\+?\s+years?(?:\s+of)?\s+(?:relevant\s+)?experience\b/i)?.[0];
@@ -85,21 +78,15 @@ export function parseJobRequirements(job: JobProfile): JobRequirement[] {
     for (const originalText of splitText(line)) {
       const preferredWording = /\b(preferred|preferably|nice to have|a plus|bonus|ideally|not required|desired)\b/i.test(originalText);
       const labels = requirementLabels(originalText);
-      const commercialMention = /\bcommercial monetization\b/i.test(originalText);
       let category = sectionCategory;
       if (sectionCategory === "core" && preferredWording) category = "preferred";
-      if (sectionCategory === "core" && !labels.length && !preferredWording) category = "ambiguous";
-      if (sectionCategory === "core" && commercialMention
-        && !/\b(required|must(?: have)?|minimum|non[- ]negotiable)\b/i.test(originalText)) {
-        category = "ambiguous";
-      }
       for (const label of labels.length ? labels : [cleanLabel(originalText)]) {
         const ambiguityFlags: string[] = [];
         if (!labels.length) ambiguityFlags.push("unrecognized_requirement");
-        if (/\b(familiarity|exposure|understanding|some experience|commercial monetization)\b/i.test(originalText)) {
+        if (/\b(familiarity|exposure|understanding|some experience)\b/i.test(originalText)) {
           ambiguityFlags.push("unclear_scope");
         }
-        if (/\b(or equivalent|equivalent experience|similar experience|commercial monetization)\b/i.test(originalText)) {
+        if (/\b(or equivalent|equivalent experience|similar experience)\b/i.test(originalText)) {
           ambiguityFlags.push("multiple_interpretations");
         }
         if (category === "ambiguous" && sectionCategory === "ambiguous") {
