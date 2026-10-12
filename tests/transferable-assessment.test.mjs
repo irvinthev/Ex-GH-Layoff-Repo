@@ -11,7 +11,7 @@ test("direct evidence is demonstrated with provenance",()=>{
 test("explicit adjacent experience permission produces transferable, not demonstrated",()=>{
  const rows=assessCandidateRequirements([requirement("Experience with reporting and dashboards.",{label:"Reporting and dashboards",interpretedAs:"Data analysis",markedReviewed:true,acceptsAdjacentExperience:true})],[candidate([{capability:"Data analysis",source:"directory_description",evidence:"Analyzed operational performance."}])],true);
  assert.equal(rows[0].status,"transferable");
- assert.match(rows[0].rationale,/unverified/);
+ assert.match(rows[0].rationale,/not established/);
 });
 test("without specific reviewer approval adjacent evidence cannot establish transfer",()=>{
  const req=requirement("Experience with reporting and dashboards.");
