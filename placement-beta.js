@@ -595,6 +595,20 @@ function renderMatches(data, { scrollToResults = true } = {}) {
           </div>
         </details>`
       : "";
+    const requirementAssessments = Array.isArray(data.evaluation?.requirementAssessments)
+      ? data.evaluation.requirementAssessments.filter((a) => a.candidateId === match.candidate?.id)
+      : [];
+    const requirementDetail = requirementAssessments.length
+      ? `<details class="evidence-provenance"><summary>Requirement assessment (informational · ${requirementAssessments.length})</summary>
+        <div class="evidence-provenance-list">${requirementAssessments.map((a) => `
+          <div class="evidence-provenance-item">
+            <strong>${escapeHtml(a.status.replaceAll("_", " "))}: ${escapeHtml(a.requirementText)}</strong>
+            ${a.reviewedInterpretation ? `<p>Admin interpretation: ${escapeHtml(a.reviewedInterpretation)}</p>` : ""}
+            <p>${escapeHtml(a.rationale)}</p>
+            ${a.candidateEvidenceText ? `<p>Evidence (${escapeHtml(a.evidenceType ?? a.evidenceSource ?? "recorded")}): ${escapeHtml(a.candidateEvidenceText)}</p>` : ""}
+            ${a.validationQuestion ? `<p>Validate: ${escapeHtml(a.validationQuestion)}</p>` : ""}
+          </div>`).join("")}</div></details>`
+      : "";
     const evidenceCategory = getEvidenceCategory(match);
     const evidenceAssessment = String(match.evidenceAssessment?.note ?? "This saved result has no detailed evidence assessment; validate job-relevant capabilities before relying on it.");
     return `
@@ -628,6 +642,7 @@ function renderMatches(data, { scrollToResults = true } = {}) {
             <div class="reason-panel evidence-panel"><h4><span aria-hidden="true">✓</span> Why this person surfaced</h4>${renderList(match.reasons)}</div>
             <div class="reason-panel gap-panel"><h4><span aria-hidden="true">⚠</span> Not evidenced / needs validation</h4>${renderList(match.gaps, "No immediate evidence gaps identified")}${renderGapActions(match)}</div>
           </div>
+          ${requirementDetail}
           ${provenance}
           ${linkedin}
         </div>

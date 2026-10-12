@@ -68,6 +68,12 @@ After a job is imported or pasted, the `evaluate-job` function first returns a s
 
 The live job page is not a runtime dependency; parser limitations include incomplete heading/intent recognition and no semantic interpretation of unrecognized requirements.
 
+### Phase 2 shadow transferable-capability assessment
+
+Candidate results include a separate, informational `requirementAssessments` array. It does not change qualification scores, fit bands, compatibility, rankability, or ordering. Categories are **Demonstrated** (specific recorded evidence), **Reported** (listed skill without work context), **Transferable** (documented related capability with explicit admin approval), **Needs Validation** (reviewer interpretation or unconfirmed adjacency), and **Not Evidenced** (insufficient record, not proof of absence). The original employer text, reviewer interpretation, specific provenance and follow-up questions remain distinguishable.
+
+The current conservative implementation recognizes capabilities from existing bounded taxonomy and reviewed interpretations, not generalized semantic similarity. Adjacent transfer requires both global and per-requirement confirmed permission. The legacy core-only `requirementEvidenceLinks` field remains unchanged. Neither reviewer wording nor industry/title overlap independently proves employer qualification. This model has not been calibrated using actual hiring outcomes.
+
 ### Evidence sufficiency
 
 The same canonical candidate used by `scoreCandidate()` is also used to report how much evidence is available:

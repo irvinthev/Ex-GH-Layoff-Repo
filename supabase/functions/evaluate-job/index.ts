@@ -12,7 +12,7 @@ import { attachEvidenceLayers } from "./evidence-layers.ts";
 import { evaluateCompatibility } from "./compatibility.ts";
 import { importJobFromUrl, validatePublicJobUrl } from "./job-import.ts";
 import { applyJobRequirementReview, type JobRequirementReview } from "./job-requirements.ts";
-import { mapCandidateToCoreRequirements } from "./requirement-mapping.ts";
+import { mapCandidateToCoreRequirements, assessCandidateRequirements } from "./requirement-mapping.ts";
 import { getActiveReviewerEvidence, saveReviewerEvidence, withReviewerEvidence } from "./reviewer-evidence.ts";
 
 const ALLOWED_ORIGINS = new Set([
@@ -486,6 +486,8 @@ Deno.serve(async (req: Request) => {
       }))
       .sort((a, b) => b.score - a.score);
     const requirementEvidenceLinks = mapCandidateToCoreRequirements(job.requirementsStructured, matches);
+    const requirementAssessments = assessCandidateRequirements(job.requirementsStructured, matches,
+      requirementReview?.adjacentExperience === "yes");
     const scoringMs = roundMs(performance.now() - scoringStartedAt);
 
     const evidenceSummary = matches.reduce((summary, match) => {
@@ -503,6 +505,7 @@ Deno.serve(async (req: Request) => {
       requirementsStructured: job.requirementsStructured,
       requirementReview,
       requirementEvidenceLinks,
+      requirementAssessments,
       seniority: inferSeniority(title, description),
       location: location || null,
       remoteType: remoteType || null,
