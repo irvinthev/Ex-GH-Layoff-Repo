@@ -148,6 +148,42 @@
         </form>
       </section>
 
+      <section id="requirementReviewPanel" class="placement-panel requirement-review-panel" hidden aria-labelledby="requirementReviewHeading">
+        <div class="panel-heading">
+          <div>
+            <p class="step-label">Optional hiring-intent review</p>
+            <h2 id="requirementReviewHeading">Review job requirements</h2>
+          </div>
+          <p>Original job wording stays separate from your interpretation. This review does not change candidate scores.</p>
+        </div>
+        <form id="requirementReviewForm" class="requirement-review-form">
+          <div id="requirementReviewContent" class="requirement-review-content"></div>
+          <div class="review-questions">
+            <label>What are the three most important capabilities?
+              <textarea name="topCapabilities" rows="2" maxlength="2000"></textarea>
+            </label>
+            <label>Is equivalent experience from adjacent roles or industries acceptable?
+              <select name="adjacentExperience">
+                <option value="unsure">Not specified</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </label>
+            <label>Are seniority and location constraints flexible?
+              <select name="seniorityLocationFlexible">
+                <option value="unsure">Not specified</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </label>
+          </div>
+          <div class="form-actions">
+            <button class="primary-btn" type="submit">Confirm review and find matching talent</button>
+            <button id="skipRequirementReview" class="summary-action" type="button">Skip review and find matching talent</button>
+          </div>
+        </form>
+      </section>
+
       <section id="resultsSection" hidden>
         <div class="results-intro">
           <p class="step-label">Matching talent</p>

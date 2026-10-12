@@ -173,6 +173,19 @@ button { border: 0; cursor: pointer; }
 .history-source { display: inline-flex; padding: 3px 7px; border-radius: 999px; background: var(--primary-light); color: var(--primary); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
 @media (max-width: 640px) { .history-row { align-items: flex-start; } .history-meta { justify-items: start; } }
 
+.requirement-review-panel { display: grid; gap: 18px; order: 2; }
+.requirement-review-form,.requirement-review-content,.requirement-review-group { display: grid; gap: 14px; }
+.requirement-review-group { gap: 8px; }
+.requirement-review-group h3 { margin: 0; font-size: 17px; }
+.requirement-review-item { display: grid; gap: 10px; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
+.requirement-review-original { margin: 0; color: var(--text); line-height: 1.5; white-space: pre-wrap; }
+.requirement-review-meta { color: var(--text-muted); font-size: 12px; }
+.requirement-review-controls { display: grid; grid-template-columns: minmax(180px,1fr) minmax(180px,1fr); gap: 10px 16px; }
+.requirement-review-controls .review-confirm,.requirement-review-controls .review-adjacent { display: flex; grid-column: 1 / -1; align-items: center; gap: 8px; }
+.requirement-review-controls input[type="checkbox"] { width: auto; }
+.review-questions { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+.review-questions textarea { min-height: 72px; }
+@media (max-width: 760px) { .review-questions,.requirement-review-controls { grid-template-columns: 1fr; } }
 
 /* Placement Engineer beta UI */
 .sr-only { position:absolute !important; width:1px !important; height:1px !important; padding:0 !important; margin:-1px !important; overflow:hidden !important; clip:rect(0,0,0,0) !important; white-space:nowrap !important; border:0 !important; }

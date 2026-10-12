@@ -10,7 +10,9 @@ import {
 } from "./candidate-cache.ts";
 import { attachEvidenceLayers } from "./evidence-layers.ts";
 import { evaluateCompatibility } from "./compatibility.ts";
-import { importJobFromUrl } from "./job-import.ts";
+import { importJobFromUrl, validatePublicJobUrl } from "./job-import.ts";
+import { applyJobRequirementReview, type JobRequirementReview } from "./job-requirements.ts";
+import { mapCandidateToCoreRequirements } from "./requirement-mapping.ts";
 import { getActiveReviewerEvidence, saveReviewerEvidence, withReviewerEvidence } from "./reviewer-evidence.ts";
 
 const ALLOWED_ORIGINS = new Set([
@@ -180,6 +182,52 @@ Deno.serve(async (req: Request) => {
     const payload = await req.json().catch(() => null) as Record<string, unknown> | null;
     const action = String(payload?.action ?? "evaluate");
 
+    if (action === "preview_requirements") {
+      let title = String(payload?.title ?? "").trim().slice(0, 300);
+      let description = String(payload?.description ?? "").trim().slice(0, 50000);
+      let location = String(payload?.location ?? "").trim().slice(0, 300);
+      let remoteType = String(payload?.remoteType ?? "").trim().slice(0, 100);
+      const jobUrl = String(payload?.jobUrl ?? "").trim().slice(0, 2048);
+      let sourceUrl: string | null = null;
+      let sourceMode: "structured" | "page_text" | "pasted" | "url_plus_paste" = "pasted";
+      let importWarning: string | null = null;
+
+      if (jobUrl) {
+        try {
+          const imported = await importJobFromUrl(jobUrl);
+          sourceUrl = imported.canonicalUrl;
+          sourceMode = description.length >= 50 ? "url_plus_paste" : imported.sourceMode;
+          title ||= imported.title;
+          description ||= imported.description;
+          location ||= imported.location;
+          remoteType ||= imported.remoteType;
+        } catch (importError) {
+          if (description.length < 50) {
+            const detail = importError instanceof Error ? importError.message : "The job page could not be read";
+            return json(req, {
+              error: `${detail}. Paste the job description below and try again.`,
+              code: "JOB_URL_UNREADABLE",
+            }, 422);
+          }
+          importWarning = "The job page could not be read, so the pasted description was used.";
+        }
+      }
+      if (description.length < 50) {
+        return json(req, { error: "Add a public job URL or paste at least 50 characters of the job description" }, 400);
+      }
+      const job = prepareJobProfile({ title, description, location, remoteType });
+      return json(req, {
+        title: title || "Untitled role",
+        description,
+        location,
+        remoteType,
+        sourceUrl,
+        sourceMode,
+        importWarning,
+        requirementsStructured: job.requirementsStructured,
+      });
+    }
+
     if (action === "network_review") {
       const review = await getNetworkReview(admin);
       return json(req, review);
@@ -332,14 +380,35 @@ Deno.serve(async (req: Request) => {
       return json(req, { row: inserted });
     }
 
-    let title = String(payload?.title ?? "").trim().slice(0, 300);
-    let description = String(payload?.description ?? "").trim().slice(0, 50000);
-    let location = String(payload?.location ?? "").trim().slice(0, 300);
-    let remoteType = String(payload?.remoteType ?? "").trim().slice(0, 100);
-    const jobUrl = String(payload?.jobUrl ?? "").trim().slice(0, 2048);
+    const jobPreview = payload?.jobPreview && typeof payload.jobPreview === "object"
+      ? payload.jobPreview as Record<string, unknown>
+      : null;
+    const previewDescription = String(jobPreview?.description ?? "").trim().slice(0, 50000);
+    const useReviewedPreview = previewDescription.length >= 50;
+    let title = String(useReviewedPreview ? jobPreview?.title ?? "" : payload?.title ?? "").trim().slice(0, 300);
+    let description = useReviewedPreview
+      ? previewDescription
+      : String(payload?.description ?? "").trim().slice(0, 50000);
+    let location = String(useReviewedPreview ? jobPreview?.location ?? "" : payload?.location ?? "").trim().slice(0, 300);
+    let remoteType = String(useReviewedPreview ? jobPreview?.remoteType ?? "" : payload?.remoteType ?? "").trim().slice(0, 100);
+    const jobUrl = useReviewedPreview ? "" : String(payload?.jobUrl ?? "").trim().slice(0, 2048);
     let sourceUrl: string | null = null;
     let sourceMode: "structured" | "page_text" | "pasted" | "url_plus_paste" = "pasted";
     let importWarning: string | null = null;
+    if (useReviewedPreview) {
+      const previewSourceUrl = String(jobPreview?.sourceUrl ?? "").trim();
+      if (previewSourceUrl) {
+        try {
+          sourceUrl = validatePublicJobUrl(previewSourceUrl).href;
+        } catch {
+          return json(req, { error: "The reviewed job source URL is invalid" }, 400);
+        }
+      }
+      sourceMode = ["structured", "page_text", "pasted", "url_plus_paste"].includes(String(jobPreview?.sourceMode))
+        ? jobPreview?.sourceMode as typeof sourceMode
+        : "pasted";
+      importWarning = String(jobPreview?.importWarning ?? "").trim().slice(0, 500) || null;
+    }
 
     if (jobUrl) {
       try {
@@ -368,6 +437,36 @@ Deno.serve(async (req: Request) => {
 
     const { cache, metrics: cacheMetrics } = await getCandidateCache(admin);
     const job = prepareJobProfile({ title, description, location, remoteType });
+    const rawRequirementReview = payload?.requirementReview;
+    const requirementReview: JobRequirementReview | null = rawRequirementReview && typeof rawRequirementReview === "object"
+      ? {
+          requirements: Array.isArray((rawRequirementReview as Record<string, unknown>).requirements)
+            ? ((rawRequirementReview as Record<string, unknown>).requirements as unknown[]).slice(0, 300).map((item) => {
+                const record = item && typeof item === "object" ? item as Record<string, unknown> : {};
+                return {
+                  requirementId: String(record.requirementId ?? ""),
+                  interpretedAs: String(record.interpretedAs ?? "").slice(0, 300),
+                  flexibility: ["mandatory", "flexible", "nice_to_have"].includes(String(record.flexibility))
+                    ? record.flexibility as "mandatory" | "flexible" | "nice_to_have"
+                    : undefined,
+                  acceptsAdjacentExperience: typeof record.acceptsAdjacentExperience === "boolean"
+                    ? record.acceptsAdjacentExperience
+                    : undefined,
+                  markedReviewed: record.markedReviewed === true,
+                };
+              })
+            : [],
+          topCapabilities: String((rawRequirementReview as Record<string, unknown>).topCapabilities ?? "").slice(0, 2000),
+          adjacentExperience: ["yes", "no", "unsure"].includes(String((rawRequirementReview as Record<string, unknown>).adjacentExperience))
+            ? (rawRequirementReview as Record<string, unknown>).adjacentExperience as JobRequirementReview["adjacentExperience"]
+            : "unsure",
+          seniorityLocationFlexible: ["yes", "no", "unsure"].includes(String((rawRequirementReview as Record<string, unknown>).seniorityLocationFlexible))
+            ? (rawRequirementReview as Record<string, unknown>).seniorityLocationFlexible as JobRequirementReview["seniorityLocationFlexible"]
+            : "unsure",
+          skipped: (rawRequirementReview as Record<string, unknown>).skipped === true,
+        }
+      : null;
+    job.requirementsStructured = applyJobRequirementReview(job.requirementsStructured, requirementReview);
     const role = classifyRole(job, cache.roles);
     const scoringStartedAt = performance.now();
     const reviewerEvidence = await getActiveReviewerEvidence(admin, cache.candidates.map((candidate) => candidate.id));
@@ -386,6 +485,7 @@ Deno.serve(async (req: Request) => {
         compatibility: evaluateCompatibility(candidateById.get(match.candidate.id)!, job),
       }))
       .sort((a, b) => b.score - a.score);
+    const requirementEvidenceLinks = mapCandidateToCoreRequirements(job.requirementsStructured, matches);
     const scoringMs = roundMs(performance.now() - scoringStartedAt);
 
     const evidenceSummary = matches.reduce((summary, match) => {
@@ -400,6 +500,9 @@ Deno.serve(async (req: Request) => {
       role: role ? { slug: role.slug, functionName: role.function_name, roleFamily: role.role_family, specialty: role.specialty } : null,
       jobBrief,
       requirementsParsed: job.requirementsParsed,
+      requirementsStructured: job.requirementsStructured,
+      requirementReview,
+      requirementEvidenceLinks,
       seniority: inferSeniority(title, description),
       location: location || null,
       remoteType: remoteType || null,

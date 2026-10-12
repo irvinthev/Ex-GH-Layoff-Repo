@@ -20,6 +20,10 @@ const signOutButton = document.querySelector("#signOut");
 const evaluationForm = document.querySelector("#evaluationForm");
 const evaluateButton = document.querySelector("#evaluateButton");
 const evaluationStatus = document.querySelector("#evaluationStatus");
+const requirementReviewPanel = document.querySelector("#requirementReviewPanel");
+const requirementReviewForm = document.querySelector("#requirementReviewForm");
+const requirementReviewContent = document.querySelector("#requirementReviewContent");
+const skipRequirementReviewButton = document.querySelector("#skipRequirementReview");
 const resultsSection = document.querySelector("#resultsSection");
 const evaluationSummary = document.querySelector("#evaluationSummary");
 const jobBrief = document.querySelector("#jobBrief");
@@ -42,6 +46,7 @@ const refreshNetworkReviewButton = document.querySelector("#refreshNetworkReview
 
 const BETA_SESSION_KEY = "placement_beta_session";
 let latestPayload = null;
+let pendingEvaluationPayload = null;
 let activeSort = "score_desc";
 let activeFilter = "all";
 let showAllMatches = false;
@@ -679,6 +684,82 @@ function renderMatches(data, { scrollToResults = true } = {}) {
   }
 }
 
+function renderRequirementReview(requirements) {
+  const groups = [
+    ["core", "Core requirements"],
+    ["preferred", "Preferred qualifications"],
+    ["ambiguous", "Ambiguous or unrecognized"],
+    ["company_info", "Company information"],
+    ["benefits", "Benefits"],
+  ];
+  requirementReviewContent.innerHTML = groups.map(([category, title]) => {
+    const items = requirements.filter((requirement) => requirement.category === category);
+    if (!items.length) return "";
+    return `<details class="requirement-review-group" ${category === "core" || category === "ambiguous" ? "open" : ""}><summary>${title} (${items.length})</summary>${items.map((requirement) => `
+      <article class="requirement-review-item" data-requirement-id="${escapeHtml(requirement.requirementId)}">
+        <p class="requirement-review-original">${escapeHtml(requirement.originalText)}</p>
+        <div class="requirement-review-meta">Parsed label: ${escapeHtml(requirement.label)} · Source: ${escapeHtml(requirement.sourceSection)}${requirement.ambiguityFlags?.length ? ` · Flags: ${escapeHtml(requirement.ambiguityFlags.join(", "))}` : ""}</div>
+        <div class="requirement-review-controls">
+          <label>Admin interpretation
+            <input type="text" data-requirement-interpretation maxlength="300" value="${escapeHtml(requirement.interpretedAs ?? requirement.label)}" />
+          </label>
+          <label>Hiring flexibility
+            <select data-requirement-flexibility>
+              <option value="">Needs confirmation</option>
+              <option value="mandatory">Nonnegotiable</option>
+              <option value="flexible">Flexible</option>
+              <option value="nice_to_have">Nice to have</option>
+            </select>
+          </label>
+          <label class="review-confirm"><input type="checkbox" data-requirement-reviewed /> Confirm this requirement</label>
+          <label class="review-adjacent"><input type="checkbox" data-requirement-adjacent /> Accept equivalent experience from adjacent roles for this requirement</label>
+        </div>
+      </article>`).join("")}</details>`;
+  }).join("") || `<p>No structured requirements were identified. You can still answer the hiring-intent questions or skip review.</p>`;
+}
+
+async function runEvaluation(requirementReview) {
+  if (!pendingEvaluationPayload) return;
+  evaluateButton.disabled = true;
+  skipRequirementReviewButton.disabled = true;
+  requirementReviewPanel.hidden = true;
+  setStatus(evaluationStatus, "Evaluating opted-in candidates…");
+  renderLoadingState();
+  const { data, error } = await invokePlacement({
+    ...pendingEvaluationPayload,
+    requirementReview,
+  });
+
+  evaluateButton.disabled = false;
+  skipRequirementReviewButton.disabled = false;
+  if (error) {
+    let message = error.message;
+    try {
+      const response = error.context;
+      const body = response ? await response.json() : null;
+      if (body?.error) message = body.error;
+    } catch (_) { /* Keep the SDK error message. */ }
+    setStatus(evaluationStatus, message, "error");
+    resultsSection.setAttribute("aria-busy", "false");
+    resultsSection.hidden = true;
+    requirementReviewPanel.hidden = false;
+    return;
+  }
+  const completionMessage = data.evaluation.importWarning
+    ? `Evaluation complete. ${data.evaluation.importWarning}`
+    : data.evaluation.sourceMode === "structured"
+      ? "Job page imported and evaluation complete."
+      : "Evaluation complete.";
+  setStatus(evaluationStatus, completionMessage, data.evaluation.importWarning ? "warning" : "success");
+  latestPayload = data;
+  pendingEvaluationPayload = null;
+  showAllMatches = false;
+  renderMatches(data);
+  loadHistory().catch(() => {
+    setStatus(historyStatus, "Evaluation saved, but recent history could not refresh.", "warning");
+  });
+}
+
 results.addEventListener("click", (event) => {
   const trigger = event.target.closest("[data-reviewer-action]");
   if (!trigger) return;
@@ -732,6 +813,26 @@ wireResultControls({
   },
 });
 
+requirementReviewForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const fields = new FormData(requirementReviewForm);
+  const requirements = [...requirementReviewContent.querySelectorAll("[data-requirement-id]")].map((item) => ({
+    requirementId: item.dataset.requirementId,
+    interpretedAs: item.querySelector("[data-requirement-interpretation]").value,
+    flexibility: item.querySelector("[data-requirement-flexibility]").value,
+    markedReviewed: item.querySelector("[data-requirement-reviewed]").checked,
+    acceptsAdjacentExperience: item.querySelector("[data-requirement-adjacent]").checked,
+  }));
+  await runEvaluation({
+    requirements,
+    topCapabilities: fields.get("topCapabilities"),
+    adjacentExperience: fields.get("adjacentExperience"),
+    seniorityLocationFlexible: fields.get("seniorityLocationFlexible"),
+  });
+});
+
+skipRequirementReviewButton.addEventListener("click", () => runEvaluation({ skipped: true }));
+
 evaluationForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const jobUrl = jobUrlInput.value.trim();
@@ -741,14 +842,14 @@ evaluationForm.addEventListener("submit", async (event) => {
     jobUrlInput.focus();
     return;
   }
+  pendingEvaluationPayload = null;
+  requirementReviewPanel.hidden = true;
   evaluateButton.disabled = true;
-  setStatus(evaluationStatus, jobUrl ? "Reading the job page and evaluating candidates…" : "Evaluating opted-in candidates…");
-  renderLoadingState();
-
   const form = new FormData(evaluationForm);
   const payload = Object.fromEntries(form.entries());
-  const { data, error } = await invokePlacement(payload);
-
+  setStatus(evaluationStatus, jobUrl ? "Reading the job page and preparing requirements for review…" : "Preparing job requirements for review…");
+  resultsSection.hidden = true;
+  const { data, error } = await invokePlacement({ ...payload, action: "preview_requirements" });
   evaluateButton.disabled = false;
   if (error) {
     let message = error.message;
@@ -758,20 +859,26 @@ evaluationForm.addEventListener("submit", async (event) => {
       if (body?.error) message = body.error;
     } catch (_) { /* Keep the SDK error message. */ }
     setStatus(evaluationStatus, message, "error");
-    resultsSection.setAttribute("aria-busy", "false");
-    resultsSection.hidden = true;
     return;
   }
-  const completionMessage = data.evaluation.importWarning
-    ? `Evaluation complete. ${data.evaluation.importWarning}`
-    : data.evaluation.sourceMode === "structured"
-      ? "Job page imported and evaluation complete."
-      : "Evaluation complete.";
-  setStatus(evaluationStatus, completionMessage, data.evaluation.importWarning ? "warning" : "success");
-  latestPayload = data;
-  showAllMatches = false;
-  renderMatches(data);
-  loadHistory().catch(() => {
-    setStatus(historyStatus, "Evaluation saved, but recent history could not refresh.", "warning");
-  });
+  pendingEvaluationPayload = payload;
+  pendingEvaluationPayload.jobPreview = {
+    title: data.title,
+    description: data.description,
+    location: data.location,
+    remoteType: data.remoteType,
+    sourceUrl: data.sourceUrl,
+    sourceMode: data.sourceMode,
+    importWarning: data.importWarning,
+  };
+  requirementReviewPanel.hidden = false;
+  renderRequirementReview(Array.isArray(data.requirementsStructured) ? data.requirementsStructured : []);
+  setStatus(
+    evaluationStatus,
+    data.importWarning
+      ? `${data.importWarning} Review requirements or skip to continue.`
+      : "Job parsed. Confirm hiring intent or skip review to proceed to candidate scoring.",
+    data.importWarning ? "warning" : "success",
+  );
+  requirementReviewPanel.scrollIntoView({ behavior: "smooth", block: "start" });
 });
