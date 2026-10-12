@@ -42,7 +42,7 @@ test("admin interpretation can resolve unrecognized requirement without rewritin
  const r=requirement("Operational insights",{label:"Operational insights",markedReviewed:true,interpretedAs:"Data analysis"});
  const m=candidate([{capability:"Data analysis",source:"resume_derived",evidence:"Analyzed merchant performance."}]);
  const [row]=assessCandidateRequirements([r],[m],false);
- assert.equal(row.status,"demonstrated");
+ assert.equal(row.status,"needs_validation");
  assert.equal(row.requirementText,"Operational insights");
  assert.equal(row.reviewedInterpretation,"Data analysis");
 });
