@@ -603,8 +603,9 @@ function renderMatches(data, { scrollToResults = true } = {}) {
         <div class="evidence-provenance-list">${requirementAssessments.map((a) => `
           <div class="evidence-provenance-item">
             <strong>${escapeHtml(a.status.replaceAll("_", " "))}: ${escapeHtml(a.requirementText)}</strong>
+            ${a.reviewedInterpretation ? `<p>Admin interpretation: ${escapeHtml(a.reviewedInterpretation)}</p>` : ""}
             <p>${escapeHtml(a.rationale)}</p>
-            ${a.candidateEvidenceText ? `<p>Evidence (${escapeHtml(a.evidenceSource ?? "recorded")}): ${escapeHtml(a.candidateEvidenceText)}</p>` : ""}
+            ${a.candidateEvidenceText ? `<p>Evidence (${escapeHtml(a.evidenceType ?? a.evidenceSource ?? "recorded")}): ${escapeHtml(a.candidateEvidenceText)}</p>` : ""}
             ${a.validationQuestion ? `<p>Validate: ${escapeHtml(a.validationQuestion)}</p>` : ""}
           </div>`).join("")}</div></details>`
       : "";
