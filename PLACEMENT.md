@@ -57,6 +57,17 @@ Current controls:
 
 These rankability and sufficiency rules are conservative presentation/review signals, not new score points or hiring thresholds. Their capability-count assumptions are uncalibrated and should be reviewed against outcomes before any score or fit-band changes.
 
+### Phase 2 structured job requirements
+
+After a job is imported or pasted, the `evaluate-job` function first returns a structured requirements preview. Candidate scoring does not start until an administrator either confirms the optional review or skips it.
+
+- Parsed requirements preserve the original job wording and its source section. Recognized capability labels are separate from the original wording; unrecognized or ambiguous text remains visible with ambiguity flags.
+- Requirements are categorized as core, preferred, company information, benefits, or ambiguous. A preferred qualification is never assigned mandatory flexibility automatically.
+- Admin interpretations, confirmed flexibility, per-requirement adjacent-experience acceptance, the three priority capabilities, and the seniority/location flexibility answer are recorded alongside—not in place of—the employer wording in the saved evaluation snapshot. Skipping review is recorded separately.
+- Requirement-to-capability links use exact labels already present in candidate `coreCoverage` and their existing `evidenceTrace` provenance. They are informational evidence links only: no semantic matching, qualification score, fit band, rankability, or candidate ordering changes.
+
+The Braze benchmark fixture distinguishes required enterprise SaaS pricing experience from preferred commercial monetization wording and flags ambiguous scope for admin review. The live job page is not a runtime dependency; parser limitations include incomplete heading/intent recognition and no semantic interpretation of unrecognized requirements.
+
 ### Evidence sufficiency
 
 The same canonical candidate used by `scoreCandidate()` is also used to report how much evidence is available:
@@ -138,4 +149,4 @@ Outcome strength is an analysis field, not a scoring input:
 
 The initial calibration dataset contains validated feedback from Jill Weinstein, Kelsey Peretti, and Elena Moilan. Paul de Lucena's two recommendations are retained as pending feedback and must not be counted as validated outcomes.
 
-Regression tests cover canonical directory evidence, enrichment invariance, title/role-family separation, generated/inferred evidence rejection, provenance, higher-education/EdTech equivalence, transferable capabilities versus title-only evidence, L1-only and irrelevant enriched profiles, location incompatibility, and reviewer validation.
+Regression tests cover canonical directory evidence, enrichment invariance, title/role-family separation, generated/inferred evidence rejection, provenance, higher-education/EdTech equivalence, transferable capabilities versus title-only evidence, L1-only and irrelevant enriched profiles, location incompatibility, reviewer validation, structured requirement parsing/admin overrides, informational evidence mapping, and unchanged scoring.

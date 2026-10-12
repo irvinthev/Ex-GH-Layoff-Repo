@@ -123,6 +123,27 @@ export type JobProfile = {
   remoteType: string;
   requiresTechnicalSkillEvidence: boolean;
   technicalRequirementTerms: string[];
+  requirementsStructured: JobRequirement[];
+};
+
+export type JobRequirement = {
+  requirementId: string;
+  category: "core" | "preferred" | "company_info" | "benefits" | "ambiguous";
+  originalText: string;
+  label: string;
+  interpretedAs?: string;
+  flexibility?: "mandatory" | "flexible" | "nice_to_have";
+  sourceSection: string;
+  ambiguityFlags: string[];
+  markedReviewed: boolean;
+  acceptsAdjacentExperience?: boolean;
+};
+
+export type JobRequirementUnit = {
+  requirementId: string;
+  parsedCapability: string | null;
+  adminConfirmedInterpretation: string | null;
+  parseStatus: "parsed" | "unparsed";
 };
 
 export type CompatibilityStatus = "compatible" | "conditional" | "mismatch" | "unknown";

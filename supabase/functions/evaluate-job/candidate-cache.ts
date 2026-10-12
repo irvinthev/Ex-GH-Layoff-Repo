@@ -1,4 +1,5 @@
 import { CAPABILITY_UNITS, TECHNICAL_UNITS, qualificationSections, qualificationEvidence, qualificationNarrative } from "./qualification-evidence.ts";
+import { parseJobRequirements } from "./job-requirements.ts";
 import type {
   CachedRole,
   CacheLoadMetrics,
@@ -686,7 +687,7 @@ export function prepareJobProfile(input: {
     .filter((unit) => unit.terms.some((term) => includesPhrase(descriptionText, term)))
     .map((unit) => unit.label);
   const requiresTechnicalSkillEvidence = technicalRequirementTerms.length > 0;
-  return {
+  const job: JobProfile = {
     title,
     description,
     titleText,
@@ -705,7 +706,10 @@ export function prepareJobProfile(input: {
     remoteType: input.remoteType.trim(),
     requiresTechnicalSkillEvidence,
     technicalRequirementTerms,
+    requirementsStructured: [],
   };
+  job.requirementsStructured = parseJobRequirements(job);
+  return job;
 }
 
 export function classifyRole(job: JobProfile, roles: CachedRole[]): CachedRole | null {
