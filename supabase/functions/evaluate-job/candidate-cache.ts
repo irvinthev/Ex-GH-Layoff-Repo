@@ -884,6 +884,9 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
     ...candidate.enrichedEvidence.map((entry) => ({ source: entry.source, evidence: entry.text })),
     { source: "directory_team" as const, evidence: candidate.formerTeam ?? "" },
   ].filter((entry) => entry.evidence.trim());
+  const roleEvidenceSources = evidenceSources.filter((entry) =>
+    entry.source !== "public_skill" && entry.source !== "enriched_skill"
+  );
 
   const traceForUnit = (unit: { label: string; terms: readonly string[] }) => {
     const source = evidenceSources.find((entry) =>
@@ -933,7 +936,7 @@ export function scoreCandidate(candidate: CandidateProfile, role: CachedRole | n
 
   if (role && roleScore >= 24) {
     const reviewerRoleSource = reviewerRoleEvidence[0];
-    const roleSource = evidenceSources.find((entry) =>
+    const roleSource = roleEvidenceSources.find((entry) =>
       role.phrases.some((phrase) => includesPhrase(entry.evidence, phrase))
     );
     if (reviewerRoleSource) {

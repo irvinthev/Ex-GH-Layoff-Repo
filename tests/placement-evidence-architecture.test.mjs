@@ -263,6 +263,18 @@ test("generated and inferred descriptions cannot establish capabilities", () => 
   ), false);
 });
 
+test("role-family provenance uses narrative/team sources, not matching skill labels", () => {
+  const candidate = buildCandidateProfile(row({
+    former_team: "Product Management",
+    public_description: "Led cross-functional teams through software product delivery and owned product strategy.",
+    public_skills: ["Product Management"],
+  }));
+  const match = scoreCandidate(candidate, productRole, cambiumLikeJob);
+  const roleTrace = match.evidenceTrace.find((entry) => entry.capability === "Role family: Product Management");
+
+  assert.equal(roleTrace.source, "directory_team");
+});
+
 test("irrelevant enriched fields do not improve job evidence sufficiency", () => {
   const candidate = buildCandidateProfile(row({
     public_description: "Managed scheduling, staffing, and vendor relationships across office operations.",
