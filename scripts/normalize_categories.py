@@ -16,6 +16,8 @@ CANONICAL_FUNCTIONS = (
     "Customer Success / Account Management",
     "Project / Program Management",
     "Corporate Functions",
+    "IT / Enterprise Systems",
+    "Design & Creative",
 )
 
 

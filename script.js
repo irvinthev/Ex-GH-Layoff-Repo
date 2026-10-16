@@ -652,7 +652,6 @@ async function loadDirectory() {
         label: `Function: ${selectedFunction}`,
         clear: () => {
           functionFilter.value = "";
-          locationFilter.value = "";
           applyFilters();
         }
       });
@@ -813,10 +812,13 @@ async function loadDirectory() {
       }
     );
 
-    if (
-      currentValue &&
-      counts[currentValue]
-    ) {
+    if (currentValue) {
+      if (!counts[currentValue]) {
+        const option = document.createElement("option");
+        option.value = currentValue;
+        option.textContent = `${currentValue} (0)`;
+        locationFilter.appendChild(option);
+      }
       locationFilter.value =
         currentValue;
     } else {
@@ -900,9 +902,6 @@ async function loadDirectory() {
         el.onclick = () => {
           functionFilter.value =
             fn;
-
-          locationFilter.value =
-            "";
 
           applyFilters();
 
@@ -1235,7 +1234,7 @@ async function loadDirectory() {
             personLocation ===
               activeLocation;
 
-          const haystack = [
+          const searchableFields = [
             getName(person),
             getRole(person),
             getTeam(person),
@@ -1248,15 +1247,9 @@ async function loadDirectory() {
             getSkills(person),
             getCompany(person),
             getLinkedIn(person)
-          ]
-            .join(" ")
-            .toLowerCase();
+          ];
 
-          const matchesSearch =
-            !q ||
-            haystack.includes(
-              q
-            );
+          const matchesSearch = window.DirectorySearch.matches(q, searchableFields);
 
           return (
             matchesLocation &&
@@ -1313,9 +1306,6 @@ async function loadDirectory() {
 
   functionFilter.onchange =
     () => {
-      locationFilter.value =
-        "";
-
       applyFilters();
     };
 
@@ -1351,7 +1341,6 @@ async function loadDirectory() {
       button.textContent = `${value || "All talent"} (${count})`;
       button.onclick = () => {
         functionFilter.value = value;
-        locationFilter.value = "";
         applyFilters();
         // Keep keyboard focus on the selected chip after rerendering.
         Array.from(chips.children).find((chip) => chip.textContent === button.textContent)?.focus();
@@ -1403,8 +1392,7 @@ async function loadDirectory() {
   searchBox.value = params.get("search") || "";
   // Preserve shared links created before slash-spacing normalization.
   functionFilter.value = (params.get("function") || "").replace(/\s*\/\s*/g, " / ");
-  populateLocationFilter(people.filter((person) =>
-    !functionFilter.value || getFunction(person) === functionFilter.value));
+  populateLocationFilter(people);
   locationFilter.value = params.get("location") || "";
   applyFilters();
 
