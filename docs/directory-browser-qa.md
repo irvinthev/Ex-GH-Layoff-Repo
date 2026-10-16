@@ -1,5 +1,13 @@
 # Directory browser QA
 
+## Mobile compact-controls follow-up
+
+The follow-up removes the function-chip row below 641px, uses two side-by-side native filter pickers, places active filters below them, and groups result count, Clear all, and Share results on one compact row. Native pickers preserve device/browser selection behavior without adding custom dialogs.
+
+All 55 real Chromium browser assertions and all 95 Node regression tests pass. At 320px and 390px, tests confirm hidden redundant chips, side-by-side pickers, working Engineering/Chicago filtering, a results toolbar no taller than 52px, a filtered control panel shorter than 330px, keyboard navigation skipping hidden chips, keyboard filter removal, and clearing back to all profiles. Desktop chips remain visible at 768px, 1024px, and 1440px. Screenshots of the filtered mobile state at 320px and 390px and the desktop state at 1440px were visually inspected. No horizontal page overflow was observed at any of the five widths.
+
+The earlier Chromium-only qualification still applies: no physical iPhone or Safari test has been performed. This follow-up does not modify candidate data, publication gates, forms, or the card content.
+
 Run date: October 15, 2026 (America/New_York).
 
 ## Result

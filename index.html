@@ -11,7 +11,7 @@
     content="Search former Ex-GH professionals by role, function, location, and skills."
   />
 
-  <link rel="stylesheet" href="style.css?v=directory-search-first-1" />
+  <link rel="stylesheet" href="style.css?v=directory-mobile-compact-1" />
 </head>
 
 <body class="directory-page">
@@ -95,22 +95,10 @@
           <h2>
             Search talent
           </h2>
-          <p
-            id="resultsCount"
-            class="results-count" role="status"
-          >
-            Loading talent…
-          </p>
         </div>
 
       </div>
 
-      <!-- ACTIVE FILTERS BREADCRUMB -->
-      <div
-        id="filterBreadcrumb"
-        class="filter-breadcrumb"
-        aria-live="polite"
-      ></div>
 
 
 
@@ -158,18 +146,24 @@
           </option>
         </select>
 
+      </div>
+
+      <div id="filterBreadcrumb" class="filter-breadcrumb" aria-live="polite"></div>
+
+      <div class="results-toolbar">
+        <p id="resultsCount" class="results-count" role="status">Loading talent…</p>
+        <div class="results-actions">
         <button
           id="clearFilters"
           class="clear-btn"
           type="button"
           aria-label="Clear all filters"
         >
-          Clear Filters
+          Clear all
         </button>
-
+        <button id="shareSearch" class="clear-btn" type="button">Share results</button>
+        </div>
       </div>
-
-      <button id="shareSearch" class="clear-btn" type="button">Copy search link</button>
       <p id="shareStatus" class="share-status" role="status"></p>
 
     </section>
@@ -267,7 +261,7 @@
        JAVASCRIPT
   ====================== -->
 
-  <script src="script.js?v=directory-search-first-1"></script>
+  <script src="script.js?v=directory-mobile-compact-1"></script>
   <script src="talent-impact.js"></script>
 
   <script src="analytics-config.js"></script>
