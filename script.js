@@ -58,13 +58,8 @@ async function loadDirectory() {
     document.getElementById("talentExplorer");
 
   let searchTimeout = null;
+  let selectedRegion = "";
 
-  if (
-    talentExplorer &&
-    window.matchMedia("(min-width: 769px)").matches
-  ) {
-    talentExplorer.open = true;
-  }
 
 
   /* =====================
@@ -647,6 +642,10 @@ async function loadDirectory() {
     }
 
     const activeFilters = [];
+    if (selectedRegion) activeFilters.push({
+      label: `Region: ${selectedRegion}`,
+      clear: () => { selectedRegion = ""; applyFilters(); }
+    });
 
     const selectedFunction =
       functionFilter.value.trim();
@@ -697,12 +696,12 @@ async function loadDirectory() {
       .map(
         (filter) => `
           <div class="filter-breadcrumb-item">
-            ${filter.label}
+            ${escapeHtml(filter.label)}
             <span 
               class="filter-breadcrumb-remove" 
               role="button" 
               tabindex="0"
-              aria-label="Remove ${filter.label} filter"
+              aria-label="Remove ${escapeHtml(filter.label)} filter"
             >
               ×
             </span>
@@ -889,15 +888,16 @@ async function loadDirectory() {
       ([fn, count]) => {
         const el =
           document.createElement(
-            "div"
+            "button"
           );
 
+        el.type = "button";
         el.className =
           "function-card";
 
         el.innerHTML = `
           <div class="function-name">
-            ${fn}
+            ${escapeHtml(fn)}
           </div>
 
           <div class="function-value">
@@ -934,15 +934,16 @@ async function loadDirectory() {
       ([region, count]) => {
         const el =
           document.createElement(
-            "div"
+            "button"
           );
 
+        el.type = "button";
         el.className =
           "function-card";
 
         el.innerHTML = `
           <div class="function-name">
-            ${region}
+            ${escapeHtml(region)}
           </div>
 
           <div class="function-value">
@@ -984,9 +985,15 @@ async function loadDirectory() {
       container.innerHTML = `
         <div class="empty-state">
           <strong>No matches found.</strong>
-          <p>Try a different search, broaden your filters, or check your spelling. You can also <a href="javascript:clearFilters()" class="empty-state-link">clear all filters</a> to see all talent.</p>
+          <p>Try a different search, broaden your filters, or check your spelling. You can also <a href="#directory-section" class="empty-state-link">clear all filters</a> to see all talent.</p>
         </div>
       `;
+
+      container.querySelector(".empty-state-link").onclick = (event) => {
+        event.preventDefault();
+        clearBtn.click();
+        searchBox.focus();
+      };
 
       if (resultsCount) {
         resultsCount.textContent =
@@ -1051,7 +1058,7 @@ async function loadDirectory() {
           </h3>
 
           <p class="role">
-            ${escapeHtml(role)}
+            ${role ? `Previously: ${escapeHtml(role)}` : ""}
           </p>
 
           <div class="candidate-context">
@@ -1086,14 +1093,23 @@ async function loadDirectory() {
               <span class="status-dot" aria-hidden="true"></span>
               ${activelySearching ? "Actively searching" : "Availability unverified"}
             </span>
-            ${renderLinkedIn(
-              person
-            )}
+            <div class="candidate-links">${renderLinkedIn(person)}
+              <button class="share-candidate clear-btn" type="button" aria-label="Copy profile link for ${escapeHtml(name)}">Share profile</button>
+            </div>
           </div>
         `;
 
         container
           .appendChild(card);
+
+        card.querySelector(".share-candidate").onclick = () => {
+          const url = new URL(window.location.href);
+          url.search = "";
+          url.hash = "directory-section";
+          url.searchParams.set("search", name);
+          url.searchParams.set("expand", "1");
+          copyLink(url.href);
+        };
 
         const description =
           card.querySelector(".description");
@@ -1167,22 +1183,8 @@ async function loadDirectory() {
     functionFilter.value = "";
     locationFilter.value = "";
 
-    const filtered =
-      people.filter(
-        (person) =>
-          getRegion(
-            getRawLocation(
-              person
-            )
-          ) === region
-      );
-
-    populateLocationFilter(
-      filtered
-    );
-
-    render(filtered);
-    updateFilterBreadcrumb();
+    selectedRegion = region;
+    applyFilters();
   }
 
 
@@ -1266,6 +1268,7 @@ async function loadDirectory() {
 
           return (
             matchesLocation &&
+            (!selectedRegion || getRegion(getRawLocation(person)) === selectedRegion) &&
             matchesSearch
           );
         }
@@ -1273,6 +1276,8 @@ async function loadDirectory() {
 
     render(filtered);
     updateFilterBreadcrumb();
+    renderFunctionChips();
+    syncSearchUrl();
   }
 
 
@@ -1299,14 +1304,14 @@ async function loadDirectory() {
     searchBox.value = "";
     functionFilter.value = "";
     locationFilter.value = "";
+    selectedRegion = "";
 
     populateFunctionFilter();
     populateLocationFilter(
       people
     );
 
-    render(people);
-    updateFilterBreadcrumb();
+    applyFilters();
   };
 
 
@@ -1341,14 +1346,75 @@ async function loadDirectory() {
 
   renderDashboard();
 
-  const urlSearch = new URLSearchParams(window.location.search).get("search");
-  if (urlSearch) {
-    searchBox.value = urlSearch;
-    applyFilters();
-  } else {
-    render(people);
-    updateFilterBreadcrumb();
+  function renderFunctionChips() {
+    const chips = document.getElementById("functionChips");
+    chips.replaceChildren();
+    const entries = [["", people.length], ...Object.entries(countBy(people, getFunction))
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))];
+    for (const [value, count] of entries) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "function-chip";
+      button.setAttribute("aria-pressed", String(functionFilter.value === value));
+      button.textContent = `${value || "All talent"} (${count})`;
+      button.onclick = () => {
+        functionFilter.value = value;
+        locationFilter.value = "";
+        applyFilters();
+        // Keep keyboard focus on the selected chip after rerendering.
+        Array.from(chips.children).find((chip) => chip.textContent === button.textContent)?.focus();
+      };
+      chips.appendChild(button);
+    }
   }
+
+  function syncSearchUrl() {
+    const url = new URL(window.location.href);
+    for (const [key, value] of [["search", searchBox.value.trim()],
+      ["function", functionFilter.value], ["location", locationFilter.value], ["region", selectedRegion]]) {
+      if (value) url.searchParams.set(key, value);
+      else url.searchParams.delete(key);
+    }
+    if (!searchBox.value.trim()) url.searchParams.delete("expand");
+    window.history.replaceState(null, "", url);
+  }
+
+  async function copyLink(value) {
+    const status = document.getElementById("shareStatus");
+    try {
+      await navigator.clipboard.writeText(value);
+      status.textContent = "Link copied. Ready to share.";
+    } catch {
+      // A manual copy option also works when clipboard access is unavailable.
+      status.replaceChildren();
+      const label = document.createElement("label");
+      label.textContent = "Copy this link: ";
+      const field = document.createElement("input");
+      field.type = "text";
+      field.readOnly = true;
+      field.value = value;
+      label.appendChild(field);
+      status.appendChild(label);
+      field.focus();
+      field.select();
+    }
+  }
+
+  document.getElementById("shareSearch").onclick = () => {
+    clearTimeout(searchTimeout);
+    applyFilters();
+    copyLink(window.location.href);
+  };
+
+  const params = new URLSearchParams(window.location.search);
+  selectedRegion = params.get("region") || "";
+  searchBox.value = params.get("search") || "";
+  functionFilter.value = params.get("function") || "";
+  populateLocationFilter(people.filter((person) =>
+    !functionFilter.value || getFunction(person) === functionFilter.value));
+  locationFilter.value = params.get("location") || "";
+  applyFilters();
+
 }
 
 
@@ -1372,7 +1438,7 @@ loadDirectory().catch(
       container.innerHTML = `
         <div class="empty-state">
           <strong>Something broke while loading the directory.</strong>
-          <p>Check people.json and file paths in your browser console for details.</p>
+          <p>Please refresh the page to try again.</p>
         </div>
       `;
     }

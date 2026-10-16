@@ -11,10 +11,10 @@
     content="Search former Ex-GH professionals by role, function, location, and skills."
   />
 
-  <link rel="stylesheet" href="style.css?v=directory-cards-1" />
+  <link rel="stylesheet" href="style.css?v=directory-search-first-1" />
 </head>
 
-<body>
+<body class="directory-page">
 
   <!-- =====================
        NAVIGATION
@@ -47,7 +47,7 @@
       </p>
 
       <h1>
-        Reducing noise. Increasing signal.
+        Find your next great hire.
       </h1>
 
       <p class="hero-subtext">
@@ -56,27 +56,6 @@
       </p>
 
 
-      <!-- PRIMARY ACTIONS -->
-
-      <div class="hero-actions hero-actions-primary">
-
-        <a
-          class="primary-btn"
-          href="#directory-section"
-        >
-          Search Talent
-        </a>
-
-        <a
-          class="secondary-btn hero-recruiter-btn"
-          href="https://docs.google.com/forms/d/e/1FAIpQLSe-eIZp1WChWPYzT8cNPWULgSP6v_pSVkYao0XEzlPqFyXDtA/viewform?usp=header"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Share an Open Role
-        </a>
-
-      </div>
 
     </div>
 
@@ -102,19 +81,6 @@
 
 
     <!-- =====================
-         TALENT NETWORK IMPACT WIDGET
-    ====================== -->
-
-    <section
-      id="talent-impact-widget"
-      class="talent-impact-section"
-      aria-label="Talent Network Impact"
-      aria-live="polite"
-      aria-busy="true"
-    ></section>
-
-
-    <!-- =====================
          DIRECTORY CONTROLS
     ====================== -->
 
@@ -131,27 +97,12 @@
           </h2>
           <p
             id="resultsCount"
-            class="results-count"
+            class="results-count" role="status"
           >
-            0 results
+            Loading talent…
           </p>
         </div>
 
-      </div>
-
-      <div class="directory-profile-actions">
-        <p>
-          Found a job, need to update something, or no longer want to be listed?
-          Submit a request and we’ll update or remove your profile.
-        </p>
-        <a
-          class="secondary-btn"
-          href="https://docs.google.com/forms/d/e/1FAIpQLSePvYi72JFg37T6nQti-sC3dTTAOES2TLpDUh2nFLg1DwtGHQ/viewform"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Update or Remove My Profile
-        </a>
       </div>
 
       <!-- ACTIVE FILTERS BREADCRUMB -->
@@ -162,13 +113,15 @@
       ></div>
 
 
+      <div id="functionChips" class="function-chips" role="group" aria-label="Browse by function"></div>
+
       <div class="controls">
 
         <div class="search-wrapper">
           <input
             id="search"
             type="text"
-            placeholder="Product Manager, Python, Chicago, Customer Success..."
+            placeholder="Search roles, skills, or names…"
             aria-label="Search talent directory"
           />
           <button
@@ -214,8 +167,20 @@
 
       </div>
 
+      <button id="shareSearch" class="clear-btn" type="button">Copy search link</button>
+      <p id="shareStatus" class="share-status" role="status"></p>
+
     </section>
 
+
+    <!-- =====================
+         DIRECTORY
+    ====================== -->
+
+    <section
+      id="directory"
+      class="directory-grid"
+    ></section>
 
     <!-- =====================
          OPTIONAL TALENT EXPLORER
@@ -252,18 +217,38 @@
 
 
     <!-- =====================
-         DIRECTORY
+         TALENT NETWORK IMPACT WIDGET
     ====================== -->
 
     <section
-      id="directory"
-      class="directory-grid"
+      id="talent-impact-widget"
+      class="talent-impact-section"
+      aria-label="Talent Network Impact"
+      aria-live="polite"
+      aria-busy="true"
     ></section>
+
+
+      <div class="directory-profile-actions">
+        <p>
+          Found a job, need to update something, or no longer want to be listed?
+          Submit a request and we’ll update or remove your profile.
+        </p>
+        <a
+          class="secondary-btn"
+          href="https://docs.google.com/forms/d/e/1FAIpQLSePvYi72JFg37T6nQti-sC3dTTAOES2TLpDUh2nFLg1DwtGHQ/viewform"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Update or Remove My Profile
+        </a>
+      </div>
 
   </main>
 
   <footer class="site-footer">
     <div class="site-footer-inner">
+      <a class="secondary-btn" href="https://docs.google.com/forms/d/e/1FAIpQLSe-eIZp1WChWPYzT8cNPWULgSP6v_pSVkYao0XEzlPqFyXDtA/viewform?usp=header" target="_blank" rel="noopener noreferrer">Share an Open Role</a>
       <nav class="site-footer-nav" aria-label="Footer navigation">
         <a href="about.html">About</a>
         <a href="index.html">Directory</a>
@@ -280,7 +265,7 @@
        JAVASCRIPT
   ====================== -->
 
-  <script src="script.js?v=directory-cards-1"></script>
+  <script src="script.js?v=directory-search-first-1"></script>
   <script src="talent-impact.js"></script>
 
   <script src="analytics-config.js"></script>
