@@ -9,7 +9,23 @@ assert(await page.locator('#functionFilter option[value="Marketing/Communication
 assert(await page.locator('#functionFilter option[value="Marketing / Communications"]').count()===1,'one canonical marketing option');
 await page.goto('http://localhost:8765/?function=Marketing%2FCommunications');await page.waitForSelector('.card');
 assert(await page.locator('#functionFilter').inputValue()==='Marketing / Communications','legacy marketing link restores canonical filter');
-assert(await page.locator('.card').count()===3,'canonical marketing bucket includes all three profiles');
+const publishedPeople=JSON.parse(fs.readFileSync('people.json','utf8'));
+const marketingCount=publishedPeople.filter(p=>p.Function==='Marketing / Communications').length;
+assert(await page.locator('.card').count()===marketingCount,'canonical marketing bucket includes all published marketing profiles');
+await page.locator('#clearFilters').click();
+async function searchFor(query){await page.locator('#search').fill(query);await page.waitForTimeout(350);}
+await searchFor('senior manager finance systems');assert(await page.locator('.card').filter({hasText:'Katie Logan'}).count()===1,'Katie found across seniority and finance-system fields');
+await searchFor('software chicago');assert(await page.locator('.card').filter({hasText:'Sean Zhang'}).count()===1,'software and city match across fields');
+await searchFor('"finance systems" ERP');assert(await page.locator('.card').filter({hasText:'Katie Logan'}).count()===1,'quoted phrase plus separate keyword finds Katie');
+await searchFor('QA release');assert(await page.locator('.card').filter({hasText:'Chirag Gandhi'}).count()===1,'software QA and release search finds Chirag');
+await page.locator('#clearFilters').click();
+await page.locator('#locationFilter').selectOption('Chicago');await page.locator('#functionFilter').selectOption('Engineering');assert(await page.locator('#locationFilter').inputValue()==='Chicago','function change retains location');
+const zeroFunction=[...new Set(publishedPeople.map(p=>p.Function))].find(fn=>publishedPeople.filter(p=>p.Function===fn).every(p=>!String(p.Location).toLowerCase().includes('chicago')));
+assert(Boolean(zeroFunction),'zero-result location/function fixture exists');
+await page.locator('#functionFilter').selectOption(zeroFunction);assert(await page.locator('#locationFilter').inputValue()==='Chicago'&&await page.locator('.card').count()===0,'zero-result combination retains selected location');
+const zeroUrl=page.url();await page.goto(zeroUrl);await page.waitForSelector('.empty-state');assert(await page.locator('#locationFilter').inputValue()==='Chicago','zero-result shared URL retains location');
+await page.getByRole('button',{name:`Remove Function: ${zeroFunction} filter`}).click();assert(await page.locator('#locationFilter').inputValue()==='Chicago'&&await page.locator('.card').count()>0,'removing function preserves location');
+await page.getByRole('button',{name:/Engineering \(/}).click();assert(await page.locator('#locationFilter').inputValue()==='Chicago','desktop function chip preserves location');
 await page.locator('#clearFilters').click();
 await page.getByRole('button',{name:/Engineering \(/,exact:false}).click();assert((await page.locator('.card').count())<total,'function chips filter');
 await page.getByRole('button',{name:'Share results',exact:true}).click(); const copied=await page.evaluate(()=>navigator.clipboard.readText());assert(copied.includes('function=Engineering'),'filtered URL copied');await page.goto(copied);await page.waitForSelector('.card');assert(await page.locator('#functionFilter').inputValue()==='Engineering','shared filter restores');
@@ -45,6 +61,11 @@ for(const [width,height] of [[1440,1050],[1024,768],[768,1024],[390,844],[320,74
   await page.locator('#search').focus();await page.keyboard.press('Tab');await page.keyboard.press('Tab');assert(await page.locator('#functionFilter').evaluate(el=>el===document.activeElement),`${width}px keyboard skips hidden chips`);
   await page.getByRole('button',{name:'Remove Function: Engineering filter'}).focus();await page.keyboard.press('Space');assert(await page.locator('#functionFilter').inputValue()==='',`${width}px remove active filter`);
   await page.locator('#clearFilters').click();assert(await page.locator('.card').count()===total,`${width}px clear restores all`);
+  await searchFor('senior manager finance systems');assert(await page.locator('.card').filter({hasText:'Katie Logan'}).count()===1,`${width}px finance-systems hiring scenario`);
+  await page.screenshot({path:`/tmp/directory-katie-${width}.png`});
+  await searchFor('QA release');assert(await page.locator('.card').filter({hasText:'Chirag Gandhi'}).count()===1,`${width}px software-QA hiring scenario`);
+  await page.locator('#clearFilters').click();await page.locator('#functionFilter').selectOption('Marketing / Communications');assert(await page.locator('.card').count()===marketingCount,`${width}px marketing hiring scenario`);
+  await page.locator('#clearFilters').click();
  } else assert(await page.locator('#functionChips').isVisible(),`${width}px desktop chips retained`);
  await page.locator('.card').first().scrollIntoViewIfNeeded();await page.screenshot({path:`/tmp/directory-cards-${width}.png`,fullPage:false});
 }
