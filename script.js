@@ -54,9 +54,6 @@ async function loadDirectory() {
   const filterBreadcrumb =
     document.getElementById("filterBreadcrumb");
 
-  const talentExplorer =
-    document.getElementById("talentExplorer");
-
   let searchTimeout = null;
   let selectedRegion = "";
 
@@ -619,7 +616,7 @@ async function loadDirectory() {
 
     if (heroTalentCount) {
       heroTalentCount.textContent =
-        `${people.length} former Ex-GH professionals`;
+        `${people.length} former Grubhub professionals`;
     }
 
     if (functionCount) {
@@ -697,14 +694,13 @@ async function loadDirectory() {
         (filter) => `
           <div class="filter-breadcrumb-item">
             ${escapeHtml(filter.label)}
-            <span 
-              class="filter-breadcrumb-remove" 
-              role="button" 
-              tabindex="0"
+            <button
+              type="button"
+              class="filter-breadcrumb-remove"
               aria-label="Remove ${escapeHtml(filter.label)} filter"
             >
               ×
-            </span>
+            </button>
           </div>
         `
       )
@@ -721,11 +717,7 @@ async function loadDirectory() {
           activeFilters[index].clear();
         };
 
-        btn.onkeydown = (e) => {
-          if (e.key === "Enter") {
-            activeFilters[index].clear();
-          }
-        };
+
       }
     );
   }
@@ -1064,7 +1056,7 @@ async function loadDirectory() {
           <div class="candidate-context">
             ${fn ? `<span>${escapeHtml(fn)}</span>` : ""}
             ${fn && (rawLocation || workPreference) ? `<span aria-hidden="true">·</span>` : ""}
-            ${rawLocation ? `<span>📍 ${escapeHtml(rawLocation)}</span>` : ""}
+            ${rawLocation ? `<span>Location: ${escapeHtml(rawLocation)}</span>` : ""}
             ${rawLocation && workPreference ? `<span aria-hidden="true">·</span>` : ""}
             ${workPreference ? `<span>${escapeHtml(workPreference.replace(/,/g, " /"))}</span>` : ""}
           </div>

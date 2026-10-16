@@ -113,7 +113,6 @@
       ></div>
 
 
-      <div id="functionChips" class="function-chips" role="group" aria-label="Browse by function"></div>
 
       <div class="controls">
 
@@ -128,14 +127,17 @@
             class="search-help-btn"
             title="Tips: Search across name, role, function, team, location, and professional skills"
             aria-label="Search tips"
+            aria-describedby="searchHelp"
           >
             ?
           </button>
-          <div class="search-help-tooltip">
+          <div id="searchHelp" class="search-help-tooltip" role="tooltip">
             <strong>Search across:</strong> name, role, function, team, location, and professional skills
           </div>
         </div>
 
+
+      <div id="functionChips" class="function-chips" role="group" aria-label="Browse by function"></div>
 
         <select 
           id="functionFilter"
