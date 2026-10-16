@@ -1401,7 +1401,8 @@ async function loadDirectory() {
   const params = new URLSearchParams(window.location.search);
   selectedRegion = params.get("region") || "";
   searchBox.value = params.get("search") || "";
-  functionFilter.value = params.get("function") || "";
+  // Preserve shared links created before slash-spacing normalization.
+  functionFilter.value = (params.get("function") || "").replace(/\s*\/\s*/g, " / ");
   populateLocationFilter(people.filter((person) =>
     !functionFilter.value || getFunction(person) === functionFilter.value));
   locationFilter.value = params.get("location") || "";
