@@ -2301,3 +2301,21 @@ select:focus {
 .directory-page .controls-section { max-width: none; padding: 0; }
 .directory-page .search-help-btn:focus ~ .search-help-tooltip { display: block; }
 @media (max-width: 640px) { .directory-page .page { padding: 24px 16px 32px; } }
+
+/* Keep mobile controls compact; native selects open the device's picker. */
+.directory-page .controls { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.directory-page .results-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.directory-page .results-actions { display: flex; align-items: center; gap: 8px; }
+.directory-page .results-actions .clear-btn { width: auto; min-height: 44px; padding: 8px; margin: 0; border: 0; box-shadow: none; background: transparent; font-size: 13px; }
+.directory-page .results-actions #shareSearch { margin-top: 0; }
+.directory-page .filter-breadcrumb:empty { display: none; }
+.directory-page .filter-breadcrumb { margin: 10px 0 0; }
+@media (max-width: 640px) {
+  .directory-page #functionChips { display: none; }
+  .directory-page .controls { gap: 8px; margin-top: 10px; }
+  .directory-page .controls select { padding: 10px 26px 10px 10px; min-height: 44px; font-size: 13px; text-overflow: ellipsis; }
+  .directory-page .results-toolbar { margin-top: 4px; }
+  .directory-page .filter-breadcrumb-item { font-size: 12px; padding: 4px 8px; }
+  .directory-page .filter-breadcrumb-remove { min-width: 32px; min-height: 32px; }
+  .directory-page .directory-grid { margin-top: 8px; }
+}

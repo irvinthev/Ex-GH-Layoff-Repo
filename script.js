@@ -693,7 +693,7 @@ async function loadDirectory() {
       .map(
         (filter) => `
           <div class="filter-breadcrumb-item">
-            ${escapeHtml(filter.label)}
+            ${escapeHtml(filter.label.replace(/^(Function|Location): /, ""))}
             <button
               type="button"
               class="filter-breadcrumb-remove"
