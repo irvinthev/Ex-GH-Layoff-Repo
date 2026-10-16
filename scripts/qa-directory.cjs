@@ -5,6 +5,12 @@ const browser=await chromium.launch({headless:true, ...(process.env.DIRECTORY_QA
 const assert=(v,msg)=>{if(!v)throw Error(msg);console.log('PASS',msg)};
 await page.setViewportSize({width:1440,height:1050});await page.goto('http://localhost:8765');await page.waitForSelector('.card');const total=await page.locator('.card').count();assert(total>0,'profiles load');
 await page.screenshot({path:'/tmp/directory-desktop.png',fullPage:false});
+assert(await page.locator('#functionFilter option[value="Marketing/Communications"]').count()===0,'duplicate marketing option removed');
+assert(await page.locator('#functionFilter option[value="Marketing / Communications"]').count()===1,'one canonical marketing option');
+await page.goto('http://localhost:8765/?function=Marketing%2FCommunications');await page.waitForSelector('.card');
+assert(await page.locator('#functionFilter').inputValue()==='Marketing / Communications','legacy marketing link restores canonical filter');
+assert(await page.locator('.card').count()===3,'canonical marketing bucket includes all three profiles');
+await page.locator('#clearFilters').click();
 await page.getByRole('button',{name:/Engineering \(/,exact:false}).click();assert((await page.locator('.card').count())<total,'function chips filter');
 await page.getByRole('button',{name:'Share results',exact:true}).click(); const copied=await page.evaluate(()=>navigator.clipboard.readText());assert(copied.includes('function=Engineering'),'filtered URL copied');await page.goto(copied);await page.waitForSelector('.card');assert(await page.locator('#functionFilter').inputValue()==='Engineering','shared filter restores');
 await page.locator('#clearFilters').click();assert(await page.locator('.card').count()===total,'clear restores all');
