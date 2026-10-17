@@ -741,7 +741,7 @@ async function runEvaluation(requirementReview) {
   requirementReviewPanel.hidden = true;
   openRequirementReviewButton.setAttribute("aria-expanded", "false");
   setStatus(evaluationStatus, "Evaluating opted-in candidates…");
-  renderLoadingState();
+  if (!latestPayload) renderLoadingState();
   const { data, error } = await invokePlacement({
     ...pendingEvaluationPayload,
     requirementReview,
@@ -759,6 +759,7 @@ async function runEvaluation(requirementReview) {
     setStatus(evaluationStatus, message, "error");
     resultsSection.setAttribute("aria-busy", "false");
     resultsSection.hidden = !latestPayload;
+    if (latestPayload) renderMatches(latestPayload, { scrollToResults: false });
     return;
   }
   const completionMessage = data.evaluation.importWarning
