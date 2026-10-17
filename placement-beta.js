@@ -24,6 +24,7 @@ const requirementReviewPanel = document.querySelector("#requirementReviewPanel")
 const requirementReviewForm = document.querySelector("#requirementReviewForm");
 const requirementReviewContent = document.querySelector("#requirementReviewContent");
 const skipRequirementReviewButton = document.querySelector("#skipRequirementReview");
+const openRequirementReviewButton = document.querySelector("#openRequirementReview");
 const resultsSection = document.querySelector("#resultsSection");
 const evaluationSummary = document.querySelector("#evaluationSummary");
 const jobBrief = document.querySelector("#jobBrief");
@@ -560,6 +561,7 @@ function renderMatches(data, { scrollToResults = true } = {}) {
   };
 
   const filteredMatches = sortAndFilterMatches(data.matches ?? [], activeSort, activeFilter);
+  openRequirementReviewButton.hidden = !(data.evaluation?.requirementsStructured ?? []).some((r) => ["core", "preferred", "ambiguous"].includes(r.category));
   const rankedMatches = filteredMatches.filter((match) => getEvidenceCategory(match) === "ranked");
   const needsValidationMatches = filteredMatches.filter((match) => getEvidenceCategory(match) === "validation");
   const visibleRankedMatches = showAllMatches ? rankedMatches : rankedMatches.slice(0, DEFAULT_RESULT_LIMIT);
@@ -699,14 +701,13 @@ function renderMatches(data, { scrollToResults = true } = {}) {
   }
 }
 
-function renderRequirementReview(requirements) {
+function renderRequirementReview(requirements, priorReview = null) {
   const groups = [
     ["core", "Core requirements"],
     ["preferred", "Preferred qualifications"],
     ["ambiguous", "Ambiguous or unrecognized"],
-    ["company_info", "Company information"],
-    ["benefits", "Benefits"],
   ];
+  const previous = new Map((priorReview?.requirements ?? []).map((item) => [item.requirementId, item]));
   requirementReviewContent.innerHTML = groups.map(([category, title]) => {
     const items = requirements.filter((requirement) => requirement.category === category);
     if (!items.length) return "";
@@ -716,7 +717,7 @@ function renderRequirementReview(requirements) {
         <div class="requirement-review-meta">Parsed label: ${escapeHtml(requirement.label)} · Source: ${escapeHtml(requirement.sourceSection)}${requirement.ambiguityFlags?.length ? ` · Flags: ${escapeHtml(requirement.ambiguityFlags.join(", "))}` : ""}</div>
         <div class="requirement-review-controls">
           <label>Admin interpretation
-            <input type="text" data-requirement-interpretation maxlength="300" value="${escapeHtml(requirement.interpretedAs ?? requirement.label)}" />
+            <input type="text" data-requirement-interpretation maxlength="300" value="${escapeHtml(previous.get(requirement.requirementId)?.interpretedAs ?? requirement.interpretedAs ?? requirement.label)}" />
           </label>
           <label>Hiring flexibility
             <select data-requirement-flexibility>
@@ -726,11 +727,11 @@ function renderRequirementReview(requirements) {
               <option value="nice_to_have">Nice to have</option>
             </select>
           </label>
-          <label class="review-confirm"><input type="checkbox" data-requirement-reviewed /> Confirm this requirement</label>
-          <label class="review-adjacent"><input type="checkbox" data-requirement-adjacent /> Accept equivalent experience from adjacent roles for this requirement</label>
+          <label class="review-confirm"><input type="checkbox" data-requirement-reviewed ${previous.get(requirement.requirementId)?.markedReviewed ?? requirement.markedReviewed ? "checked" : ""} /> Confirm this interpretation</label>
+          <label class="review-adjacent"><input type="checkbox" data-requirement-adjacent ${previous.get(requirement.requirementId)?.acceptsAdjacentExperience ?? requirement.acceptsAdjacentExperience ? "checked" : ""} /> Consider documented adjacent experience for this requirement</label>
         </div>
       </article>`).join("")}</details>`;
-  }).join("") || `<p>No structured requirements were identified. You can still answer the hiring-intent questions or skip review.</p>`;
+  }).join("") || `<p>No reviewable requirements were extracted. Matching is unaffected.</p>`;
 }
 
 async function runEvaluation(requirementReview) {
@@ -738,6 +739,7 @@ async function runEvaluation(requirementReview) {
   evaluateButton.disabled = true;
   skipRequirementReviewButton.disabled = true;
   requirementReviewPanel.hidden = true;
+  openRequirementReviewButton.setAttribute("aria-expanded", "false");
   setStatus(evaluationStatus, "Evaluating opted-in candidates…");
   renderLoadingState();
   const { data, error } = await invokePlacement({
@@ -756,8 +758,7 @@ async function runEvaluation(requirementReview) {
     } catch (_) { /* Keep the SDK error message. */ }
     setStatus(evaluationStatus, message, "error");
     resultsSection.setAttribute("aria-busy", "false");
-    resultsSection.hidden = true;
-    requirementReviewPanel.hidden = false;
+    resultsSection.hidden = !latestPayload;
     return;
   }
   const completionMessage = data.evaluation.importWarning
@@ -767,7 +768,7 @@ async function runEvaluation(requirementReview) {
       : "Evaluation complete.";
   setStatus(evaluationStatus, completionMessage, data.evaluation.importWarning ? "warning" : "success");
   latestPayload = data;
-  pendingEvaluationPayload = null;
+  // Preserve the job input for optional evidence refinement.
   showAllMatches = false;
   renderMatches(data);
   loadHistory().catch(() => {
@@ -830,7 +831,6 @@ wireResultControls({
 
 requirementReviewForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const fields = new FormData(requirementReviewForm);
   const requirements = [...requirementReviewContent.querySelectorAll("[data-requirement-id]")].map((item) => ({
     requirementId: item.dataset.requirementId,
     interpretedAs: item.querySelector("[data-requirement-interpretation]").value,
@@ -840,13 +840,24 @@ requirementReviewForm.addEventListener("submit", async (event) => {
   }));
   await runEvaluation({
     requirements,
-    topCapabilities: fields.get("topCapabilities"),
-    adjacentExperience: fields.get("adjacentExperience"),
-    seniorityLocationFlexible: fields.get("seniorityLocationFlexible"),
+    adjacentExperience: requirements.some((r) => r.markedReviewed && r.acceptsAdjacentExperience) ? "yes" : "unsure",
+    seniorityLocationFlexible: "unsure",
   });
 });
 
-skipRequirementReviewButton.addEventListener("click", () => runEvaluation({ skipped: true }));
+skipRequirementReviewButton.addEventListener("click", () => {
+  requirementReviewPanel.hidden = true;
+  openRequirementReviewButton.setAttribute("aria-expanded", "false");
+  openRequirementReviewButton.focus();
+});
+openRequirementReviewButton.addEventListener("click", () => {
+  const requirements = latestPayload?.evaluation?.requirementsStructured ?? [];
+  if (!requirements.some((r) => ["core", "preferred", "ambiguous"].includes(r.category))) return;
+  renderRequirementReview(requirements, latestPayload.evaluation.requirementReview);
+  requirementReviewPanel.hidden = false;
+  openRequirementReviewButton.setAttribute("aria-expanded", "true");
+  requirementReviewPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+});
 
 evaluationForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -857,43 +868,13 @@ evaluationForm.addEventListener("submit", async (event) => {
     jobUrlInput.focus();
     return;
   }
-  pendingEvaluationPayload = null;
   requirementReviewPanel.hidden = true;
-  evaluateButton.disabled = true;
-  const form = new FormData(evaluationForm);
-  const payload = Object.fromEntries(form.entries());
-  setStatus(evaluationStatus, jobUrl ? "Reading the job page and preparing requirements for review…" : "Preparing job requirements for review…");
+  openRequirementReviewButton.hidden = true;
+  openRequirementReviewButton.setAttribute("aria-expanded", "false");
   resultsSection.hidden = true;
-  const { data, error } = await invokePlacement({ ...payload, action: "preview_requirements" });
-  evaluateButton.disabled = false;
-  if (error) {
-    let message = error.message;
-    try {
-      const response = error.context;
-      const body = response ? await response.json() : null;
-      if (body?.error) message = body.error;
-    } catch (_) { /* Keep the SDK error message. */ }
-    setStatus(evaluationStatus, message, "error");
-    return;
-  }
-  pendingEvaluationPayload = payload;
-  pendingEvaluationPayload.jobPreview = {
-    title: data.title,
-    description: data.description,
-    location: data.location,
-    remoteType: data.remoteType,
-    sourceUrl: data.sourceUrl,
-    sourceMode: data.sourceMode,
-    importWarning: data.importWarning,
-  };
-  requirementReviewPanel.hidden = false;
-  renderRequirementReview(Array.isArray(data.requirementsStructured) ? data.requirementsStructured : []);
-  setStatus(
-    evaluationStatus,
-    data.importWarning
-      ? `${data.importWarning} Review requirements or skip to continue.`
-      : "Job parsed. Confirm hiring intent or skip review to proceed to candidate scoring.",
-    data.importWarning ? "warning" : "success",
-  );
-  requirementReviewPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+  latestPayload = null;
+  pendingEvaluationPayload = Object.fromEntries(new FormData(evaluationForm).entries());
+  // Older deployments treat unknown preview actions as full evaluation requests.
+  // Match immediately; requirement review becomes available from results when supported.
+  await runEvaluation({ skipped: true });
 });
