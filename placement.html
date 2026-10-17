@@ -151,35 +151,16 @@
       <section id="requirementReviewPanel" class="placement-panel requirement-review-panel" hidden aria-labelledby="requirementReviewHeading">
         <div class="panel-heading">
           <div>
-            <p class="step-label">Optional hiring-intent review</p>
-            <h2 id="requirementReviewHeading">Review job requirements</h2>
+            <p class="step-label">Optional · After matching</p>
+            <h2 id="requirementReviewHeading">Refine requirement evidence</h2>
           </div>
-          <p>Original job wording stays separate from your interpretation. This review does not change candidate scores.</p>
+          <p>Clarify specific requirements only when useful. Original wording is preserved. Reviewed context can update evidence explanations, not scores or ranking.</p>
         </div>
         <form id="requirementReviewForm" class="requirement-review-form">
           <div id="requirementReviewContent" class="requirement-review-content"></div>
-          <div class="review-questions">
-            <label>What are the three most important capabilities?
-              <textarea name="topCapabilities" rows="2" maxlength="2000"></textarea>
-            </label>
-            <label>Is equivalent experience from adjacent roles or industries acceptable?
-              <select name="adjacentExperience">
-                <option value="unsure">Not specified</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-              </select>
-            </label>
-            <label>Are seniority and location constraints flexible?
-              <select name="seniorityLocationFlexible">
-                <option value="unsure">Not specified</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-              </select>
-            </label>
-          </div>
           <div class="form-actions">
-            <button class="primary-btn" type="submit">Confirm review and find matching talent</button>
-            <button id="skipRequirementReview" class="summary-action" type="button">Skip review and find matching talent</button>
+            <button class="primary-btn" type="submit">Update evidence assessment</button>
+            <button id="skipRequirementReview" class="summary-action" type="button">Cancel</button>
           </div>
         </form>
       </section>
@@ -189,6 +170,7 @@
           <p class="step-label">Matching talent</p>
           <h2>People worth looking at</h2>
           <p>Ranked using the evidence currently available in the network. Review the explanation and validate anything material before making a hiring decision.</p>
+          <button id="openRequirementReview" class="summary-action" type="button" hidden aria-expanded="false" aria-controls="requirementReviewPanel">Refine requirement evidence (optional)</button>
         </div>
         <section id="jobBrief" class="job-brief-card" hidden aria-live="polite"></section>
         <nav class="results-toolbar" aria-label="Result controls">
