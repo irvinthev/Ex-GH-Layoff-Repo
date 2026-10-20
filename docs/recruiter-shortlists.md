@@ -39,3 +39,11 @@ Prepared October 19, 2026, in this order:
 | 3 | Angi | `shortlist.html?list=angi` | 7 | 5 |
 
 See [company-shortlist-review.md](company-shortlist-review.md) for review sources, candidate rationale, qualification gaps, and exclusions. These are conversation shortlists, not assertions that every candidate meets every minimum requirement. No outreach has been sent, and candidate interest or availability has not been reconfirmed.
+
+### Shopify
+
+`shortlist.html?list=shopify` introduces Corey Laffel, Jill Weinstein, Connor Kaddatz, Arushi Tayal, and Gina Reynolds. The first four resolve against the current public directory. Gina is a company-scoped community introduction maintained in `shortlists/shopify-profiles.json`, explicitly requested by Irvin on October 19, 2026. No personal contact details are published and no Grubhub employment is implied. Her card links to Shopify Design's general application; it is not presented as a specific vacancy. Norm is not included.
+
+The viewer loads supplemental profiles only for the saved Shopify list, never from a shared URL payload. Removing an introduction from the sidecar withholds its card; directory profile removals continue to be respected. The sidecar does not alter the directory or its spreadsheet refresh. Current interest, portfolio fit, and eligibility still require confirmation.
+
+Source review: Shopify official careers board and the linked official role pages, October 19, 2026. Corey and Jill are potential partner-marketing matches. Connor and Arushi need to confirm interest in a senior IC Product Operations role.

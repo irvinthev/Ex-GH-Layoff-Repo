@@ -59,6 +59,7 @@
   }
   try {
     let raw;
+    let supplementalProfiles = [];
     const params = new URLSearchParams(window.location.search);
     const data = new URLSearchParams(window.location.hash.slice(1)).get('data');
     if (data) raw = S.decode(data);
@@ -68,16 +69,26 @@
       const response = await fetch(`./shortlists/${slug}.json`, { cache: 'no-store' });
       if (!response.ok) throw new Error('This saved shortlist is unavailable. Ask the sender for a current link.');
       raw = S.validate(await response.json());
+      // Company-scoped introductions are maintained separately from the opt-in directory.
+      // Shared URL payloads cannot supply or restore profile data.
+      if (slug === 'shopify') {
+        const profiles = await fetch('./shortlists/shopify-profiles.json', { cache: 'no-store' });
+        if (profiles.ok) {
+          const entries = await profiles.json();
+          if (!Array.isArray(entries)) throw new Error('Community introductions are unavailable.');
+          supplementalProfiles = entries.map(person => ({ ...person, shortlistIntroduction: true }));
+        }
+      }
     }
     const response = await fetch('./people.json', { cache: 'no-store' });
     if (!response.ok) throw new Error('Could not load current profiles. Please refresh to try again.');
     const people = await response.json();
     if (!Array.isArray(people)) throw new Error('The directory is unavailable. Please try again later.');
-    resolved = S.resolve(raw, people);
+    resolved = S.resolve(raw, [...people, ...supplementalProfiles]);
     byId('shortlist-title').textContent = resolved.title;
     document.title = `${resolved.title} | Talent Network HQ`;
     byId('shortlist-intro').textContent = resolved.intro;
-    byId('shortlist-status').textContent = resolved.unavailable ? `${resolved.unavailable} selected profile(s) are no longer available in the public directory.` : '';
+    byId('shortlist-status').textContent = resolved.unavailable ? `${resolved.unavailable} selected profile(s) are no longer available in the current sources.` : '';
     for (const item of resolved.items) {
       const person = item.person;
       const card = node('article', '', 'shortlist-card');
@@ -102,6 +113,7 @@
       const footer = node('div', '', 'recruiter-card-footer');
       const link = S.linkedin(person);
       if (link) footer.appendChild(external('LinkedIn ↗', link));
+      else if (person.shortlistIntroduction) footer.appendChild(node('span', 'Ask Irvin for an introduction'));
       else {
         const profile = node('a', 'View public profile ↗');
         profile.href = `index.html?search=${encodeURIComponent(S.name(person))}&expand=1#directory-section`;

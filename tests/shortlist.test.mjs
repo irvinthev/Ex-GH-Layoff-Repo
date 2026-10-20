@@ -73,3 +73,23 @@ for (const [company, expectedCount, host] of [
   assert.equal(S.resolve(fixture, current).items.length, expectedCount - 1);
  });
 }
+
+test('Shopify includes four current profiles and a scoped community introduction', () => {
+ const fixture = JSON.parse(readFileSync(new URL('../shortlists/shopify.json', import.meta.url)));
+ const people = JSON.parse(readFileSync(new URL('../people.json', import.meta.url)));
+ const introductions = JSON.parse(readFileSync(new URL('../shortlists/shopify-profiles.json', import.meta.url)));
+ assert.equal(introductions.length, 1);
+ assert.equal(S.name(introductions[0]), 'Gina Reynolds');
+ const result = S.resolve(fixture, [...people, ...introductions]);
+ assert.equal(result.items.length, 5); assert.equal(result.unavailable, 0);
+ assert.ok(result.items.every(item => new URL(item.url).hostname === 'www.shopify.com'));
+ assert.ok(result.items.every(item => !/norm/i.test(S.name(item.person))));
+ assert.equal(S.resolve(fixture, people).items.length, 4);
+ const removed = result.items[0].id;
+ assert.equal(S.resolve(fixture, [...people.filter(p => S.personId(p) !== removed), ...introductions]).items.length, 4);
+ const gina = result.items.find(item => S.name(item.person) === 'Gina Reynolds');
+ assert.match(gina.role, /general application/);
+ assert.match(gina.note, /not a verified specific vacancy/);
+ assert.ok(!/gmail|@|312[ .-]/i.test(JSON.stringify(introductions)));
+ assert.deepEqual(S.decode(S.encode(fixture)), S.validate(fixture));
+});
