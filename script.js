@@ -56,6 +56,19 @@ async function loadDirectory() {
 
   let searchTimeout = null;
   let selectedRegion = "";
+  const shortlist = window.TalentShortlist;
+  let shortlistStorage;
+  try { shortlistStorage = window.sessionStorage; } catch { shortlistStorage = null; }
+  const shortlistDraft = shortlist.draftFrom(shortlistStorage);
+  const shortlistLink = document.getElementById("createShortlist");
+  function updateShortlistLink() {
+    const count = shortlistDraft.items.length;
+    shortlistLink.textContent = count ? `Create shortlist (${count})` : "Create shortlist";
+    shortlistLink.href = count
+      ? `shortlist-builder.html#from=${shortlist.encode({ ...shortlistDraft, title: shortlistDraft.title || "Recruiter shortlist" })}`
+      : "shortlist-builder.html";
+  }
+  updateShortlistLink();
 
 
 
@@ -1044,6 +1057,7 @@ async function loadDirectory() {
           "card";
 
         card.innerHTML = `
+          <label class="shortlist-selection"><input class="select-for-shortlist" type="checkbox" aria-label="Add ${escapeHtml(name)} to recruiter shortlist"> Add to shortlist</label>
           <h3>
             ${escapeHtml(name)}
           </h3>
@@ -1092,6 +1106,23 @@ async function loadDirectory() {
 
         container
           .appendChild(card);
+
+        const shortlistCheckbox = card.querySelector(".select-for-shortlist");
+        const profileId = shortlist.personId(person);
+        shortlistCheckbox.checked = shortlistDraft.items.some(item => item.id === profileId);
+        shortlistCheckbox.onchange = () => {
+          if (shortlistCheckbox.checked) {
+            if (shortlistDraft.items.length >= shortlist.MAX_ITEMS) {
+              shortlistCheckbox.checked = false;
+              document.getElementById("shareStatus").textContent = `A shortlist can include up to ${shortlist.MAX_ITEMS} people.`;
+              return;
+            }
+            shortlistDraft.items.push({ id: profileId, role: "", url: "", note: "" });
+          } else shortlistDraft.items = shortlistDraft.items.filter(item => item.id !== profileId);
+          shortlist.saveDraft(shortlistStorage, shortlistDraft);
+          updateShortlistLink();
+          document.getElementById("shareStatus").textContent = `${shortlistDraft.items.length} people selected. Choose Create shortlist to add roles and share.`;
+        };
 
         card.querySelector(".share-candidate").onclick = () => {
           const url = new URL(window.location.href);

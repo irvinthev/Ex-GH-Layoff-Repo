@@ -8,6 +8,12 @@ on:
       - 'placement-beta.js'
       - 'placement-beta-display.js'
       - 'placement-utils.js'
+      - 'shortlist*.js'
+      - 'shortlist*.html'
+      - 'shortlist.css'
+      - 'script.js'
+      - 'index.html'
+      - 'shortlists/**'
       - '.github/workflows/placement-tests.yml'
   push:
     branches: [main]
@@ -17,6 +23,12 @@ on:
       - 'placement-beta.js'
       - 'placement-beta-display.js'
       - 'placement-utils.js'
+      - 'shortlist*.js'
+      - 'shortlist*.html'
+      - 'shortlist.css'
+      - 'script.js'
+      - 'index.html'
+      - 'shortlists/**'
       - '.github/workflows/placement-tests.yml'
   workflow_dispatch:
 
