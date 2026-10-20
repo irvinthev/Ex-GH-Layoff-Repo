@@ -1,0 +1,41 @@
+.shortlist-page { max-width: 1080px; margin: 0 auto; padding: 40px 24px 70px; }
+.shortlist-page h1 { font-size: clamp(30px, 5vw, 48px); line-height: 1.15; margin: 12px 0 18px; letter-spacing: -.035em; }
+.shortlist-page h2 { font-size: 24px; margin: 0 0 18px; }
+.shortlist-page .lede { color: var(--text-muted); max-width: 760px; white-space: pre-line; }
+.shortlist-panel { background: white; padding: 26px; border: 1px solid var(--border); border-radius: 16px; margin: 22px 0; }
+.shortlist-fields { display: grid; gap: 18px; }
+.shortlist-page label { display: grid; gap: 6px; font-size: 14px; font-weight: 600; }
+.shortlist-page input:not([type=checkbox]), .shortlist-page textarea { width: 100%; min-width: 0; padding: 11px; border: 1px solid #cbd5e1; border-radius: 8px; font: inherit; color: var(--text); background: white; }
+.shortlist-page textarea { min-height: 90px; resize: vertical; }
+.shortlist-page input:focus-visible, .shortlist-page textarea:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.shortlist-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 18px 0; }
+.shortlist-button { display: inline-block; border: 1px solid var(--primary); border-radius: 8px; padding: 10px 16px; background: var(--primary); color: white; font-weight: 600; text-decoration: none; cursor: pointer; }
+.shortlist-button.secondary { color: var(--primary); background: white; }
+.shortlist-button:disabled { cursor: not-allowed; opacity: .6; }
+.shortlist-selection { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; font-size: 14px; }
+.shortlist-selection input, .shortlist-interest input { accent-color: var(--primary); width: 18px; height: 18px; }
+.shortlist-builder-row, .shortlist-card { border: 1px solid var(--border); border-radius: 12px; background: white; padding: 22px; margin: 16px 0; min-width: 0; }
+.shortlist-row-top { display: flex; align-items: start; justify-content: space-between; gap: 16px; }
+.shortlist-row-top h3 { margin: 0 0 6px; font-size: 21px; }
+.shortlist-row-top p { color: var(--text-muted); font-size: 14px; margin: 0 0 18px; }
+.shortlist-metadata { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.shortlist-note-field { grid-column: 1 / -1; }
+.shortlist-help, .shortlist-page small { color: var(--text-muted); font-size: 13px; line-height: 1.6; }
+.shortlist-help { background: var(--primary-light); padding: 15px 18px; border-radius: 10px; }
+.shortlist-status { min-height: 24px; margin: 15px 0; white-space: pre-line; }
+.shortlist-status.error { color: #b91c1c; }
+.shortlist-candidates { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.shortlist-candidates .shortlist-card { margin: 0; }
+.shortlist-profile-bio { color: var(--text-muted); white-space: pre-line; overflow-wrap: anywhere; }
+.shortlist-role { padding: 15px; background: var(--background-secondary); border-radius: 8px; margin-top: 20px; overflow-wrap: anywhere; }
+.shortlist-role a { color: var(--primary); font-weight: 600; }
+.shortlist-interest { display: flex !important; align-items: center; margin-top: 18px; }
+.shortlist-candidate-result { display: flex !important; align-items: start; padding: 13px 0; border-bottom: 1px solid var(--border); font-weight: 400 !important; }
+.shortlist-candidate-result input { margin-top: 4px; flex-shrink: 0; }
+.shortlist-directory-link { margin: 12px 0; }
+#candidate-results { max-height: 380px; overflow-y: auto; }
+.shortlist-copy-output { min-height: 170px !important; }
+.shortlist-page [hidden] { display: none !important; }
+@media (max-width: 650px) { .shortlist-candidates, .shortlist-metadata { grid-template-columns: 1fr; } .shortlist-panel { padding: 19px; } .shortlist-page { padding: 28px 18px 50px; } }
+.directory-page .results-actions { flex-wrap: wrap; }
+.directory-page #createShortlist { display: inline-flex; align-items: center; text-decoration: none; }
