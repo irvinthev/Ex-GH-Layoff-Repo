@@ -52,3 +52,24 @@ test('Engine fixture resolves only to existing public profiles and valid role li
  assert.equal(result.unavailable, 0); assert.equal(result.items.length, 7);
  assert.ok(result.items.every(item => item.url.startsWith('https://job-boards.greenhouse.io/engine/jobs/')));
 });
+
+for (const [company, expectedCount, host] of [
+ ['instacart', 8, 'www.instacart.careers'],
+ ['airbnb', 8, 'careers.airbnb.com'],
+ ['angi', 7, 'www.angi.com']
+]) {
+ test(`${company} shortlist uses unique current public profiles and official role links`, () => {
+  const fixture = JSON.parse(readFileSync(new URL(`../shortlists/${company}.json`, import.meta.url)));
+  const people = JSON.parse(readFileSync(new URL('../people.json', import.meta.url)));
+  const result = S.resolve(fixture, people);
+  assert.equal(result.unavailable, 0);
+  assert.equal(result.items.length, expectedCount);
+  assert.equal(new Set(result.items.map(item => item.id)).size, expectedCount);
+  assert.ok(result.items.every(item => new URL(item.url).hostname === host));
+  assert.ok(result.items.every(item => item.role && item.note));
+  assert.deepEqual(S.decode(S.encode(fixture)), S.validate(fixture));
+  const removed = result.items[0].id;
+  const current = people.filter(person => S.personId(person) !== removed);
+  assert.equal(S.resolve(fixture, current).items.length, expectedCount - 1);
+ });
+}

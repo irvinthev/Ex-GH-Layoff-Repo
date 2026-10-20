@@ -10,6 +10,7 @@
     if (/product manager/i.test(item.role)) return 'Product';
     if (/partner.*(?:growth|success|acquisition)/i.test(item.role)) return 'Partnerships';
     if (/counsel/i.test(item.role)) return 'Legal';
+    if (/engineer/i.test(item.role)) return 'Engineering';
     if (/operations/i.test(item.role)) return 'Operations';
     const fn = S.value(item.person, ['Function', 'function']);
     if (/marketing/i.test(fn)) return 'Marketing';
