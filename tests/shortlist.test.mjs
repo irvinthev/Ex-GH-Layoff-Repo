@@ -56,7 +56,8 @@ test('Engine fixture resolves only to existing public profiles and valid role li
 for (const [company, expectedCount, host] of [
  ['instacart', 8, 'www.instacart.careers'],
  ['airbnb', 8, 'careers.airbnb.com'],
- ['angi', 7, 'www.angi.com']
+ ['angi', 7, 'www.angi.com'],
+ ['reddit', 7, 'job-boards.greenhouse.io']
 ]) {
  test(`${company} shortlist uses unique current public profiles and official role links`, () => {
   const fixture = JSON.parse(readFileSync(new URL(`../shortlists/${company}.json`, import.meta.url)));
