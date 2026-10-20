@@ -1,0 +1,49 @@
+{
+  "v": 1,
+  "title": "Talent selected for Reddit",
+  "intro": "Prepared by Irvin Thevaranjan through the independent Ex-GH Talent Network. Seven public profiles paired with Reddit opportunities reviewed October 19, 2026, across engineering, finance systems, advertising sales, operations, and lifecycle marketing. These are potential alignments, with role-specific questions on each card. Candidate interest, availability, eligibility, and qualifications still need confirmation. Reply to Irvin to explore introductions.",
+  "items": [
+    {
+      "id": "linkedin:/in/mingyang-yan",
+      "role": "Senior Android Software Engineer, Consumer Engineering",
+      "url": "https://job-boards.greenhouse.io/reddit/jobs/8263407",
+      "note": "Kotlin, Android architecture, and consumer mobile development align directly with this role. Explore shipped apps at scale, project leadership, experimentation, instrumentation, and performance or accessibility improvements."
+    },
+    {
+      "id": "linkedin:/in/katie-logan-5b67b676",
+      "role": "Group Product Manager, Finance Technology",
+      "url": "https://job-boards.greenhouse.io/reddit/jobs/8075185",
+      "note": "Finance systems leadership and ERP transformation provide a relevant foundation; the role explicitly accepts business/finance systems experience. Explore eight-plus years of relevant experience, two-plus years managing people, multi-domain platform ownership, roadmaps, vendor management, SOX, and close transformation."
+    },
+    {
+      "id": "linkedin:/in/abhinauv-kapoor",
+      "role": "Engineering Manager, Notifications Platform",
+      "url": "https://job-boards.greenhouse.io/reddit/jobs/8095476",
+      "note": "Led distributed systems, platform products, and multi-team engineering organizations. Explore event-driven architecture, messaging or notification delivery, highly available services, and interest in the team scope."
+    },
+    {
+      "id": "linkedin:/in/erin-tatum-6b331a2b",
+      "role": "Lead Client Partner, Large Customer Sales (Restaurants & Drinks)",
+      "url": "https://job-boards.greenhouse.io/reddit/jobs/8257083",
+      "note": "Enterprise advertising sales across Twitter and Tastemade connect well with social and native advertising partnerships. Confirm the required 12-plus years in digital media (the directory lists 11-plus), seven-plus years in sales, restaurant/beverage accounts, agency relationships, and hybrid office eligibility."
+    },
+    {
+      "id": "linkedin:/in/mark-spooner-603b9b55",
+      "role": "Senior Frontend Software Engineer, Consumer Engineering",
+      "url": "https://job-boards.greenhouse.io/reddit/jobs/8147617",
+      "note": "Senior frontend engineering, JavaScript, scalable web applications, and UI performance are relevant. Explore React, TypeScript, Next.js, API design, technical ownership, and measurable consumer-product impact."
+    },
+    {
+      "id": "linkedin:/in/tai-worlds-mba-pmp-csm-28b98a282",
+      "role": "Senior Program Manager, Business Process Transformation",
+      "url": "https://job-boards.greenhouse.io/reddit/jobs/8010425",
+      "note": "PMP-certified program leadership and extensive customer-support operations experience provide relevant foundations. Explore end-to-end transformation outcomes, executive recommendations, sales-process or advertiser-workflow experience, and change adoption. Chicago-based hybrid attendance needs confirmation."
+    },
+    {
+      "id": "linkedin:/in/jill-weinstein-0192b4a",
+      "role": "Senior Community Lifecycle Manager",
+      "url": "https://job-boards.greenhouse.io/reddit/jobs/8168390",
+      "note": "Lifecycle campaigns, customer insights, churn reduction, and GTM experience are relevant. This is a hands-on individual-contributor role: confirm interest in that scope, HubSpot or comparable campaign building, basic SQL, multichannel QA, and treatment/control experiments."
+    }
+  ]
+}

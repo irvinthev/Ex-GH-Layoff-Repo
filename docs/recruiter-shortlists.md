@@ -47,3 +47,11 @@ See [company-shortlist-review.md](company-shortlist-review.md) for review source
 The viewer loads supplemental profiles only for the saved Shopify list, never from a shared URL payload. Removing an introduction from the sidecar withholds its card; directory profile removals continue to be respected. The sidecar does not alter the directory or its spreadsheet refresh. Current interest, portfolio fit, and eligibility still require confirmation.
 
 Source review: Shopify official careers board and the linked official role pages, October 19, 2026. Corey and Jill are potential partner-marketing matches. Connor and Arushi need to confirm interest in a senior IC Product Operations role.
+
+### Reddit
+
+`shortlist.html?list=reddit` introduces Mindy Yan, Katie Logan, Abhi Kapoor, Erin Tatum, Mark Spooner, Taisha Worlds, and Jill Weinstein against seven current official postings, reviewed October 19, 2026. Every card resolves from the current public directory; there are no supplemental profiles.
+
+Mindy and Katie lead the page. Katie's complete finance-system scope, tenure, and people management need confirmation. Erin's public profile lists 11+ years versus the posting's 12+ digital-media requirement; the card explicitly flags the gap. Erin and Taisha have office-location requirements; the other selected postings are US remote. Jill's role is a hands-on IC position requiring campaign building and basic SQL. No interest, referral, introduction, or recruiter response is implied. No outreach has been sent.
+
+Role sources are the official Greenhouse URLs on each card. Posting descriptions were read in full. Match notes reflect public profile evidence and identify material points to validate. Justin's email address remains outside the public shortlist.
