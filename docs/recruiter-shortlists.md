@@ -27,3 +27,15 @@ A shared link's role match is a sender assessment, not a verified qualification 
 Run `node --experimental-strip-types --test tests/*.test.mjs` and syntax-check the modified JavaScript. Core tests cover Unicode sharing links, safe URLs, schema limits, duplicate references, directory reorder/name changes, live profile updates, removals, corrupt/blocked storage, and the saved Engine list.
 
 UI checks should cover directory selection across filters, builder editing/removal, preview and copy, reload of a shared link, clipboard denial/manual copy, malformed links, blocked storage, no current profiles, and narrow-screen layouts. No browser or physical-device rendering verification is claimed by the unit tests.
+
+## Company outreach queue
+
+Prepared October 19, 2026, in this order:
+
+| Priority | Company | Saved link | Profiles | Distinct roles |
+| --- | --- | --- | --- | --- |
+| 1 | Instacart | `shortlist.html?list=instacart` | 8 | 6 |
+| 2 | Airbnb | `shortlist.html?list=airbnb` | 8 | 5 |
+| 3 | Angi | `shortlist.html?list=angi` | 7 | 5 |
+
+See [company-shortlist-review.md](company-shortlist-review.md) for review sources, candidate rationale, qualification gaps, and exclusions. These are conversation shortlists, not assertions that every candidate meets every minimum requirement. No outreach has been sent, and candidate interest or availability has not been reconfirmed.
