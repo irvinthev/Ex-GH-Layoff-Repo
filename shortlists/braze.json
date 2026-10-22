@@ -1,12 +1,12 @@
 {
   "v": 1,
   "title": "Braze × Ex-Grubhub | Curated talent introductions",
-  "intro": "Great talent. Already in your orbit. A curated introduction to former Grubhub professionals across lifecycle marketing, partnerships, customer success, engineering, and revenue operations. Jill is already in the interview process for a Braze marketing role. These are suggested alignments, not hiring endorsements: role requirements, interest, availability, and interview status should be confirmed directly. Select candidates below and send the names to Irvin to request an introduction.",
+  "intro": "Great talent. Already in your orbit. Eight experienced professionals across lifecycle marketing, partnerships, customer success, engineering, decision science, and revenue operations. Jill is already in the interview process for a Braze marketing role. Explore their experience, select the people you'd like to meet, and request an introduction. Candidate interest, availability, and role fit are confirmed before introductions.",
   "items": [
     {
       "id": "linkedin:/in/jill-weinstein-0192b4a",
       "role": "Director, Lifecycle Marketing — interviewing",
-      "url": "https://job-boards.greenhouse.io/braze/jobs/8144376",
+      "url": "https://job-boards.greenhouse.io/braze/jobs/8226600",
       "note": "Already in the interview process for this Braze opportunity. 15+ years leading B2B engagement and product marketing; her published profile cites major growth programs and churn reduction. Interview status and next steps should be confirmed before outreach."
     },
     {
@@ -44,6 +44,12 @@
       "role": "Revenue Operations / business operations",
       "url": "",
       "note": "Revenue operations experience with Salesforce, data management, process improvement and cross-functional implementations. Explore systems ownership, reporting, and specific open RevOps positions."
+    },
+    {
+      "id": "linkedin:/in/pdelucena",
+      "role": "Decision Science / AI product analytics — exploratory",
+      "url": "",
+      "note": "Former Staff Decision Scientist with experience in machine learning, systems design and data-driven decision-making. Relevant to Braze's intelligence and optimization work; confirm product versus data-science scope, applied ML depth and currently open positions before making a role-specific match."
     }
   ]
 }
