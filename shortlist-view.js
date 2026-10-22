@@ -68,7 +68,7 @@
     'linkedin:/in/kritikaumashankar': ['React, Node.js and Java development','Recent full-stack application delivery','Experience spanning frontend and backend'],
     'linkedin:/in/roxanne-dean-856bb0216': ['Salesforce and revenue operations','Cross-functional system implementations','Data and process improvement'],
     'linkedin:/in/edsancha': ['20+ years in product engineering','Led teams of up to 36 and over 30 services','AI-enabled care and platform modernization'],
-    'linkedin:/in/pdelucena': ['Staff Decision Scientist at Grubhub','Machine learning, optimization and systems design','Product intelligence and measurable decision outcomes']
+    'linkedin:/in/pdelucena': ['Technical product management and decision science at Grubhub','CTO and Head of Product at Unlocked Labs','AI prototyping with TalentBot; enterprise integrations at Blackboard']
   };
   const brazeReasons = {
     'linkedin:/in/jill-weinstein-0192b4a': 'Jill has led B2B marketing and lifecycle programs at major platforms, with reported outcomes in growth and retention. Her experience is directly relevant to the Director, Lifecycle Marketing conversation already underway.',
@@ -79,7 +79,7 @@
     'linkedin:/in/kritikaumashankar': 'Kritika combines modern React and Node.js development with Java experience. Her full-stack background is relevant to application teams, with role-specific stack and production-scale fit to establish.',
     'linkedin:/in/roxanne-dean-856bb0216': 'Roxanne combines Salesforce, revenue operations, and cross-functional process implementation experience. She offers relevant skills for the systems and processes supporting commercial operations.',
     'linkedin:/in/edsancha': 'Eduardo has led multi-team consumer product engineering and major platform modernization. His experience in distributed systems, AI-enabled care and organizational leadership merits a conversation for Braze Channels engineering; VP-level manager-of-managers scope and messaging infrastructure depth remain to be confirmed.',
-    'linkedin:/in/pdelucena': 'Paul brings decision science, machine learning and systems architecture to a product area focused on model quality, optimization and measurable customer outcomes. His background offers a compelling technical foundation for Braze Intelligence; roadmap ownership, commercial metrics and launch leadership should be explored.'
+    'linkedin:/in/pdelucena': 'Paul brings technical product ownership, AI experimentation, integration architecture and hands-on product building. His experience across Grubhub, Unlocked Labs, TalentBot and Blackboard connects well to Braze Banners and Content Cards, particularly SDK-connected experiences and customer adoption. His formal PM tenure and NYC hybrid feasibility should be confirmed.'
   };
   function updateBrazeSelection() {
     if (!isBraze || !resolved) return;
