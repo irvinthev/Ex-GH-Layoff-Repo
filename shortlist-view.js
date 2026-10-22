@@ -67,7 +67,7 @@
     'linkedin:/in/patel-prem': ['Backend platforms and APIs','Checkout and payments systems','Distributed systems engineering'],
     'linkedin:/in/kritikaumashankar': ['React, Node.js and Java development','Recent full-stack application delivery','Experience spanning frontend and backend'],
     'linkedin:/in/roxanne-dean-856bb0216': ['Salesforce and revenue operations','Cross-functional system implementations','Data and process improvement'],
-    'linkedin:/in/pdelucena': ['Staff Decision Scientist background','Machine learning and systems design','Data-driven strategic analytics']
+    'linkedin:/in/pdelucena': ['Staff Decision Scientist at Grubhub','Machine learning, optimization and systems design','Product intelligence and measurable decision outcomes']
   };
   const brazeReasons = {
     'linkedin:/in/jill-weinstein-0192b4a': 'Jill has led B2B marketing and lifecycle programs at major platforms, with reported outcomes in growth and retention. Her experience is directly relevant to the Director, Lifecycle Marketing conversation already underway.',
@@ -77,7 +77,7 @@
     'linkedin:/in/patel-prem': 'Prem has built backend, API, checkout, and distributed systems. That foundation could translate to Braze platform engineering, subject to the specific team stack and system-scale requirements.',
     'linkedin:/in/kritikaumashankar': 'Kritika combines modern React and Node.js development with Java experience. Her full-stack background is relevant to application teams, with role-specific stack and production-scale fit to establish.',
     'linkedin:/in/roxanne-dean-856bb0216': 'Roxanne combines Salesforce, revenue operations, and cross-functional process implementation experience. She offers relevant skills for the systems and processes supporting commercial operations.',
-    'linkedin:/in/pdelucena': 'Paul has worked at the intersection of decision science, machine learning, and systems design. That perspective is relevant to Braze decisioning and product analytics, though a specific opening has not been confirmed.'
+    'linkedin:/in/pdelucena': 'Paul brings decision science, machine learning and systems architecture to a product area focused on model quality, optimization and measurable customer outcomes. His background offers a compelling technical foundation for Braze Intelligence; roadmap ownership, commercial metrics and launch leadership should be explored.'
   };
   function updateBrazeSelection() {
     if (!isBraze || !resolved) return;
