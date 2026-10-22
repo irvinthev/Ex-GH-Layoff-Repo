@@ -150,3 +150,36 @@
 .braze-shortlist .shortlist-profile-bio { font-size: 14px; line-height: 1.75; }
 .braze-shortlist .recruiter-discipline { letter-spacing: .08em; font-size: 11px; }
 @media (max-width: 750px) { .braze-shortlist .recruiter-hero h1 { letter-spacing: -.05em; } }
+
+/* Braze-only executive candidate experience. */
+.braze-shortlist .recruiter-hero { padding-bottom: 32px; }
+.braze-shortlist .shortlist-candidates { align-items: stretch; }
+.braze-shortlist .braze-candidate { gap: 0; padding: 26px; }
+.braze-shortlist .braze-kicker { color: var(--recruiter-green); font-size: 10px; letter-spacing: .11em; font-weight: 800; margin: 0 0 9px; }
+.braze-shortlist .braze-who h2 { margin-bottom: 9px; }
+.braze-shortlist .braze-who .recruiter-location { margin-bottom: 0; }
+.braze-shortlist .braze-why { padding: 22px 0 20px; }
+.braze-shortlist .braze-why h3, .braze-shortlist .braze-meet h3 { font-size: 14px; font-weight: 750; margin: 0 0 9px; }
+.braze-shortlist .braze-why p { font-size: 14px; line-height: 1.65; color: var(--recruiter-ink); margin: 0 0 14px; }
+.braze-shortlist .braze-highlights { display: grid; gap: 7px; margin: 0; padding-left: 19px; font-size: 12px; line-height: 1.5; color: var(--recruiter-muted); }
+.braze-shortlist .braze-highlights li::marker { color: var(--recruiter-green); }
+.braze-shortlist .braze-opportunity { background: #f2f5ef; padding: 15px 17px; border-radius: 10px; margin-top: auto; display: grid; gap: 7px; }
+.braze-shortlist .braze-opportunity strong, .braze-shortlist .braze-opportunity a { font-size: 14px; line-height: 1.5; font-weight: 750; }
+.braze-shortlist .braze-opportunity small { font-size: 11px; }
+.braze-shortlist .braze-meet { margin-top: 20px; }
+.braze-shortlist .braze-actions { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.braze-shortlist .braze-actions a { font-size: 12px; }
+.braze-shortlist .braze-select { background: var(--recruiter-green); border: 1px solid var(--recruiter-green); color: white; border-radius: 8px; padding: 11px 14px; cursor: pointer; font: inherit; font-size: 12px; font-weight: 750; }
+.braze-shortlist .braze-select[aria-pressed="true"] { color: var(--recruiter-ink); background: var(--recruiter-lime); border-color: var(--recruiter-lime); }
+.braze-shortlist .braze-details { margin-top: 15px; border-top: 1px solid var(--recruiter-line); padding-top: 12px; }
+.braze-shortlist .braze-details summary { cursor: pointer; color: var(--recruiter-green); font-size: 12px; }
+.braze-shortlist .braze-details p { color: var(--recruiter-muted); font-size: 13px; line-height: 1.65; }
+.braze-shortlist .braze-selection-summary { flex: 1; max-width: 240px; font-size: 13px; }
+.braze-shortlist .braze-selection-summary p { font-size: 11px; line-height: 1.5; margin: 6px 0 0; }
+.braze-shortlist #copy-interest:disabled { opacity: .6; cursor: not-allowed; }
+@media (max-width: 750px) {
+  .braze-shortlist .braze-candidate { padding: 23px; }
+  .braze-shortlist .braze-actions { align-items: stretch; flex-direction: column; }
+  .braze-shortlist .braze-select { width: 100%; }
+  .braze-shortlist .braze-selection-summary { max-width: 100%; }
+}
