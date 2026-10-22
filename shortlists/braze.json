@@ -1,7 +1,7 @@
 {
   "v": 1,
   "title": "Braze × Ex-Grubhub | Curated talent introductions",
-  "intro": "Great talent. Already in your orbit. Eight experienced professionals across lifecycle marketing, partnerships, customer success, engineering, decision science, and revenue operations. Jill is already in the interview process for a Braze marketing role. Explore their experience, select the people you'd like to meet, and request an introduction. Candidate interest, availability, and role fit are confirmed before introductions.",
+  "intro": "Great talent. Already in your orbit. Nine experienced professionals across lifecycle marketing, partnerships, customer success, engineering, decision science, and revenue operations. Jill is already in the interview process for a Braze marketing role. Explore their experience, select the people you'd like to meet, and request an introduction. Candidate interest, availability, and role fit are confirmed before introductions.",
   "items": [
     {
       "id": "linkedin:/in/jill-weinstein-0192b4a",
@@ -50,6 +50,12 @@
       "role": "Senior Product Manager, Intelligence",
       "url": "https://job-boards.greenhouse.io/braze/jobs/8247542",
       "note": "Background in technical product management, prediction, simulation, optimization and systems architecture at Grubhub. Explore relevance to Braze Intelligence's ML-driven product portfolio, product-roadmap ownership and measurable customer outcomes. Position availability requires reconfirmation."
+    },
+    {
+      "id": "linkedin:/in/edsancha",
+      "role": "VP, Product Engineering — Channels",
+      "url": "https://job-boards.greenhouse.io/braze/jobs/8186643",
+      "note": "20+ years building consumer products and platforms, leading teams up to 36 and engineering across more than 30 services. Strong background in platform modernization and AI-enabled customer experience. Confirm depth of VP-scale manager-of-managers leadership, messaging infrastructure ownership, and New York working arrangement."
     }
   ]
 }
