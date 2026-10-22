@@ -1,0 +1,49 @@
+{
+  "v": 1,
+  "title": "Braze × Ex-Grubhub | Curated talent introductions",
+  "intro": "Great talent. Already in your orbit. A curated introduction to former Grubhub professionals across lifecycle marketing, partnerships, customer success, engineering, and revenue operations. Jill is already in the interview process for a Braze marketing role. These are suggested alignments, not hiring endorsements: role requirements, interest, availability, and interview status should be confirmed directly. Select candidates below and send the names to Irvin to request an introduction.",
+  "items": [
+    {
+      "id": "linkedin:/in/jill-weinstein-0192b4a",
+      "role": "Director, Lifecycle Marketing — interviewing",
+      "url": "https://job-boards.greenhouse.io/braze/jobs/8144376",
+      "note": "Already in the interview process for this Braze opportunity. 15+ years leading B2B engagement and product marketing; her published profile cites major growth programs and churn reduction. Interview status and next steps should be confirmed before outreach."
+    },
+    {
+      "id": "linkedin:/in/corey-laffel-solon",
+      "role": "Marketing and partnerships leadership",
+      "url": "",
+      "note": "Led enterprise partner marketing and helped scale a major advertising business at Wayfair. Relevant to lifecycle growth and commercial partnerships; confirm specific role requirements, SaaS marketing attribution experience and interest."
+    },
+    {
+      "id": "linkedin:/in/elena-moilan",
+      "role": "Senior Customer Success / customer operations",
+      "url": "https://job-boards.greenhouse.io/braze/jobs/8155118",
+      "note": "Enterprise onboarding, operational escalation, compliance and process improvement experience. Explore ownership of renewals, executive business reviews, retention metrics and expansion responsibilities for customer success positions."
+    },
+    {
+      "id": "linkedin:/in/daniel-hara-0258234",
+      "role": "Engineering Manager / engineering leadership",
+      "url": "",
+      "note": "13+ years building and leading the Driver App and post-purchase teams, progressing from technical lead to Associate Director. Particularly relevant for mobile and cross-functional engineering leadership; confirm open roles and technical scope."
+    },
+    {
+      "id": "linkedin:/in/patel-prem",
+      "role": "Software Engineer II — backend / targeting exploration",
+      "url": "",
+      "note": "Backend engineering across checkout, APIs, payments and distributed systems. Explore service scale and proficiency with Braze's role-specific database and application stack before treating User Targeting as a confirmed match."
+    },
+    {
+      "id": "linkedin:/in/kritikaumashankar",
+      "role": "Software Engineer II — full-stack / targeting exploration",
+      "url": "",
+      "note": "Recent hands-on React, Node.js and Java full-stack work. Relevant application-development background; confirm experience with role-specific production scale, data systems and backend requirements."
+    },
+    {
+      "id": "linkedin:/in/roxanne-dean-856bb0216",
+      "role": "Revenue Operations / business operations",
+      "url": "",
+      "note": "Revenue operations experience with Salesforce, data management, process improvement and cross-functional implementations. Explore systems ownership, reporting, and specific open RevOps positions."
+    }
+  ]
+}
