@@ -67,6 +67,7 @@
     'linkedin:/in/patel-prem': ['Backend platforms and APIs','Checkout and payments systems','Distributed systems engineering'],
     'linkedin:/in/kritikaumashankar': ['React, Node.js and Java development','Recent full-stack application delivery','Experience spanning frontend and backend'],
     'linkedin:/in/roxanne-dean-856bb0216': ['Salesforce and revenue operations','Cross-functional system implementations','Data and process improvement'],
+    'linkedin:/in/edsancha': ['20+ years in product engineering','Led teams of up to 36 and over 30 services','AI-enabled care and platform modernization'],
     'linkedin:/in/pdelucena': ['Staff Decision Scientist at Grubhub','Machine learning, optimization and systems design','Product intelligence and measurable decision outcomes']
   };
   const brazeReasons = {
@@ -77,6 +78,7 @@
     'linkedin:/in/patel-prem': 'Prem has built backend, API, checkout, and distributed systems. That foundation could translate to Braze platform engineering, subject to the specific team stack and system-scale requirements.',
     'linkedin:/in/kritikaumashankar': 'Kritika combines modern React and Node.js development with Java experience. Her full-stack background is relevant to application teams, with role-specific stack and production-scale fit to establish.',
     'linkedin:/in/roxanne-dean-856bb0216': 'Roxanne combines Salesforce, revenue operations, and cross-functional process implementation experience. She offers relevant skills for the systems and processes supporting commercial operations.',
+    'linkedin:/in/edsancha': 'Eduardo has led multi-team consumer product engineering and major platform modernization. His experience in distributed systems, AI-enabled care and organizational leadership merits a conversation for Braze Channels engineering; VP-level manager-of-managers scope and messaging infrastructure depth remain to be confirmed.',
     'linkedin:/in/pdelucena': 'Paul brings decision science, machine learning and systems architecture to a product area focused on model quality, optimization and measurable customer outcomes. His background offers a compelling technical foundation for Braze Intelligence; roadmap ownership, commercial metrics and launch leadership should be explored.'
   };
   function updateBrazeSelection() {
@@ -157,8 +159,8 @@
       raw = S.validate(await response.json());
       // Company-scoped introductions are maintained separately from the opt-in directory.
       // Shared URL payloads cannot supply or restore profile data.
-      if (slug === 'shopify') {
-        const profiles = await fetch('./shortlists/shopify-profiles.json', { cache: 'no-store' });
+      if (slug === 'shopify' || slug === 'braze') {
+        const profiles = await fetch(`./shortlists/${slug}-profiles.json`, { cache: 'no-store' });
         if (profiles.ok) {
           const entries = await profiles.json();
           if (!Array.isArray(entries)) throw new Error('Community introductions are unavailable.');
