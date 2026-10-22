@@ -3,6 +3,7 @@
   const S = window.TalentShortlist;
   const byId = id => document.getElementById(id);
   const selected = new Set();
+  const displayName = person => S.personId(person) === 'linkedin:/in/corey-laffel-solon' ? 'Corey Laffel Solon' : S.name(person);
   let resolved;
   let activeDiscipline = 'All';
   const cards = new Map();
@@ -65,6 +66,13 @@
     if (data) raw = S.decode(data);
     else {
       const slug = params.get('list');
+      if (slug === 'braze') {
+        document.body.classList.add('braze-shortlist');
+        const fonts = document.createElement('link');
+        fonts.rel = 'stylesheet';
+        fonts.href = 'https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap';
+        document.head.appendChild(fonts);
+      }
       if (!slug || slug.length > 60 || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) throw new Error('Choose a shortlist link from its sender, or create one from the directory.');
       const response = await fetch(`./shortlists/${slug}.json`, { cache: 'no-store' });
       if (!response.ok) throw new Error('This saved shortlist is unavailable. Ask the sender for a current link.');
@@ -93,7 +101,7 @@
       const person = item.person;
       const card = node('article', '', 'shortlist-card');
       card.appendChild(node('p', discipline(item), 'recruiter-discipline'));
-      card.appendChild(node('h2', S.name(person)));
+      card.appendChild(node('h2', displayName(person)));
       card.appendChild(node('p', S.value(person, ['Former Job Title', 'formerRole', 'role']), 'recruiter-background'));
       card.appendChild(node('p', S.value(person, ['Location', 'location']), 'recruiter-location'));
       const bio = S.value(person, ['Description', 'description', 'Short Description']);
@@ -124,7 +132,7 @@
         checkbox.checked ? selected.add(item.id) : selected.delete(item.id);
         byId('copy-interest').textContent = selected.size ? `Copy ${selected.size} selected name${selected.size === 1 ? '' : 's'}` : 'Copy all names';
       };
-      checkbox.setAttribute('aria-label', `Interested in ${S.name(person)}`);
+      checkbox.setAttribute('aria-label', `Interested in ${displayName(person)}`);
       label.append(checkbox, node('span', 'Interested')); footer.appendChild(label); card.appendChild(footer);
       const current = S.value(person, ['Open to Work', 'openToWork', 'availability']).toLowerCase();
       card.appendChild(node('p', ['yes', 'true', 'active', 'actively searching'].includes(current) ? 'Listed as actively searching · Confirm current availability' : 'Availability unverified', 'recruiter-availability'));
@@ -141,7 +149,7 @@
   }
   byId('copy-interest').onclick = () => {
     const items = resolved.items.filter(item => !selected.size || selected.has(item.id));
-    copy(`I’d like to learn more about these candidates from “${resolved.title}”:\n\n${items.map(item => `• ${S.name(item.person)}${item.role ? ` — ${item.role}` : ''}`).join('\n')}\n\nCould you confirm their interest and availability for an introduction?`);
+    copy(`I’d like to learn more about these candidates from “${resolved.title}”:\n\n${items.map(item => `• ${displayName(item.person)}${item.role ? ` — ${item.role}` : ''}`).join('\n')}\n\nCould you confirm their interest and availability for an introduction?`);
   };
   byId('copy-shortlist-link').onclick = () => copy(window.location.href);
 })();

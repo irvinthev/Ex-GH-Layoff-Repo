@@ -139,3 +139,14 @@
   .recruiter-section-heading h2 { font-size: 24px; }
 }
 @media (prefers-reduced-motion: reduce) { .shortlist-view-page { scroll-behavior: auto; } }
+
+/* Braze executive shortlist: scoped typography, preserving other shortlist pages. */
+.shortlist-view-page.braze-shortlist { font-family: "Plus Jakarta Sans", "Avenir Next", system-ui, sans-serif; }
+.braze-shortlist .recruiter-hero h1, .braze-shortlist .recruiter-section-heading h2, .braze-shortlist .shortlist-card h2 { font-family: "Plus Jakarta Sans", "Avenir Next", system-ui, sans-serif; }
+.braze-shortlist .recruiter-hero h1 { font-weight: 750; letter-spacing: -.065em; }
+.braze-shortlist .recruiter-hero h1 em { font-family: "DM Serif Display", Georgia, serif; font-style: italic; font-weight: 400; letter-spacing: -.035em; }
+.braze-shortlist .recruiter-intro { font-size: 16px; line-height: 1.65; max-width: 650px; }
+.braze-shortlist .shortlist-card h2 { font-size: 27px; font-weight: 750; letter-spacing: -.04em; }
+.braze-shortlist .shortlist-profile-bio { font-size: 14px; line-height: 1.75; }
+.braze-shortlist .recruiter-discipline { letter-spacing: .08em; font-size: 11px; }
+@media (max-width: 750px) { .braze-shortlist .recruiter-hero h1 { letter-spacing: -.05em; } }
