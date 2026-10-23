@@ -1,0 +1,43 @@
+{
+  "v": 1,
+  "title": "SeatGeek | Marketplace talent shortlist",
+  "intro": "Independent Ex-Grubhub talent introductions for SeatGeek opportunities. These are exploratory alignments; candidate interest and job requirements must be confirmed before outreach.",
+  "items": [
+    {
+      "id": "linkedin:/in/edsancha",
+      "role": "Engineering leadership",
+      "url": "https://seatgeek.com/jobs",
+      "note": "Consumer product engineering leadership and modernization."
+    },
+    {
+      "id": "linkedin:/in/connorkaddatz",
+      "role": "Lead Product Manager, Fan Experience",
+      "url": "https://seatgeek.com/jobs",
+      "note": "API, integration and platform product experience."
+    },
+    {
+      "id": "linkedin:/in/elena-moilan",
+      "role": "Client Success Manager",
+      "url": "https://seatgeek.com/jobs",
+      "note": "Enterprise implementations and client operations."
+    },
+    {
+      "id": "linkedin:/in/mike-jahn-372a2226",
+      "role": "Engineering Manager, Core Engineering",
+      "url": "https://seatgeek.com/jobs",
+      "note": "Consumer technology and shared engineering platforms."
+    },
+    {
+      "id": "linkedin:/in/daniel-hara-0258234",
+      "role": "Engineering Manager, SupportX",
+      "url": "https://seatgeek.com/jobs",
+      "note": "Mobile and post-purchase engineering leadership."
+    },
+    {
+      "id": "linkedin:/in/pdelucena",
+      "role": "Lead Product Manager, Fan Experience",
+      "url": "https://seatgeek.com/jobs",
+      "note": "Technical product management and decision science."
+    }
+  ]
+}
