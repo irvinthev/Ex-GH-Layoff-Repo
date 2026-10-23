@@ -205,3 +205,11 @@
 .seatgeek-shortlist .braze-details p { font-size: 13px; line-height: 1.65; color: var(--recruiter-muted); }
 .seatgeek-shortlist #copy-interest:disabled { opacity: .6; }
 @media(max-width:750px){.seatgeek-shortlist .braze-candidate{padding:22px}.seatgeek-shortlist .braze-actions{flex-direction:column;align-items:stretch}.seatgeek-shortlist .braze-select{width:100%}}
+
+/* SeatGeek: optional full background is available without obscuring the role fit. */
+.seatgeek-shortlist .seatgeek-background { order: 4; border-top: 1px solid var(--recruiter-line); margin-top: 18px; padding: 15px 0 0; }
+.seatgeek-shortlist .seatgeek-background summary { font-size: 13px; font-weight: 700; cursor: pointer; padding: 7px 0; }
+.seatgeek-shortlist .seatgeek-background[open] summary { margin-bottom: 12px; }
+.seatgeek-shortlist .seatgeek-background-content { color: var(--recruiter-muted); font-size: 13px; line-height: 1.7; white-space: pre-line; }
+.seatgeek-shortlist .seatgeek-background-position { font-weight: 650; color: var(--recruiter-ink); }
+.seatgeek-shortlist .braze-meet { order: 5; }
