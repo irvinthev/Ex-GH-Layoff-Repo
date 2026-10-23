@@ -67,7 +67,8 @@
     'linkedin:/in/patel-prem': ['Backend platforms and APIs','Checkout and payments systems','Distributed systems engineering'],
     'linkedin:/in/kritikaumashankar': ['React, Node.js and Java development','Recent full-stack application delivery','Experience spanning frontend and backend'],
     'linkedin:/in/roxanne-dean-856bb0216': ['Salesforce and revenue operations','Cross-functional system implementations','Data and process improvement'],
-    'linkedin:/in/pdelucena': ['Staff Decision Scientist background','Machine learning and systems design','Data-driven strategic analytics']
+    'linkedin:/in/edsancha': ['20+ years leading product engineering','30+ applications and services; teams up to 36','AI-enabled customer care and platform modernization'],
+    'linkedin:/in/pdelucena': ['Technical PM and decision science at Grubhub','CTO and Head of Product at Unlocked Labs','AI product development at TalentBot; Blackboard integrations']
   };
   const brazeReasons = {
     'linkedin:/in/jill-weinstein-0192b4a': 'Jill has led B2B marketing and lifecycle programs at major platforms, with reported outcomes in growth and retention. Her experience is directly relevant to the Director, Lifecycle Marketing conversation already underway.',
@@ -77,7 +78,8 @@
     'linkedin:/in/patel-prem': 'Prem has built backend, API, checkout, and distributed systems. That foundation could translate to Braze platform engineering, subject to the specific team stack and system-scale requirements.',
     'linkedin:/in/kritikaumashankar': 'Kritika combines modern React and Node.js development with Java experience. Her full-stack background is relevant to application teams, with role-specific stack and production-scale fit to establish.',
     'linkedin:/in/roxanne-dean-856bb0216': 'Roxanne combines Salesforce, revenue operations, and cross-functional process implementation experience. She offers relevant skills for the systems and processes supporting commercial operations.',
-    'linkedin:/in/pdelucena': 'Paul has worked at the intersection of decision science, machine learning, and systems design. That perspective is relevant to Braze decisioning and product analytics, though a specific opening has not been confirmed.'
+    'linkedin:/in/edsancha': 'Eduardo brings 20+ years in consumer product engineering, leading multi-team organizations and modernization across 30+ services. His experience in AI-enabled care and platform delivery warrants a VP, Product Engineering conversation; messaging-channel depth, VP-level management scope and NYC feasibility remain open questions.',
+    'linkedin:/in/pdelucena': 'Paul combines technical product ownership, AI product development, SDK and integration architecture, and decision science. His product work across Grubhub, Unlocked Labs, TalentBot, and Blackboard is relevant to Braze Banners and Content Cards; confirm eight-plus years of formal PM tenure and NYC hybrid feasibility.'
   };
   function updateBrazeSelection() {
     if (!isBraze || !resolved) return;
@@ -157,8 +159,8 @@
       raw = S.validate(await response.json());
       // Company-scoped introductions are maintained separately from the opt-in directory.
       // Shared URL payloads cannot supply or restore profile data.
-      if (slug === 'shopify') {
-        const profiles = await fetch('./shortlists/shopify-profiles.json', { cache: 'no-store' });
+      if (slug === 'shopify' || slug === 'braze') {
+        const profiles = await fetch(`./shortlists/${slug}-profiles.json`, { cache: 'no-store' });
         if (profiles.ok) {
           const entries = await profiles.json();
           if (!Array.isArray(entries)) throw new Error('Community introductions are unavailable.');
