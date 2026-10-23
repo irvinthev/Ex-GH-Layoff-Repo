@@ -183,3 +183,25 @@
   .braze-shortlist .braze-select { width: 100%; }
   .braze-shortlist .braze-selection-summary { max-width: 100%; }
 }
+
+/* SeatGeek editorial shortlist: retain established executive design and emphasize business case. */
+.seatgeek-shortlist .braze-candidate { gap: 0; padding: 25px; }
+.seatgeek-shortlist .braze-kicker { font-size: 10px; font-weight: 800; letter-spacing: .11em; color: var(--recruiter-green); margin: 0 0 10px; }
+.seatgeek-shortlist .braze-who h2 { margin: 0 0 8px; }
+.seatgeek-shortlist .braze-who .recruiter-location { margin-bottom: 0; }
+.seatgeek-shortlist .braze-why { padding: 23px 0; }
+.seatgeek-shortlist .braze-why h3,.seatgeek-shortlist .braze-meet h3 { font-size: 15px; margin: 0 0 10px; }
+.seatgeek-shortlist .braze-why p { font-size: 14px; line-height: 1.7; color: var(--recruiter-ink); margin: 0; }
+.seatgeek-shortlist .braze-highlights:empty { display: none; }
+.seatgeek-shortlist .braze-opportunity { display: grid; gap: 7px; padding: 16px; border-radius: 10px; background: #f2f5ef; margin-top: auto; }
+.seatgeek-shortlist .braze-opportunity a { font-size: 14px; font-weight: 750; }
+.seatgeek-shortlist .braze-opportunity small { font-size: 11px; color: var(--recruiter-muted); }
+.seatgeek-shortlist .braze-meet { margin-top: 20px; }
+.seatgeek-shortlist .braze-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: space-between; align-items: center; }
+.seatgeek-shortlist .braze-select { background: var(--recruiter-green); border: 0; border-radius: 8px; padding: 12px 14px; color: white; font-weight: 750; cursor: pointer; }
+.seatgeek-shortlist .braze-select[aria-pressed='true'] { background: var(--recruiter-lime); color: var(--recruiter-ink); }
+.seatgeek-shortlist .braze-details { border-top: 1px solid var(--recruiter-line); margin-top: 16px; padding-top: 14px; }
+.seatgeek-shortlist .braze-details summary { cursor: pointer; color: var(--recruiter-green); font-size: 12px; }
+.seatgeek-shortlist .braze-details p { font-size: 13px; line-height: 1.65; color: var(--recruiter-muted); }
+.seatgeek-shortlist #copy-interest:disabled { opacity: .6; }
+@media(max-width:750px){.seatgeek-shortlist .braze-candidate{padding:22px}.seatgeek-shortlist .braze-actions{flex-direction:column;align-items:stretch}.seatgeek-shortlist .braze-select{width:100%}}
