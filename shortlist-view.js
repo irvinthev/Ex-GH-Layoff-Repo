@@ -116,6 +116,17 @@
     opportunity.appendChild(item.url ? external(item.role, item.url) : node('strong', item.role || 'Exploratory introduction'));
     if (!item.url || (isSeatGeek && /seatgeek\.com\/jobs\/?$/.test(item.url))) opportunity.appendChild(node('small', 'Exploratory alignment · specific opening not confirmed'));
     card.appendChild(opportunity);
+    if (isSeatGeek) {
+      const profileText = S.value(person, ['Description','description','Short Description']);
+      const background = node('details', '', 'braze-details seatgeek-background');
+      background.appendChild(node('summary', 'Explore full professional background'));
+      const content = node('div', '', 'seatgeek-background-content');
+      const previousRole = S.value(person, ['Former Job Title', 'formerRole', 'role']);
+      if (previousRole) content.appendChild(node('p', previousRole, 'seatgeek-background-position'));
+      content.appendChild(node('p', profileText || 'Additional experience is available through the candidate’s public profile.'));
+      background.appendChild(content);
+      card.appendChild(background);
+    }
     const meet = node('section', '', 'braze-meet');
     meet.appendChild(node('h3', 'How to meet them'));
     const actions = node('div', '', 'braze-actions');
@@ -135,10 +146,12 @@
     actions.appendChild(pick);
     meet.appendChild(actions);
     card.appendChild(meet);
-    const details = node('details', '', 'braze-details');
-    details.appendChild(node('summary', 'Read full background'));
-    details.appendChild(node('p', S.value(person, ['Description','description','Short Description'])));
-    card.appendChild(details);
+    if (!isSeatGeek) {
+      const details = node('details', '', 'braze-details');
+      details.appendChild(node('summary', 'Read full background'));
+      details.appendChild(node('p', S.value(person, ['Description','description','Short Description'])));
+      card.appendChild(details);
+    }
     return card;
   }
   try {
