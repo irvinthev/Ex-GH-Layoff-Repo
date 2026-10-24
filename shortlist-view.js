@@ -11,6 +11,10 @@
     ['overview','Overview'], ['sales','Sales & SevenRooms'], ['engineering','Engineering'],
     ['product','Product & Strategy'], ['partnerships','Partnerships & Success'], ['data','Data & AI']
   ];
+  const angiTeams = [['overview','Overview'],['large-pro','Large Pro & Partnerships'],['enterprise-sales','Enterprise Sales'],['enablement','Sales Enablement']];
+  const angiTeamMembers = { 'large-pro':['linkedin:/in/elizabeth-doll-a45b10b0','linkedin:/in/michael-cognetti-3b926910b','linkedin:/in/corey-laffel-solon','linkedin:/in/christian-reeve','linkedin:/in/jonathan-spatz'], 'enterprise-sales':['linkedin:/in/chip-richards'], enablement:['linkedin:/in/jacqueline-wujec'] };
+  const angiTeamExplanations = { overview:'Browse seven candidates across three Angi teams. Contacts below have public hiring signals; requisition ownership is only confirmed when explicitly stated.', 'large-pro':'Enterprise partnership and marketplace strategy. Lily Inman Wilson publicly announced Large Pro hiring, but does not establish ownership of every requisition.', 'enterprise-sales':'Enterprise new business. Steven Woody publicly recruited for related Angi enterprise sales roles; ownership of this exact opening is unconfirmed.', enablement:'Sales enablement strategy. Bethanni Buikema publicly identified this opening as part of her team.' };
+  const angiHiringSignals = { 'linkedin:/in/elizabeth-doll-a45b10b0':['Lily Inman Wilson','https://www.linkedin.com/in/linktolily','Large Pro team hiring; requisition owner unconfirmed'], 'linkedin:/in/michael-cognetti-3b926910b':['Lily Inman Wilson','https://www.linkedin.com/in/linktolily','Large Pro team hiring; requisition owner unconfirmed'], 'linkedin:/in/corey-laffel-solon':['Lily Inman Wilson','https://www.linkedin.com/in/linktolily','Large Pro team hiring; requisition owner unconfirmed'], 'linkedin:/in/christian-reeve':['Lily Inman Wilson','https://www.linkedin.com/in/linktolily','Large Pro hiring announcement; reporting line unconfirmed'], 'linkedin:/in/jonathan-spatz':['Lily Inman Wilson','https://www.linkedin.com/in/linktolily','Large Pro hiring announcement; reporting line unconfirmed'], 'linkedin:/in/chip-richards':['Steven Woody','https://www.linkedin.com/in/stevenwoody3','Recruited for related enterprise sales roles; owner unconfirmed'], 'linkedin:/in/jacqueline-wujec':['Bethanni Buikema','https://www.linkedin.com/in/bethanni-buikema','Publicly confirmed: this role is on her team'] };
   const airbnbTeams = [
     ['overview','Overview'],['product','Product & Platform'],
     ['experiences','Experiences & Growth'],['support','Community Support'],['partnerships','Partnerships'],
@@ -57,13 +61,14 @@
   const shortlistQuery = new URLSearchParams(window.location.search);
   const doorDashPortal = shortlistQuery.get('list') === 'doordash' && !new URLSearchParams(window.location.hash.slice(1)).has('data');
   const airbnbPortal = shortlistQuery.get('list') === 'airbnb' && !new URLSearchParams(window.location.hash.slice(1)).has('data');
+  const angiPortal = shortlistQuery.get('list') === 'angi' && !new URLSearchParams(window.location.hash.slice(1)).has('data');
   const requestedTeam = shortlistQuery.get('team') || 'overview';
-  const portalTeams = airbnbPortal ? airbnbTeams : doorDashTeams;
+  const portalTeams = angiPortal ? angiTeams : airbnbPortal ? airbnbTeams : doorDashTeams;
   let activeTeam = portalTeams.some(([slug]) => slug === requestedTeam) ? requestedTeam : 'overview';
   function setupDoorDashTabs() {
-    if (!doorDashPortal && !airbnbPortal) return;
+    if (!doorDashPortal && !airbnbPortal && !angiPortal) return;
     const nav = node('nav','','doordash-team-nav');
-    nav.setAttribute('aria-label', airbnbPortal ? 'Airbnb hiring teams' : 'DoorDash hiring teams');
+    nav.setAttribute('aria-label', angiPortal ? 'Angi hiring teams' : airbnbPortal ? 'Airbnb hiring teams' : 'DoorDash hiring teams');
     for (const [slug,label] of portalTeams) {
       const a = node('a',label,'doordash-team-tab');
       const url = new URL(window.location.href);
@@ -72,9 +77,9 @@
       a.setAttribute('aria-current',activeTeam === slug ? 'page' : 'false');
       nav.appendChild(a);
     }
-    if (airbnbPortal) {
+    if (airbnbPortal || angiPortal) {
       const mobile = node('div','','airbnb-mobile-team-picker');
-      const label = node('label','Browse Airbnb teams','airbnb-mobile-team-label');
+      const label = node('label',angiPortal ? 'Browse Angi teams' : 'Browse Airbnb teams','airbnb-mobile-team-label');
       label.htmlFor = 'airbnb-team-select';
       const select = node('select','','airbnb-team-select');
       select.id = 'airbnb-team-select';
@@ -100,7 +105,7 @@
     }
     const heading = node('div','','doordash-team-context');
     const title = node('h2',portalTeams.find(([s])=>s===activeTeam)[1]);
-    const description = node('p',(airbnbPortal ? airbnbTeamExplanations : doorDashTeamExplanations)[activeTeam]);
+    const description = node('p',(angiPortal ? angiTeamExplanations : airbnbPortal ? airbnbTeamExplanations : doorDashTeamExplanations)[activeTeam]);
     heading.append(title,description);
     const filterArea = byId('shortlist-filters').closest('.recruiter-explore');
     filterArea.parentNode.insertBefore(nav,filterArea);
@@ -124,7 +129,7 @@
     let count = 0;
     for (const item of resolved.items) {
       const text = [displayName(item.person), item.role, brazeReasons[item.id] || item.note || '', S.value(item.person, ['Former Job Title', 'formerRole', 'role']), S.value(item.person, ['Description', 'description']), discipline(item)].join(' ').toLowerCase();
-      const inTeam = !(doorDashPortal || airbnbPortal) || activeTeam === 'overview' || ((airbnbPortal ? airbnbTeamMembers : doorDashTeamMembers)[activeTeam] || []).includes(item.id);
+      const inTeam = !(doorDashPortal || airbnbPortal || angiPortal) || activeTeam === 'overview' || ((angiPortal ? angiTeamMembers : airbnbPortal ? airbnbTeamMembers : doorDashTeamMembers)[activeTeam] || []).includes(item.id);
       const matches = inTeam && (activeDiscipline === 'All' || discipline(item) === activeDiscipline) && text.includes(query);
       cards.get(item.id).hidden = !matches;
       if (matches) count++;
@@ -163,7 +168,7 @@
   const shortlistSlug = new URLSearchParams(window.location.search).get('list');
   const isBraze = shortlistSlug === 'braze' && !new URLSearchParams(window.location.hash.slice(1)).has('data');
   const isSeatGeek = shortlistSlug === 'seatgeek' && !new URLSearchParams(window.location.hash.slice(1)).has('data');
-  const isExecutive = isBraze || isSeatGeek || airbnbPortal;
+  const isExecutive = isBraze || isSeatGeek || airbnbPortal || angiPortal;
   // Public hiring posts supplied by the network curator; only verified matches display a manager.
   const doordashManagers = {
     'linkedin:/in/jessica-marie-fabrizi': ['Angel David Medina', 'https://lnkd.in/p/gkBb5DxJ', 'https://www.linkedin.com/in/angeldavidmedina/'],
@@ -208,6 +213,14 @@
   function brazeCard(item) {
     const person = item.person;
     const card = node('article', '', 'shortlist-card braze-candidate');
+    if (angiPortal && angiHiringSignals[item.id]) {
+      const [name,profile,evidence] = angiHiringSignals[item.id];
+      const region = node('div','','shortlist-hiring-manager airbnb-manager-banner');
+      region.appendChild(node('span',item.id === 'linkedin:/in/jacqueline-wujec' ? 'CONFIRMED TEAM HIRING LEADER' : 'RELEVANT TEAM CONTACT · ROLE OWNERSHIP UNCONFIRMED','shortlist-manager-label'));
+      const links = node('span','','shortlist-manager-links');
+      links.appendChild(external(name + ' · LinkedIn ↗',profile));
+      links.appendChild(node('small',evidence)); region.appendChild(links); card.appendChild(region);
+    }
     if (airbnbPortal && airbnbHiringSignals[item.id]) {
       const region = node('div','','shortlist-hiring-manager airbnb-manager-banner');
       region.appendChild(node('span','RELEVANT TEAM LEADER · CURRENT ROLE OWNERSHIP UNCONFIRMED','shortlist-manager-label'));
@@ -224,18 +237,18 @@
     who.appendChild(node('p', S.value(person, ['Location','location']), 'recruiter-location'));
     card.appendChild(who);
     const why = node('section', '', 'braze-why');
-    why.appendChild(node('h3', airbnbPortal ? 'Why Airbnb should meet them' : (isSeatGeek ? 'Why SeatGeek should meet them' : 'Why Braze should meet them')));
-    why.appendChild(node('p', (isSeatGeek || airbnbPortal) ? (item.note || 'Explore this candidate’s relevant background.') : (brazeReasons[item.id] || item.note || 'Explore this candidate’s relevant background.')));
+    why.appendChild(node('h3', angiPortal ? 'Why Angi should meet them' : airbnbPortal ? 'Why Airbnb should meet them' : (isSeatGeek ? 'Why SeatGeek should meet them' : 'Why Braze should meet them')));
+    why.appendChild(node('p', (isSeatGeek || airbnbPortal || angiPortal) ? (item.note || 'Explore this candidate’s relevant background.') : (brazeReasons[item.id] || item.note || 'Explore this candidate’s relevant background.')));
     const highlights = node('ul', '', 'braze-highlights');
-    for (const h of ((isSeatGeek || airbnbPortal) ? [] : (brazeHighlights[item.id] || []))) highlights.appendChild(node('li', h));
+    for (const h of ((isSeatGeek || airbnbPortal || angiPortal) ? [] : (brazeHighlights[item.id] || []))) highlights.appendChild(node('li', h));
     why.appendChild(highlights);
     card.appendChild(why);
     const opportunity = node('section', '', 'braze-opportunity');
-    opportunity.appendChild(node('p',airbnbPortal ? 'POTENTIAL AIRBNB ALIGNMENT' : (isSeatGeek ? 'POTENTIAL SEATGEEK ALIGNMENT' : 'POTENTIAL BRAZE ALIGNMENT'),'braze-kicker'));
+    opportunity.appendChild(node('p',angiPortal ? 'POTENTIAL ANGI ALIGNMENT' : airbnbPortal ? 'POTENTIAL AIRBNB ALIGNMENT' : (isSeatGeek ? 'POTENTIAL SEATGEEK ALIGNMENT' : 'POTENTIAL BRAZE ALIGNMENT'),'braze-kicker'));
     opportunity.appendChild(item.url ? external(item.role, item.url) : node('strong', item.role || 'Exploratory introduction'));
     if (!item.url || (isSeatGeek && /seatgeek\.com\/jobs\/?$/.test(item.url))) opportunity.appendChild(node('small', 'Exploratory alignment · specific opening not confirmed'));
     card.appendChild(opportunity);
-    if (isSeatGeek || airbnbPortal) {
+    if (isSeatGeek || airbnbPortal || angiPortal) {
       const profileText = S.value(person, ['Description','description','Short Description']);
       const background = node('details', '', 'braze-details seatgeek-background');
       background.appendChild(node('summary', 'Explore full professional background'));
