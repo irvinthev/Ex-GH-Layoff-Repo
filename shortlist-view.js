@@ -17,7 +17,7 @@
     ['engineering','Engineering & Analytics']
   ];
   const airbnbTeamMembers = {
-    support:['linkedin:/in/elena-moilan','linkedin:/in/christian-reeve','linkedin:/in/tai-worlds-mba-pmp-csm-28b98a282'],
+    support:['linkedin:/in/elena-moilan','linkedin:/in/tai-worlds-mba-pmp-csm-28b98a282'],
     product:['linkedin:/in/connorkaddatz','linkedin:/in/pdelucena'],
     partnerships:['linkedin:/in/corey-laffel-solon','linkedin:/in/michael-cognetti-3b926910b'],
     engineering:['linkedin:/in/abhinauv-kapoor']
@@ -27,17 +27,15 @@
     support:'Program management and process improvement candidates. Zach Hinkle previously recruited within Community Support; direct ownership of these requisitions is not established.',
     product:'API platform product candidates. Rohan Kamath previously recruited for platform product leadership; this does not establish ownership of the API Platform opening.',
     partnerships:'Commercial partnerships candidates. Sam Kline and Alston Cheek have public historical hiring signals; current opening ownership is unconfirmed.',
-    engineering:'Payments and platform engineering leadership. Shir Gaster recruited in Community Support Engineering and Monisha Nakra in Analytics; neither is confirmed to own the Payments role.'
+    engineering:'Media Foundation engineering leadership. This new requisition needs a directly relevant hiring contact; no current owner has been established.'
   };
   const airbnbHiringSignals = {
     'linkedin:/in/elena-moilan': [['Zach Hinkle','https://www.linkedin.com/posts/zachhinkle_senior-program-manager-community-support-activity-7356755772745129984-qC-8']],
     'linkedin:/in/tai-worlds-mba-pmp-csm-28b98a282': [['Zach Hinkle','https://www.linkedin.com/posts/zachhinkle_senior-program-manager-community-support-activity-7356755772745129984-qC-8']],
-    'linkedin:/in/christian-reeve': [['Zach Hinkle','https://www.linkedin.com/posts/zachhinkle_senior-program-manager-community-support-activity-7356755772745129984-qC-8']],
     'linkedin:/in/connorkaddatz': [['Rohan Kamath','https://www.linkedin.com/posts/rohankamath_staff-platform-manager-business-host-payouts-activity-7442628207503343616-8D_6']],
     'linkedin:/in/pdelucena': [['Rohan Kamath','https://www.linkedin.com/posts/rohankamath_staff-platform-manager-business-host-payouts-activity-7442628207503343616-8D_6']],
     'linkedin:/in/corey-laffel-solon': [['Sam Kline','https://www.linkedin.com/posts/jamieconlonrocha_partnerships-strategy-lead-magnit-airbnb-activity-7503149673151361024-ZDSM']],
     'linkedin:/in/michael-cognetti-3b926910b': [['Sam Kline','https://www.linkedin.com/posts/jamieconlonrocha_partnerships-strategy-lead-magnit-airbnb-activity-7503149673151361024-ZDSM']],
-    'linkedin:/in/abhinauv-kapoor': [['Shir Gaster','https://www.linkedin.com/posts/shirgaster_staff-software-engineer-community-support-activity-7466997205439041537-4PxB']]
   };
   const doorDashTeamMembers = {
     sales: ['linkedin:/in/jessica-marie-fabrizi','linkedin:/in/gerard-salerno-28825146','linkedin:/in/chip-richards','linkedin:/in/jane-k-77b86b98'],

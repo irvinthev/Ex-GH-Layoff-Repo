@@ -5,9 +5,9 @@
   "items": [
     {
       "id": "linkedin:/in/abhinauv-kapoor",
-      "role": "Engineering Manager, Payments",
-      "url": "https://careers.airbnb.com/positions/8259504/",
-      "note": "Led multi-team engineering organizations across subscriptions, payments, and platform systems. Explore five-plus years of management, architecture ownership, and high-availability payment or regulated-domain delivery."
+      "role": "Senior Engineering Manager, Media Foundation",
+      "url": "https://careers.airbnb.com/positions/7968034/",
+      "note": "Engineering leader with 15+ years building and scaling distributed systems. Airbnb’s Media Foundation role involves multi-team technical strategy, platform reliability and management of managers/senior leads. Verify 6+ years of engineering management, manager-of-managers experience, and direct media infrastructure expertise (ingestion, processing, storage or CDN). Remote-US eligible subject to Airbnb location policy."
     },
     {
       "id": "linkedin:/in/connorkaddatz",
@@ -32,12 +32,6 @@
       "role": "Program Manager, Community Support",
       "url": "https://careers.airbnb.com/positions/8278753/",
       "note": "Enterprise onboarding, compliance operations, and process improvement provide relevant operational context. Explore formal program ownership, contact-center technology, measurable business cases, and the desired individual-contributor scope."
-    },
-    {
-      "id": "linkedin:/in/christian-reeve",
-      "role": "Lead Business Process Improvement",
-      "url": "https://careers.airbnb.com/positions/8279606/",
-      "note": "Operations leadership, analytics, and AI-assisted process automation using Python, SQL, and Databricks are relevant. Explore contact-center depth, process-engineering methods, statistical analysis, and travel up to 20%."
     },
     {
       "id": "linkedin:/in/corey-laffel-solon",
