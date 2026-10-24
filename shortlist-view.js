@@ -137,7 +137,7 @@
   const shortlistSlug = new URLSearchParams(window.location.search).get('list');
   const isBraze = shortlistSlug === 'braze' && !new URLSearchParams(window.location.hash.slice(1)).has('data');
   const isSeatGeek = shortlistSlug === 'seatgeek' && !new URLSearchParams(window.location.hash.slice(1)).has('data');
-  const isExecutive = isBraze || isSeatGeek;
+  const isExecutive = isBraze || isSeatGeek || airbnbPortal;
   // Public hiring posts supplied by the network curator; only verified matches display a manager.
   const doordashManagers = {
     'linkedin:/in/jessica-marie-fabrizi': ['Angel David Medina', 'https://lnkd.in/p/gkBb5DxJ', 'https://www.linkedin.com/in/angeldavidmedina/'],
@@ -182,6 +182,14 @@
   function brazeCard(item) {
     const person = item.person;
     const card = node('article', '', 'shortlist-card braze-candidate');
+    if (airbnbPortal && airbnbHiringSignals[item.id]) {
+      const region = node('div','','shortlist-hiring-manager airbnb-manager-banner');
+      region.appendChild(node('span','RELEVANT TEAM LEADER · CURRENT ROLE OWNERSHIP UNCONFIRMED','shortlist-manager-label'));
+      const links = node('span','','shortlist-manager-links');
+      for (const [name,post] of airbnbHiringSignals[item.id]) links.appendChild(external(name + ' · Historical hiring post ↗',post));
+      region.appendChild(links);
+      card.appendChild(region);
+    }
     card.appendChild(node('p', discipline(item), 'recruiter-discipline'));
     const who = node('section', '', 'braze-who');
     who.appendChild(node('p', 'WHO', 'braze-kicker'));
@@ -190,18 +198,18 @@
     who.appendChild(node('p', S.value(person, ['Location','location']), 'recruiter-location'));
     card.appendChild(who);
     const why = node('section', '', 'braze-why');
-    why.appendChild(node('h3', isSeatGeek ? 'Why SeatGeek should meet them' : 'Why Braze should meet them'));
-    why.appendChild(node('p', isSeatGeek ? (item.note || 'Explore this candidate’s relevant background.') : (brazeReasons[item.id] || item.note || 'Explore this candidate’s relevant background.')));
+    why.appendChild(node('h3', airbnbPortal ? 'Why Airbnb should meet them' : (isSeatGeek ? 'Why SeatGeek should meet them' : 'Why Braze should meet them')));
+    why.appendChild(node('p', (isSeatGeek || airbnbPortal) ? (item.note || 'Explore this candidate’s relevant background.') : (brazeReasons[item.id] || item.note || 'Explore this candidate’s relevant background.')));
     const highlights = node('ul', '', 'braze-highlights');
-    for (const h of (isSeatGeek ? [] : (brazeHighlights[item.id] || []))) highlights.appendChild(node('li', h));
+    for (const h of ((isSeatGeek || airbnbPortal) ? [] : (brazeHighlights[item.id] || []))) highlights.appendChild(node('li', h));
     why.appendChild(highlights);
     card.appendChild(why);
     const opportunity = node('section', '', 'braze-opportunity');
-    opportunity.appendChild(node('p',isSeatGeek ? 'POTENTIAL SEATGEEK ALIGNMENT' : 'POTENTIAL BRAZE ALIGNMENT','braze-kicker'));
+    opportunity.appendChild(node('p',airbnbPortal ? 'POTENTIAL AIRBNB ALIGNMENT' : (isSeatGeek ? 'POTENTIAL SEATGEEK ALIGNMENT' : 'POTENTIAL BRAZE ALIGNMENT'),'braze-kicker'));
     opportunity.appendChild(item.url ? external(item.role, item.url) : node('strong', item.role || 'Exploratory introduction'));
     if (!item.url || (isSeatGeek && /seatgeek\.com\/jobs\/?$/.test(item.url))) opportunity.appendChild(node('small', 'Exploratory alignment · specific opening not confirmed'));
     card.appendChild(opportunity);
-    if (isSeatGeek) {
+    if (isSeatGeek || airbnbPortal) {
       const profileText = S.value(person, ['Description','description','Short Description']);
       const background = node('details', '', 'braze-details seatgeek-background');
       background.appendChild(node('summary', 'Explore full professional background'));
@@ -231,7 +239,7 @@
     actions.appendChild(pick);
     meet.appendChild(actions);
     card.appendChild(meet);
-    if (!isSeatGeek) {
+    if (!isSeatGeek && !airbnbPortal) {
       const details = node('details', '', 'braze-details');
       details.appendChild(node('summary', 'Read full background'));
       details.appendChild(node('p', S.value(person, ['Description','description','Short Description'])));
@@ -247,8 +255,9 @@
     if (data) raw = S.decode(data);
     else {
       const slug = params.get('list');
-      if (slug === 'braze' || slug === 'seatgeek') {
+      if (slug === 'braze' || slug === 'seatgeek' || slug === 'airbnb') {
         if (slug === 'seatgeek') document.body.classList.add('seatgeek-shortlist');
+        if (slug === 'airbnb') document.body.classList.add('airbnb-shortlist');
         document.body.classList.add('braze-shortlist');
         const fonts = document.createElement('link');
         fonts.rel = 'stylesheet';
