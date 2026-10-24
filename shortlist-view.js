@@ -12,8 +12,8 @@
     ['product','Product & Strategy'], ['partnerships','Partnerships & Success'], ['data','Data & AI']
   ];
   const airbnbTeams = [
-    ['overview','Overview'],['support','Community Support & Operations'],
-    ['product','Product & Platform'],['partnerships','Partnerships'],
+    ['overview','Overview'],['product','Product & Platform'],
+    ['support','Community Support'],['partnerships','Partnerships'],
     ['engineering','Engineering & Analytics']
   ];
   const airbnbTeamMembers = {
@@ -71,6 +71,32 @@
       a.href = url.pathname + url.search + url.hash;
       a.setAttribute('aria-current',activeTeam === slug ? 'page' : 'false');
       nav.appendChild(a);
+    }
+    if (airbnbPortal) {
+      const mobile = node('div','','airbnb-mobile-team-picker');
+      const label = node('label','Browse Airbnb teams','airbnb-mobile-team-label');
+      label.htmlFor = 'airbnb-team-select';
+      const select = node('select','','airbnb-team-select');
+      select.id = 'airbnb-team-select';
+      for (const [slug, name] of portalTeams) {
+        const option = node('option',name);
+        option.value = slug;
+        option.selected = slug === activeTeam;
+        select.appendChild(option);
+      }
+      select.onchange = () => {
+        const target = new URL(window.location.href);
+        if (select.value === 'overview') target.searchParams.delete('team');
+        else target.searchParams.set('team',select.value);
+        window.location.assign(target.href);
+      };
+      mobile.append(label,select);
+      nav.after(mobile);
+      if (activeTeam !== 'overview') {
+        const secondary = byId('shortlist-filters');
+        secondary.hidden = true;
+        secondary.setAttribute('aria-hidden','true');
+      }
     }
     const heading = node('div','','doordash-team-context');
     const title = node('h2',portalTeams.find(([s])=>s===activeTeam)[1]);
