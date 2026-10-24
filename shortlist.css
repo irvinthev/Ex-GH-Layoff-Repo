@@ -218,3 +218,13 @@
 .shortlist-hiring-manager { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:6px 14px; border-bottom:1px solid var(--recruiter-line,#d7ddd5); padding:0 0 12px; margin:0 0 14px; }
 .shortlist-manager-label { font-size:10px; letter-spacing:.10em; font-weight:750; color:var(--recruiter-muted,#596b6a); }
 .shortlist-hiring-manager a { font-size:13px; font-weight:750; text-decoration:underline; overflow-wrap:anywhere; }
+
+/* DoorDash company portal: focused deep-linkable sections, shared candidate source */
+.doordash-team-nav{display:flex;flex-wrap:wrap;gap:9px;margin:4px 0 22px;padding-bottom:14px;border-bottom:1px solid var(--recruiter-line,#d7ddd5)}
+.doordash-team-tab{display:inline-flex;align-items:center;padding:9px 15px;border:1px solid var(--recruiter-line,#d7ddd5);border-radius:999px;font-size:13px;font-weight:650;text-decoration:none;color:var(--recruiter-ink,#162e30)}
+.doordash-team-tab[aria-current="page"]{background:var(--recruiter-ink,#162e30);color:#fff;border-color:var(--recruiter-ink,#162e30)}
+.doordash-team-tab:hover:not([aria-current="page"]){background:#e9eee3}
+.doordash-team-context{margin:8px 0 15px}
+.doordash-team-context h2{font-size:26px;letter-spacing:-.03em;margin:0 0 4px}
+.doordash-team-context p{font-size:14px;color:var(--recruiter-muted,#596b6a);margin:0;max-width:780px}
+@media(max-width:650px){.doordash-team-nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin;padding-bottom:13px}.doordash-team-tab{white-space:nowrap;flex-shrink:0}}
