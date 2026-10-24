@@ -213,3 +213,8 @@
 .seatgeek-shortlist .seatgeek-background-content { color: var(--recruiter-muted); font-size: 13px; line-height: 1.7; white-space: pre-line; }
 .seatgeek-shortlist .seatgeek-background-position { font-weight: 650; color: var(--recruiter-ink); }
 .seatgeek-shortlist .braze-meet { order: 5; }
+
+/* A named hiring manager is shown only when a sourced recruiting post exists. */
+.shortlist-hiring-manager { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:6px 14px; border-bottom:1px solid var(--recruiter-line,#d7ddd5); padding:0 0 12px; margin:0 0 14px; }
+.shortlist-manager-label { font-size:10px; letter-spacing:.10em; font-weight:750; color:var(--recruiter-muted,#596b6a); }
+.shortlist-hiring-manager a { font-size:13px; font-weight:750; text-decoration:underline; overflow-wrap:anywhere; }
