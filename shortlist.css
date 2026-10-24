@@ -231,3 +231,9 @@
 
 .shortlist-manager-links{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
 .shortlist-manager-links strong{font-size:13px}
+
+/* Airbnb: Braze-quality card presentation with compact, properly qualified sourcing. */
+.airbnb-shortlist .airbnb-manager-banner { padding: 12px 0; margin-bottom: 16px; }
+.airbnb-shortlist .braze-candidate .braze-highlights:empty { display:none; }
+.airbnb-shortlist .braze-candidate .braze-why p { line-height:1.65; }
+.airbnb-shortlist .braze-candidate .braze-opportunity { overflow-wrap:anywhere; }
