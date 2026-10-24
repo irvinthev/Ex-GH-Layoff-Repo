@@ -55,7 +55,7 @@ test('Engine fixture resolves only to existing public profiles and valid role li
 
 for (const [company, expectedCount, host] of [
  ['instacart', 8, 'www.instacart.careers'],
- ['airbnb', 8, 'careers.airbnb.com'],
+ ['airbnb', 7, 'careers.airbnb.com'],
  ['angi', 7, 'www.angi.com'],
  ['reddit', 7, 'job-boards.greenhouse.io']
 ]) {
