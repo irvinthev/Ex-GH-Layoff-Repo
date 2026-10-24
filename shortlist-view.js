@@ -6,6 +6,51 @@
   const displayName = person => S.personId(person) === 'linkedin:/in/corey-laffel-solon' ? 'Corey Laffel Solon' : S.name(person);
   let resolved;
   let activeDiscipline = 'All';
+  // DoorDash uses one shortlist with shareable team-specific views.
+  const doorDashTeams = [
+    ['overview','Overview'], ['sales','Sales & SevenRooms'], ['engineering','Engineering'],
+    ['product','Product & Strategy'], ['partnerships','Partnerships & Success'], ['data','Data & AI']
+  ];
+  const doorDashTeamMembers = {
+    sales: ['linkedin:/in/jessica-marie-fabrizi','linkedin:/in/gerard-salerno-28825146','linkedin:/in/chip-richards','linkedin:/in/jane-k-77b86b98'],
+    engineering: ['linkedin:/in/patel-prem','linkedin:/in/hoa-tommy-tran','linkedin:/in/mingyang-yan','linkedin:/in/ankita0207','linkedin:/in/daniel-hara-0258234'],
+    product: ['linkedin:/in/arushi-tayal','linkedin:/in/connorkaddatz'],
+    partnerships: ['linkedin:/in/michael-cognetti-3b926910b','linkedin:/in/corey-laffel-solon','linkedin:/in/jill-weinstein-0192b4a'],
+    data: []
+  };
+  const doorDashTeamExplanations = {
+    overview: 'Explore all curated introductions or choose a team to share a more focused link.',
+    sales: 'Sales and SevenRooms prospects. Manager announcements identify potential pathways; location and qualifications require confirmation.',
+    engineering: 'Platform, mobile and merchant-systems engineers. Only the Merchant GTM prospects currently have a named hiring-manager post.',
+    product: 'Product leaders matched to general recruiting opportunities; specific hiring managers are not yet confirmed.',
+    partnerships: 'Merchant partnerships, lifecycle marketing and customer engagement matches; some previously listed roles need a fresh status check.',
+    data: 'No verified candidate match yet for the specialist Agentic Foundations ML opening. We will not imply that general AI exposure meets the production ML requirements.'
+  };
+  const shortlistQuery = new URLSearchParams(window.location.search);
+  const doorDashPortal = shortlistQuery.get('list') === 'doordash' && !new URLSearchParams(window.location.hash.slice(1)).has('data');
+  const requestedTeam = shortlistQuery.get('team') || 'overview';
+  let activeTeam = doorDashTeams.some(([slug]) => slug === requestedTeam) ? requestedTeam : 'overview';
+  function setupDoorDashTabs() {
+    if (!doorDashPortal) return;
+    const nav = node('nav','','doordash-team-nav');
+    nav.setAttribute('aria-label','DoorDash hiring teams');
+    for (const [slug,label] of doorDashTeams) {
+      const a = node('a',label,'doordash-team-tab');
+      const url = new URL(window.location.href);
+      if (slug === 'overview') url.searchParams.delete('team'); else url.searchParams.set('team',slug);
+      a.href = url.pathname + url.search + url.hash;
+      a.setAttribute('aria-current',activeTeam === slug ? 'page' : 'false');
+      nav.appendChild(a);
+    }
+    const heading = node('div','','doordash-team-context');
+    const title = node('h2',doorDashTeams.find(([s])=>s===activeTeam)[1]);
+    const description = node('p',doorDashTeamExplanations[activeTeam]);
+    heading.append(title,description);
+    const filterArea = byId('shortlist-filters').closest('.recruiter-explore');
+    filterArea.parentNode.insertBefore(nav,filterArea);
+    filterArea.parentNode.insertBefore(heading,filterArea);
+  }
+
   const cards = new Map();
   function discipline(item) {
     if (/product manager/i.test(item.role)) return 'Product';
@@ -23,7 +68,8 @@
     let count = 0;
     for (const item of resolved.items) {
       const text = [displayName(item.person), item.role, brazeReasons[item.id] || item.note || '', S.value(item.person, ['Former Job Title', 'formerRole', 'role']), S.value(item.person, ['Description', 'description']), discipline(item)].join(' ').toLowerCase();
-      const matches = (activeDiscipline === 'All' || discipline(item) === activeDiscipline) && text.includes(query);
+      const inTeam = !doorDashPortal || activeTeam === 'overview' || (doorDashTeamMembers[activeTeam] || []).includes(item.id);
+      const matches = inTeam && (activeDiscipline === 'All' || discipline(item) === activeDiscipline) && text.includes(query);
       cards.get(item.id).hidden = !matches;
       if (matches) count++;
     }
@@ -203,6 +249,7 @@
     document.title = `${resolved.title} | Talent Network HQ`;
     byId('shortlist-intro').textContent = resolved.intro;
     byId('shortlist-status').textContent = resolved.unavailable ? `${resolved.unavailable} selected profile(s) are no longer available in the current sources.` : '';
+    if (doorDashPortal && activeTeam === 'data') byId('shortlist-status').textContent += (byId('shortlist-status').textContent ? '\n' : '') + doorDashTeamExplanations.data;
     for (const item of resolved.items) {
       if (isExecutive) {
         const card = brazeCard(item);
@@ -258,6 +305,7 @@
       cards.set(item.id, card);
       byId('shortlist-cards').appendChild(card);
     }
+    setupDoorDashTabs();
     renderFilters();
     if (isExecutive) {
       const response = byId('shortlist-response');
