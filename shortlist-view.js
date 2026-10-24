@@ -278,7 +278,7 @@
     actions.appendChild(pick);
     meet.appendChild(actions);
     card.appendChild(meet);
-    if (!isSeatGeek && !airbnbPortal) {
+    if (!isSeatGeek && !airbnbPortal && !angiPortal) {
       const details = node('details', '', 'braze-details');
       details.appendChild(node('summary', 'Read full background'));
       details.appendChild(node('p', S.value(person, ['Description','description','Short Description'])));
@@ -294,9 +294,10 @@
     if (data) raw = S.decode(data);
     else {
       const slug = params.get('list');
-      if (slug === 'braze' || slug === 'seatgeek' || slug === 'airbnb') {
+      if (slug === 'braze' || slug === 'seatgeek' || slug === 'airbnb' || slug === 'angi') {
         if (slug === 'seatgeek') document.body.classList.add('seatgeek-shortlist');
-        if (slug === 'airbnb') document.body.classList.add('airbnb-shortlist');
+        if (slug === 'airbnb' || slug === 'angi') document.body.classList.add('airbnb-shortlist');
+        if (slug === 'angi') document.body.classList.add('angi-shortlist');
         document.body.classList.add('braze-shortlist');
         const fonts = document.createElement('link');
         fonts.rel = 'stylesheet';
