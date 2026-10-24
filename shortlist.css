@@ -228,3 +228,6 @@
 .doordash-team-context h2{font-size:26px;letter-spacing:-.03em;margin:0 0 4px}
 .doordash-team-context p{font-size:14px;color:var(--recruiter-muted,#596b6a);margin:0;max-width:780px}
 @media(max-width:650px){.doordash-team-nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin;padding-bottom:13px}.doordash-team-tab{white-space:nowrap;flex-shrink:0}}
+
+.shortlist-manager-links{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.shortlist-manager-links strong{font-size:13px}
