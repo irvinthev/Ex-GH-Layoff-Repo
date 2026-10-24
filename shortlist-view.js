@@ -110,12 +110,12 @@
   const isExecutive = isBraze || isSeatGeek;
   // Public hiring posts supplied by the network curator; only verified matches display a manager.
   const doordashManagers = {
-    'linkedin:/in/jessica-marie-fabrizi': ['Angel David', 'https://lnkd.in/p/gkBb5DxJ'],
-    'linkedin:/in/gerard-salerno-28825146': ['Angel David', 'https://lnkd.in/p/gkBb5DxJ'],
-    'linkedin:/in/chip-richards': ['Angel David', 'https://lnkd.in/p/gkBb5DxJ'],
+    'linkedin:/in/jessica-marie-fabrizi': ['Angel David Medina', 'https://lnkd.in/p/gkBb5DxJ', 'https://www.linkedin.com/in/angeldavidmedina/'],
+    'linkedin:/in/gerard-salerno-28825146': ['Angel David Medina', 'https://lnkd.in/p/gkBb5DxJ', 'https://www.linkedin.com/in/angeldavidmedina/'],
+    'linkedin:/in/chip-richards': ['Angel David Medina', 'https://lnkd.in/p/gkBb5DxJ', 'https://www.linkedin.com/in/angeldavidmedina/'],
     'linkedin:/in/jane-k-77b86b98': ['Logan D.', 'https://lnkd.in/p/gX2-daqB'],
-    'linkedin:/in/patel-prem': ['Kazim Ahmed Mohammed', 'https://lnkd.in/p/gFuPpEfs'],
-    'linkedin:/in/hoa-tommy-tran': ['Kazim Ahmed Mohammed', 'https://lnkd.in/p/gFuPpEfs']
+    'linkedin:/in/patel-prem': ['Kazim Ahmed Mohammed', 'https://lnkd.in/p/gFuPpEfs', 'https://www.linkedin.com/in/itskaz/'],
+    'linkedin:/in/hoa-tommy-tran': ['Kazim Ahmed Mohammed', 'https://lnkd.in/p/gFuPpEfs', 'https://www.linkedin.com/in/itskaz/']
   };
   const brazeHighlights = {
     'linkedin:/in/jill-weinstein-0192b4a': ['15+ years across Grubhub, PayPal and American Express','Reported churn reduction of up to 58%','Multi-million-dollar growth programs'],
@@ -260,10 +260,14 @@
       const person = item.person;
       const card = node('article', '', 'shortlist-card');
       if (shortlistSlug === 'doordash' && doordashManagers[item.id]) {
-        const [managerName, hiringPost] = doordashManagers[item.id];
+        const [managerName, hiringPost, profileUrl] = doordashManagers[item.id];
         const manager = node('div', '', 'shortlist-hiring-manager');
         manager.appendChild(node('span', 'TARGETED HIRING MANAGER', 'shortlist-manager-label'));
-        manager.appendChild(external(managerName + ' · View hiring post 🔗', hiringPost));
+        const links = node('span', '', 'shortlist-manager-links');
+        if (profileUrl) links.appendChild(external(managerName + ' · LinkedIn ↗', profileUrl));
+        else links.appendChild(node('strong', managerName));
+        if (hiringPost) links.appendChild(external('Original hiring post 🔗', hiringPost));
+        manager.appendChild(links);
         card.appendChild(manager);
       }
       card.appendChild(node('p', discipline(item), 'recruiter-discipline'));
