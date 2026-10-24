@@ -237,3 +237,13 @@
 .airbnb-shortlist .braze-candidate .braze-highlights:empty { display:none; }
 .airbnb-shortlist .braze-candidate .braze-why p { line-height:1.65; }
 .airbnb-shortlist .braze-candidate .braze-opportunity { overflow-wrap:anywhere; }
+
+/* Airbnb mobile: explicit team selection rather than an undiscoverable horizontal scroller. */
+.airbnb-mobile-team-picker{display:none}
+.airbnb-shortlist .recruiter-filters[hidden]{display:none!important}
+@media(max-width:650px){
+  .airbnb-shortlist .doordash-team-nav{display:none}
+  .airbnb-mobile-team-picker{display:grid;gap:7px;margin:4px 0 20px}
+  .airbnb-mobile-team-label{font-size:13px;font-weight:700;color:var(--recruiter-ink,#162e30)}
+  .airbnb-mobile-team-picker select{width:100%;padding:13px 38px 13px 14px;border:1px solid var(--recruiter-line,#d7ddd5);border-radius:10px;background:#fff;color:var(--recruiter-ink,#162e30);font:inherit;font-weight:650}
+}
