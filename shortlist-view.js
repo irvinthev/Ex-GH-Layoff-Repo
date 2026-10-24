@@ -13,24 +13,26 @@
   ];
   const airbnbTeams = [
     ['overview','Overview'],['product','Product & Platform'],
-    ['support','Community Support'],['partnerships','Partnerships'],
+    ['experiences','Experiences & Growth'],['support','Community Support'],['partnerships','Partnerships'],
     ['engineering','Engineering & Analytics']
   ];
   const airbnbTeamMembers = {
-    support:['linkedin:/in/elena-moilan','linkedin:/in/tai-worlds-mba-pmp-csm-28b98a282'],
+    experiences:['linkedin:/in/elena-moilan'],
+    support:['linkedin:/in/tai-worlds-mba-pmp-csm-28b98a282'],
     product:['linkedin:/in/connorkaddatz','linkedin:/in/pdelucena'],
     partnerships:['linkedin:/in/corey-laffel-solon','linkedin:/in/michael-cognetti-3b926910b'],
     engineering:['linkedin:/in/abhinauv-kapoor']
   };
   const airbnbTeamExplanations = {
     overview:'Curated introductions across four Airbnb organizations. Contacts below are relevant team leaders with past public hiring signals, not confirmed owners of these specific requisitions.',
+    experiences:'Airbnb Experiences growth and business operations. Lauren Dickstein has publicly recruited for related growth roles and Bertrand Burdet previously promoted this specific position; current hiring ownership is not confirmed.',
     support:'Program management and process improvement candidates. Zach Hinkle previously recruited within Community Support; direct ownership of these requisitions is not established.',
     product:'API platform product candidates. Rohan Kamath previously recruited for platform product leadership; this does not establish ownership of the API Platform opening.',
     partnerships:'Commercial partnerships candidates. Sam Kline and Alston Cheek have public historical hiring signals; current opening ownership is unconfirmed.',
     engineering:'Media Foundation engineering leadership. This new requisition needs a directly relevant hiring contact; no current owner has been established.'
   };
   const airbnbHiringSignals = {
-    'linkedin:/in/elena-moilan': [['Zach Hinkle','https://www.linkedin.com/posts/zachhinkle_senior-program-manager-community-support-activity-7356755772745129984-qC-8']],
+    'linkedin:/in/elena-moilan': [['Lauren Dickstein — Experiences Growth','https://www.linkedin.com/posts/lauren-dickstein-0182532a_dream-jobs-alert-looking-for-the-activity-7419399259336122368-HkKy'],['Bertrand Burdet — posted this role','https://www.linkedin.com/posts/bertrand-burdet-6796ab23_programs-and-business-operations-lead-careers-activity-7445458011092914176-UJW8']],
     'linkedin:/in/tai-worlds-mba-pmp-csm-28b98a282': [['Zach Hinkle','https://www.linkedin.com/posts/zachhinkle_senior-program-manager-community-support-activity-7356755772745129984-qC-8']],
     'linkedin:/in/connorkaddatz': [['Rohan Kamath','https://www.linkedin.com/posts/rohankamath_staff-platform-manager-business-host-payouts-activity-7442628207503343616-8D_6']],
     'linkedin:/in/pdelucena': [['Rohan Kamath','https://www.linkedin.com/posts/rohankamath_staff-platform-manager-business-host-payouts-activity-7442628207503343616-8D_6']],
