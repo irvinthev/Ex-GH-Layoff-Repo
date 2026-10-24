@@ -1,7 +1,7 @@
 {
   "v": 1,
-  "title": "Talent selected for DoorDash",
-  "intro": "Prepared by Irvin Thevaranjan through the independent Ex-GH Talent Network. Eight public profiles paired with DoorDash recruiting opportunities reviewed October 20, 2026. These are potential alignments; interest, availability, eligibility, and role-specific requirements need confirmation. Some entries use general recruiting postings, and two marketing pages retain past expected-fill dates. Reply to Irvin to explore introductions.",
+  "title": "DoorDash × Ex-Grubhub | Curated talent introductions",
+  "intro": "Four DoorDash managers posted about hiring October 12–21, 2026. This shortlist combines existing Ex-GH prospects with six candidate-specific outreach leads for Sales Development, In-Store Account Executive and Merchant GTM Engineering. Profiles are opt-in; interest, office location, requisition status, role level and skills remain to be confirmed. No candidate is currently verified for Senior ML Engineer, Agentic Foundations. These are proposed introductions, not endorsements or confirmed applications.",
   "items": [
     {
       "id": "linkedin:/in/corey-laffel-solon",
@@ -50,6 +50,42 @@
       "role": "Product Manager (Multiple Levels)",
       "url": "https://job-boards.greenhouse.io/doordashusa/jobs/5523275",
       "note": "API integrations, platform launches, and zero-to-one leadership support a merchant/platform introduction. This is a general multi-team posting, not a confirmed team match. Confirm PM tenure, team and level availability, and relocation from Madison to a listed hub."
+    },
+    {
+      "id": "linkedin:/in/jessica-marie-fabrizi",
+      "role": "Account Executive, In-Store — Seattle (Angel David)",
+      "url": "https://lnkd.in/g4PRtK_j",
+      "note": "Grubhub Account Executive II with client acquisition, sales and partnerships experience. Potential relevance to full-cycle restaurant sales. Confirm Seattle relocation, outbound prospecting, live demos and closing results."
+    },
+    {
+      "id": "linkedin:/in/gerard-salerno-28825146",
+      "role": "Account Executive, In-Store — Seattle (Angel David)",
+      "url": "https://lnkd.in/g4PRtK_j",
+      "note": "Grubhub outside-sales Account Executive with restaurant and hospitality industry experience. Relevant operator fluency; verify Seattle feasibility, recent new-business wins and level alignment."
+    },
+    {
+      "id": "linkedin:/in/chip-richards",
+      "role": "Account Executive, In-Store — Seattle (Angel David)",
+      "url": "https://lnkd.in/g4PRtK_j",
+      "note": "Enterprise sales executive with 19+ years' B2B selling, pipeline building and complex sales cycles. Strong sales overlap, but Seattle relocation and seniority fit require confirmation."
+    },
+    {
+      "id": "linkedin:/in/jane-k-77b86b98",
+      "role": "Sales Development Representative, SevenRooms — NYC (Logan D.)",
+      "url": "https://careersatdoordash.com/career-areas/sevenrooms/",
+      "note": "Grubhub restaurant-sales onboarding and sales-support experience brings operator context. This is a pivot, not a proven SDR match; verify appetite and record for high-volume outbound prospecting and NYC onsite requirements."
+    },
+    {
+      "id": "linkedin:/in/patel-prem",
+      "role": "Tech Lead / Senior SWE (E5), Merchant GTM — Bay Area (Kazim Ahmed Mohammed)",
+      "url": "https://lnkd.in/p/gFuPpEfs",
+      "note": "Backend engineer on Grubhub checkout platform with API and distributed systems experience. Evaluate senior technical leadership, ownership of internal merchant tools and Bay Area relocation; exact requisition link unconfirmed."
+    },
+    {
+      "id": "linkedin:/in/hoa-tommy-tran",
+      "role": "Tech Lead / Senior SWE (E5), Merchant GTM — Bay Area (Kazim Ahmed Mohammed)",
+      "url": "https://lnkd.in/p/gFuPpEfs",
+      "note": "Software engineer building backend/web applications and APIs. Technical foundations are relevant but E5-level leadership and Bay Area feasibility are unverified; exact requisition link unconfirmed."
     }
   ]
 }
