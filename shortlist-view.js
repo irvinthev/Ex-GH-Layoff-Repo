@@ -11,6 +11,34 @@
     ['overview','Overview'], ['sales','Sales & SevenRooms'], ['engineering','Engineering'],
     ['product','Product & Strategy'], ['partnerships','Partnerships & Success'], ['data','Data & AI']
   ];
+  const airbnbTeams = [
+    ['overview','Overview'],['support','Community Support & Operations'],
+    ['product','Product & Platform'],['partnerships','Partnerships'],
+    ['engineering','Engineering & Analytics']
+  ];
+  const airbnbTeamMembers = {
+    support:['linkedin:/in/elena-moilan','linkedin:/in/christian-reeve','linkedin:/in/tai-worlds-mba-pmp-csm-28b98a282'],
+    product:['linkedin:/in/connorkaddatz','linkedin:/in/pdelucena'],
+    partnerships:['linkedin:/in/corey-laffel-solon','linkedin:/in/michael-cognetti-3b926910b'],
+    engineering:['linkedin:/in/abhinauv-kapoor']
+  };
+  const airbnbTeamExplanations = {
+    overview:'Curated introductions across four Airbnb organizations. Contacts below are relevant team leaders with past public hiring signals, not confirmed owners of these specific requisitions.',
+    support:'Program management and process improvement candidates. Zach Hinkle previously recruited within Community Support; direct ownership of these requisitions is not established.',
+    product:'API platform product candidates. Rohan Kamath previously recruited for platform product leadership; this does not establish ownership of the API Platform opening.',
+    partnerships:'Commercial partnerships candidates. Sam Kline and Alston Cheek have public historical hiring signals; current opening ownership is unconfirmed.',
+    engineering:'Payments and platform engineering leadership. Shir Gaster recruited in Community Support Engineering and Monisha Nakra in Analytics; neither is confirmed to own the Payments role.'
+  };
+  const airbnbHiringSignals = {
+    'linkedin:/in/elena-moilan': [['Zach Hinkle','https://www.linkedin.com/posts/zachhinkle_senior-program-manager-community-support-activity-7356755772745129984-qC-8']],
+    'linkedin:/in/tai-worlds-mba-pmp-csm-28b98a282': [['Zach Hinkle','https://www.linkedin.com/posts/zachhinkle_senior-program-manager-community-support-activity-7356755772745129984-qC-8']],
+    'linkedin:/in/christian-reeve': [['Zach Hinkle','https://www.linkedin.com/posts/zachhinkle_senior-program-manager-community-support-activity-7356755772745129984-qC-8']],
+    'linkedin:/in/connorkaddatz': [['Rohan Kamath','https://www.linkedin.com/posts/rohankamath_staff-platform-manager-business-host-payouts-activity-7442628207503343616-8D_6']],
+    'linkedin:/in/pdelucena': [['Rohan Kamath','https://www.linkedin.com/posts/rohankamath_staff-platform-manager-business-host-payouts-activity-7442628207503343616-8D_6']],
+    'linkedin:/in/corey-laffel-solon': [['Sam Kline','https://www.linkedin.com/posts/jamieconlonrocha_partnerships-strategy-lead-magnit-airbnb-activity-7503149673151361024-ZDSM']],
+    'linkedin:/in/michael-cognetti-3b926910b': [['Sam Kline','https://www.linkedin.com/posts/jamieconlonrocha_partnerships-strategy-lead-magnit-airbnb-activity-7503149673151361024-ZDSM']],
+    'linkedin:/in/abhinauv-kapoor': [['Shir Gaster','https://www.linkedin.com/posts/shirgaster_staff-software-engineer-community-support-activity-7466997205439041537-4PxB']]
+  };
   const doorDashTeamMembers = {
     sales: ['linkedin:/in/jessica-marie-fabrizi','linkedin:/in/gerard-salerno-28825146','linkedin:/in/chip-richards','linkedin:/in/jane-k-77b86b98'],
     engineering: ['linkedin:/in/patel-prem','linkedin:/in/hoa-tommy-tran','linkedin:/in/mingyang-yan','linkedin:/in/ankita0207','linkedin:/in/daniel-hara-0258234'],
@@ -28,13 +56,15 @@
   };
   const shortlistQuery = new URLSearchParams(window.location.search);
   const doorDashPortal = shortlistQuery.get('list') === 'doordash' && !new URLSearchParams(window.location.hash.slice(1)).has('data');
+  const airbnbPortal = shortlistQuery.get('list') === 'airbnb' && !new URLSearchParams(window.location.hash.slice(1)).has('data');
   const requestedTeam = shortlistQuery.get('team') || 'overview';
-  let activeTeam = doorDashTeams.some(([slug]) => slug === requestedTeam) ? requestedTeam : 'overview';
+  const portalTeams = airbnbPortal ? airbnbTeams : doorDashTeams;
+  let activeTeam = portalTeams.some(([slug]) => slug === requestedTeam) ? requestedTeam : 'overview';
   function setupDoorDashTabs() {
-    if (!doorDashPortal) return;
+    if (!doorDashPortal && !airbnbPortal) return;
     const nav = node('nav','','doordash-team-nav');
-    nav.setAttribute('aria-label','DoorDash hiring teams');
-    for (const [slug,label] of doorDashTeams) {
+    nav.setAttribute('aria-label', airbnbPortal ? 'Airbnb hiring teams' : 'DoorDash hiring teams');
+    for (const [slug,label] of portalTeams) {
       const a = node('a',label,'doordash-team-tab');
       const url = new URL(window.location.href);
       if (slug === 'overview') url.searchParams.delete('team'); else url.searchParams.set('team',slug);
@@ -43,8 +73,8 @@
       nav.appendChild(a);
     }
     const heading = node('div','','doordash-team-context');
-    const title = node('h2',doorDashTeams.find(([s])=>s===activeTeam)[1]);
-    const description = node('p',doorDashTeamExplanations[activeTeam]);
+    const title = node('h2',portalTeams.find(([s])=>s===activeTeam)[1]);
+    const description = node('p',(airbnbPortal ? airbnbTeamExplanations : doorDashTeamExplanations)[activeTeam]);
     heading.append(title,description);
     const filterArea = byId('shortlist-filters').closest('.recruiter-explore');
     filterArea.parentNode.insertBefore(nav,filterArea);
@@ -68,7 +98,7 @@
     let count = 0;
     for (const item of resolved.items) {
       const text = [displayName(item.person), item.role, brazeReasons[item.id] || item.note || '', S.value(item.person, ['Former Job Title', 'formerRole', 'role']), S.value(item.person, ['Description', 'description']), discipline(item)].join(' ').toLowerCase();
-      const inTeam = !doorDashPortal || activeTeam === 'overview' || (doorDashTeamMembers[activeTeam] || []).includes(item.id);
+      const inTeam = !(doorDashPortal || airbnbPortal) || activeTeam === 'overview' || ((airbnbPortal ? airbnbTeamMembers : doorDashTeamMembers)[activeTeam] || []).includes(item.id);
       const matches = inTeam && (activeDiscipline === 'All' || discipline(item) === activeDiscipline) && text.includes(query);
       cards.get(item.id).hidden = !matches;
       if (matches) count++;
@@ -269,6 +299,16 @@
         if (hiringPost) links.appendChild(external('Original hiring post 🔗', hiringPost));
         manager.appendChild(links);
         card.appendChild(manager);
+      }
+      if (airbnbPortal && airbnbHiringSignals[item.id]) {
+        const region = node('div','','shortlist-hiring-manager');
+        region.appendChild(node('span','RELEVANT TEAM CONTACT · OWNERSHIP UNCONFIRMED','shortlist-manager-label'));
+        const links = node('span','','shortlist-manager-links');
+        for (const [name,post] of airbnbHiringSignals[item.id]) {
+          links.appendChild(external(name + ' · Past hiring announcement 🔗',post));
+        }
+        region.appendChild(links);
+        card.appendChild(region);
       }
       card.appendChild(node('p', discipline(item), 'recruiter-discipline'));
       card.appendChild(node('h2', displayName(person)));
