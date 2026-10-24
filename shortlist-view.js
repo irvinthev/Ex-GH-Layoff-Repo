@@ -62,6 +62,15 @@
   const isBraze = shortlistSlug === 'braze' && !new URLSearchParams(window.location.hash.slice(1)).has('data');
   const isSeatGeek = shortlistSlug === 'seatgeek' && !new URLSearchParams(window.location.hash.slice(1)).has('data');
   const isExecutive = isBraze || isSeatGeek;
+  // Public hiring posts supplied by the network curator; only verified matches display a manager.
+  const doordashManagers = {
+    'linkedin:/in/jessica-marie-fabrizi': ['Angel David', 'https://lnkd.in/p/gkBb5DxJ'],
+    'linkedin:/in/gerard-salerno-28825146': ['Angel David', 'https://lnkd.in/p/gkBb5DxJ'],
+    'linkedin:/in/chip-richards': ['Angel David', 'https://lnkd.in/p/gkBb5DxJ'],
+    'linkedin:/in/jane-k-77b86b98': ['Logan D.', 'https://lnkd.in/p/gX2-daqB'],
+    'linkedin:/in/patel-prem': ['Kazim Ahmed Mohammed', 'https://lnkd.in/p/gFuPpEfs'],
+    'linkedin:/in/hoa-tommy-tran': ['Kazim Ahmed Mohammed', 'https://lnkd.in/p/gFuPpEfs']
+  };
   const brazeHighlights = {
     'linkedin:/in/jill-weinstein-0192b4a': ['15+ years across Grubhub, PayPal and American Express','Reported churn reduction of up to 58%','Multi-million-dollar growth programs'],
     'linkedin:/in/corey-laffel-solon': ['15+ years in growth and marketing','Helped scale a $150M+ advertising business','Enterprise partner marketing'],
@@ -203,6 +212,13 @@
       }
       const person = item.person;
       const card = node('article', '', 'shortlist-card');
+      if (shortlistSlug === 'doordash' && doordashManagers[item.id]) {
+        const [managerName, hiringPost] = doordashManagers[item.id];
+        const manager = node('div', '', 'shortlist-hiring-manager');
+        manager.appendChild(node('span', 'TARGETED HIRING MANAGER', 'shortlist-manager-label'));
+        manager.appendChild(external(managerName + ' · View hiring post 🔗', hiringPost));
+        card.appendChild(manager);
+      }
       card.appendChild(node('p', discipline(item), 'recruiter-discipline'));
       card.appendChild(node('h2', displayName(person)));
       card.appendChild(node('p', S.value(person, ['Former Job Title', 'formerRole', 'role']), 'recruiter-background'));
