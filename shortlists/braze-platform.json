@@ -1,30 +1,30 @@
 {
   "v": 1,
   "title": "Braze | Senior Platform Software Engineer II — Curated shortlist",
-  "intro": "Four targeted former-Grubhub engineering introductions for Braze's Senior Platform Software Engineer II opening in New York City. The role covers internal infrastructure-as-a-service, Kubernetes automation, distributed job processing, and reliability. Candidate technical depth, current interest, and NYC office feasibility require confirmation. These profiles are separate from the public open-to-work directory.",
+  "intro": "FOCUS ROLE: Senior Platform Software Engineer II (NYC). Braze is seeking a hands-on software engineer to build internal infrastructure services, reusable frameworks for high-scale background processing (including Sidekiq-style jobs), Kubernetes operators, observability, and incident-resistant automation. Four exploratory referrals follow; each highlights documented alignment and open screening questions.",
   "items": [
     {
       "id": "linkedin:/in/wakingrufus",
       "role": "Senior Platform Software Engineer II",
-      "note": "John Burns: JVM platform tooling, Gradle, developer enablement and shared engineering frameworks. Referrer reports recent Netflix layoff. Validate Kubernetes operators, Ruby/Sidekiq, and job-processing framework ownership.",
+      "note": "MATCH: Shared developer-platform tooling, JVM/Gradle frameworks and abstractions for application teams. VALIDATE: software ownership of distributed/background processing, Kubernetes custom operators, Ruby/Sidekiq, and NYC office feasibility. Referrer reports recent Netflix layoff.",
       "url": "https://job-boards.greenhouse.io/braze/jobs/8039381"
     },
     {
       "id": "name:jesus alonso",
       "role": "Senior Platform Software Engineer II",
-      "note": "Jesus Alonso (Jeezus): Java/Kotlin services, Kafka (~12k events/second in prior integration), asynchronous workloads, Cassandra optimization, build automation. Validate Kubernetes operators and Ruby/Sidekiq.",
+      "note": "MATCH: Java/Kotlin microservices, asynchronous jobs, Kafka integration (~12k events/sec), Cassandra performance debugging, developer quality tooling. VALIDATE: shared platform-framework ownership, Kubernetes operators/custom resources, Ruby/Sidekiq, and NYC office feasibility.",
       "url": "https://job-boards.greenhouse.io/braze/jobs/8039381"
     },
     {
       "id": "linkedin:/in/lonniebaldwin",
       "role": "Senior Platform Software Engineer II",
-      "note": "Lonnie Baldwin: runtime engineering, Kubernetes, Terraform, GitOps, observability and infrastructure automation. Validate recent hands-on distributed application framework development.",
+      "note": "MATCH: Kubernetes, Terraform, GitOps, infrastructure automation, observability, operational reliability and incident response. VALIDATE: hands-on software framework development for background jobs, API platform software, Ruby/Sidekiq, and NYC office feasibility.",
       "url": "https://job-boards.greenhouse.io/braze/jobs/8039381"
     },
     {
       "id": "linkedin:/in/mwils1",
       "role": "Senior Platform Software Engineer II",
-      "note": "Engineering leader with experience in cloud infrastructure, backend systems, GitOps, Kubernetes, Terraform and distributed systems. LinkedIn profile reports supporting 40 services and 300+ AWS Lambda functions. Validate current hands-on IC interest and job-framework experience.",
+      "note": "MATCH: AWS/cloud infrastructure, Kubernetes, Terraform, GitOps, distributed systems and developer-productivity improvements. Profile reports 40 services and 300+ AWS Lambda functions. VALIDATE: recent hands-on IC development of reusable processing frameworks, Ruby/Sidekiq, and NYC office feasibility.",
       "url": "https://job-boards.greenhouse.io/braze/jobs/8039381"
     }
   ]
