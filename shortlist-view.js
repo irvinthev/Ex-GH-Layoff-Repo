@@ -166,7 +166,7 @@
     catch { byId('copy-output').value = text; byId('copy-output-label').hidden = false; byId('copy-output').focus(); byId('copy-output').select(); byId('copy-status').textContent = 'Copy the selected text manually.'; }
   }
   const shortlistSlug = new URLSearchParams(window.location.search).get('list');
-  const isBraze = shortlistSlug === 'braze' && !new URLSearchParams(window.location.hash.slice(1)).has('data');
+  const isBraze = (shortlistSlug === 'braze' || shortlistSlug === 'braze-platform') && !new URLSearchParams(window.location.hash.slice(1)).has('data');
   const isSeatGeek = shortlistSlug === 'seatgeek' && !new URLSearchParams(window.location.hash.slice(1)).has('data');
   const isExecutive = isBraze || isSeatGeek || airbnbPortal || angiPortal;
   // Public hiring posts supplied by the network curator; only verified matches display a manager.
@@ -294,7 +294,7 @@
     if (data) raw = S.decode(data);
     else {
       const slug = params.get('list');
-      if (slug === 'braze' || slug === 'seatgeek' || slug === 'airbnb' || slug === 'angi') {
+      if (slug === 'braze' || slug === 'braze-platform' || slug === 'seatgeek' || slug === 'airbnb' || slug === 'angi') {
         if (slug === 'seatgeek') document.body.classList.add('seatgeek-shortlist');
         if (slug === 'airbnb' || slug === 'angi') document.body.classList.add('airbnb-shortlist');
         if (slug === 'angi') document.body.classList.add('angi-shortlist');
@@ -310,7 +310,7 @@
       raw = S.validate(await response.json());
       // Company-scoped introductions are maintained separately from the opt-in directory.
       // Shared URL payloads cannot supply or restore profile data.
-      if (slug === 'shopify' || slug === 'braze') {
+      if (slug === 'shopify' || slug === 'braze' || slug === 'braze-platform') {
         const profiles = await fetch(`./shortlists/${slug}-profiles.json`, { cache: 'no-store' });
         if (profiles.ok) {
           const entries = await profiles.json();
