@@ -398,6 +398,29 @@
       cards.set(item.id, card);
       byId('shortlist-cards').appendChild(card);
     }
+    if (shortlistSlug === 'braze-platform') {
+      const guide = node('section', '', 'braze-role-guide');
+      guide.style.cssText = 'background:#e9f0e9;border:1px solid #d5e1d8;border-radius:16px;padding:24px;margin:24px 0;';
+      guide.appendChild(node('p', 'THE ROLE · NEW YORK CITY', 'braze-kicker'));
+      guide.appendChild(node('h2', 'What Braze is looking for'));
+      const lead = node('p', 'A hands-on platform software engineer who builds the infrastructure services and distributed-processing frameworks that application teams use—not solely an infrastructure operator.');
+      guide.appendChild(lead);
+      const criteria = node('ul');
+      for (const value of [
+        'Software engineering: 5+ years, production API-driven systems and reusable internal platform services.',
+        'Distributed processing: background jobs, failure modes, retry safety and Sidekiq-style frameworks at very large scale.',
+        'Infrastructure automation: Kubernetes operators/custom resources, self-service provisioning and less operational toil.',
+        'Reliability: observability, symptom-based alerting, enterprise SLAs and PagerDuty incident response.',
+        'Collaboration: documentation, asynchronous teamwork and building guardrails for other engineers.'
+      ]) criteria.appendChild(node('li', value));
+      guide.appendChild(criteria);
+      guide.appendChild(node('p', 'Candidate cards distinguish demonstrated experience from gaps to validate; a referral does not establish full qualification.'));
+      const roleLink = external('View official Senior Platform Software Engineer II role ↗', 'https://job-boards.greenhouse.io/braze/jobs/8039381');
+      roleLink.style.fontWeight = '700';
+      guide.appendChild(roleLink);
+      const listHeading = document.querySelector('.recruiter-section-heading');
+      if (listHeading) listHeading.parentNode.insertBefore(guide, listHeading);
+    }
     setupDoorDashTabs();
     renderFilters();
     if (isExecutive) {
