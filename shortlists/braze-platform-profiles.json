@@ -21,5 +21,13 @@
     "Function": "Engineering",
     "LinkedIn URL": "https://www.linkedin.com/in/lonniebaldwin",
     "Description": "Runtime and infrastructure engineering background in Kubernetes, Terraform, GitOps, reliability, observability, and engineering automation. Confirm hands-on ownership of distributed software frameworks, Ruby/Sidekiq expertise and current availability."
+  },
+  {
+    "First Name": "Platform",
+    "Last Name": "Engineering Leader (mwils1)",
+    "Former Job Title": "Engineering leader — platform, backend systems and cloud infrastructure",
+    "Function": "Engineering",
+    "LinkedIn URL": "https://www.linkedin.com/in/mwils1",
+    "Description": "LinkedIn profile describes leadership across platform engineering, backend systems and cloud infrastructure; GitOps and AWS improvements associated with a reported 40% reduction in engineering lead time and 25% higher deployment frequency; infrastructure supporting 40 services and over 300 AWS Lambda functions. Experience includes Kubernetes, Terraform, observability, distributed systems, Java, Python, TypeScript and Scala. Confirm name, metrics, current availability and interest in a hands-on platform software engineer role."
   }
 ]
