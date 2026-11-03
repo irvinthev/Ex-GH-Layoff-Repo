@@ -1,0 +1,22 @@
+{
+  "v": 1,
+  "title": "Braze Platform Engineering | Curated introductions",
+  "intro": "Three former Grubhub engineers with complementary experience in internal developer platforms, distributed processing, and infrastructure reliability. Candidate interest and specialized technical requirements should be confirmed.",
+  "items": [
+    {
+      "id": "linkedin:/in/wakingrufus",
+      "role": "Platform Software Engineer",
+      "note": "John Burns: JVM platform tooling, Gradle, developer enablement and shared engineering frameworks. Referrer reports recent Netflix layoff. Validate Kubernetes operators, Ruby/Sidekiq, and job-processing framework ownership."
+    },
+    {
+      "id": "name:jesus alonso",
+      "role": "Platform Software Engineer",
+      "note": "Jesus Alonso (Jeezus): Java/Kotlin services, Kafka (~12k events/second in prior integration), asynchronous workloads, Cassandra optimization, build automation. Validate Kubernetes operators and Ruby/Sidekiq."
+    },
+    {
+      "id": "linkedin:/in/lonniebaldwin",
+      "role": "Platform Software Engineer",
+      "note": "Lonnie Baldwin: runtime engineering, Kubernetes, Terraform, GitOps, observability and infrastructure automation. Validate recent hands-on distributed application framework development."
+    }
+  ]
+}
