@@ -1,0 +1,25 @@
+[
+  {
+    "First Name": "John",
+    "Last Name": "Burns",
+    "Former Job Title": "Former Senior Staff Platform Engineer, Grubhub; most recently Platform Engineer, Netflix",
+    "Function": "Engineering",
+    "LinkedIn URL": "https://www.linkedin.com/in/wakingrufus/",
+    "Description": "Experienced in internal developer platforms, JVM and Gradle tooling, and shared engineering abstractions. The referrer reports that John was laid off from Netflix. Current role interest and specialized experience with distributed jobs, Sidekiq and Kubernetes operators should be confirmed."
+  },
+  {
+    "First Name": "Jesus",
+    "Last Name": "Alonso",
+    "Former Job Title": "Former Staff Software Engineer, Grindr; former Senior Software Engineer, Grubhub",
+    "Function": "Engineering",
+    "Description": "Also known as Jeezus. Built Java/Kotlin Spring Boot microservices, asynchronous processing jobs and Kafka integrations; his resume describes an integration handling roughly 12,000 Kafka events per second. Also worked on Cassandra performance and shared build tooling. Kubernetes operator and Ruby/Sidekiq experience are unverified."
+  },
+  {
+    "First Name": "Lonnie",
+    "Last Name": "Baldwin",
+    "Former Job Title": "Former Staff Engineer, Runtime Engineering, Grubhub",
+    "Function": "Engineering",
+    "LinkedIn URL": "https://www.linkedin.com/in/lonniebaldwin",
+    "Description": "Runtime and infrastructure engineering background in Kubernetes, Terraform, GitOps, reliability, observability, and engineering automation. Confirm hands-on ownership of distributed software frameworks, Ruby/Sidekiq expertise and current availability."
+  }
+]
