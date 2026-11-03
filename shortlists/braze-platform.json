@@ -17,6 +17,11 @@
       "id": "linkedin:/in/lonniebaldwin",
       "role": "Platform Software Engineer",
       "note": "Lonnie Baldwin: runtime engineering, Kubernetes, Terraform, GitOps, observability and infrastructure automation. Validate recent hands-on distributed application framework development."
+    },
+    {
+      "id": "linkedin:/in/mwils1",
+      "role": "Platform Software Engineer",
+      "note": "Engineering leader with experience in cloud infrastructure, backend systems, GitOps, Kubernetes, Terraform and distributed systems. LinkedIn profile reports supporting 40 services and 300+ AWS Lambda functions. Validate current hands-on IC interest and job-framework experience."
     }
   ]
 }
