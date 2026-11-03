@@ -1,27 +1,31 @@
 {
   "v": 1,
-  "title": "Braze Platform Engineering | Curated introductions",
-  "intro": "Four targeted introductions for Braze Platform Software Engineer, spanning developer platforms, distributed processing, infrastructure automation and engineering leadership. These manually curated profiles are separate from the open-to-work directory. Confirm current interest and specialized requirements.",
+  "title": "Braze | Senior Platform Software Engineer II — Curated shortlist",
+  "intro": "Four targeted former-Grubhub engineering introductions for Braze's Senior Platform Software Engineer II opening in New York City. The role covers internal infrastructure-as-a-service, Kubernetes automation, distributed job processing, and reliability. Candidate technical depth, current interest, and NYC office feasibility require confirmation. These profiles are separate from the public open-to-work directory.",
   "items": [
     {
       "id": "linkedin:/in/wakingrufus",
-      "role": "Platform Software Engineer",
-      "note": "John Burns: JVM platform tooling, Gradle, developer enablement and shared engineering frameworks. Referrer reports recent Netflix layoff. Validate Kubernetes operators, Ruby/Sidekiq, and job-processing framework ownership."
+      "role": "Senior Platform Software Engineer II",
+      "note": "John Burns: JVM platform tooling, Gradle, developer enablement and shared engineering frameworks. Referrer reports recent Netflix layoff. Validate Kubernetes operators, Ruby/Sidekiq, and job-processing framework ownership.",
+      "url": "https://job-boards.greenhouse.io/braze/jobs/8039381"
     },
     {
       "id": "name:jesus alonso",
-      "role": "Platform Software Engineer",
-      "note": "Jesus Alonso (Jeezus): Java/Kotlin services, Kafka (~12k events/second in prior integration), asynchronous workloads, Cassandra optimization, build automation. Validate Kubernetes operators and Ruby/Sidekiq."
+      "role": "Senior Platform Software Engineer II",
+      "note": "Jesus Alonso (Jeezus): Java/Kotlin services, Kafka (~12k events/second in prior integration), asynchronous workloads, Cassandra optimization, build automation. Validate Kubernetes operators and Ruby/Sidekiq.",
+      "url": "https://job-boards.greenhouse.io/braze/jobs/8039381"
     },
     {
       "id": "linkedin:/in/lonniebaldwin",
-      "role": "Platform Software Engineer",
-      "note": "Lonnie Baldwin: runtime engineering, Kubernetes, Terraform, GitOps, observability and infrastructure automation. Validate recent hands-on distributed application framework development."
+      "role": "Senior Platform Software Engineer II",
+      "note": "Lonnie Baldwin: runtime engineering, Kubernetes, Terraform, GitOps, observability and infrastructure automation. Validate recent hands-on distributed application framework development.",
+      "url": "https://job-boards.greenhouse.io/braze/jobs/8039381"
     },
     {
       "id": "linkedin:/in/mwils1",
-      "role": "Platform Software Engineer",
-      "note": "Engineering leader with experience in cloud infrastructure, backend systems, GitOps, Kubernetes, Terraform and distributed systems. LinkedIn profile reports supporting 40 services and 300+ AWS Lambda functions. Validate current hands-on IC interest and job-framework experience."
+      "role": "Senior Platform Software Engineer II",
+      "note": "Engineering leader with experience in cloud infrastructure, backend systems, GitOps, Kubernetes, Terraform and distributed systems. LinkedIn profile reports supporting 40 services and 300+ AWS Lambda functions. Validate current hands-on IC interest and job-framework experience.",
+      "url": "https://job-boards.greenhouse.io/braze/jobs/8039381"
     }
   ]
 }
